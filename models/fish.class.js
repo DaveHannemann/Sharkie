@@ -32,12 +32,11 @@ class Fish extends MovableObject {
 
 
     animate() {
+        setInterval(() =>{
         this.moveLeft();
+        }, 1000 / 60);
         setInterval(() => {
-        let i = this.currentImage % this.IMAGES_SWIMMING.length;
-        let path = this.IMAGES_SWIMMING[i];
-        this.img = this.imageCache[path];
-        this.currentImage++;
+        this.playAnimation(this.IMAGES_SWIMMING)  
         }, 175);
     }
 
