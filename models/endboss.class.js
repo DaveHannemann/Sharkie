@@ -4,6 +4,13 @@ class Endboss extends MovableObject {
     height = 400;
     y = -100;
 
+    offSet = {
+    top : 80,
+    bottom : 200,
+    left : 15,
+    right : 10
+    };
+
 IMAGES_SWIMMING = [
     './img/2.Enemy/3 Final Enemy/2.floating/1.png',
     './img/2.Enemy/3 Final Enemy/2.floating/2.png',
@@ -24,7 +31,7 @@ constructor(){
     super().loadImage(this.IMAGES_SWIMMING[0]);
     this.loadImages(this.IMAGES_SWIMMING);
 
-    this.x = 2650;
+    this.x = 450;
     this.animate();
 }
 

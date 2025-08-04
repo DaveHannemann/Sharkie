@@ -21,6 +21,28 @@ class Character extends MovableObject {
         '../img/1.Sharkie/3.Swim/6.png'
     ];
 
+    IMAGES_HURT = [
+        '../img/1.Sharkie/5.Hurt/1.Poisoned/1.png',
+        '../img/1.Sharkie/5.Hurt/1.Poisoned/2.png',
+        '../img/1.Sharkie/5.Hurt/1.Poisoned/3.png',
+        '../img/1.Sharkie/5.Hurt/1.Poisoned/4.png'
+    ]
+
+    IMAGES_DEAD = [
+        '../img/1.Sharkie/6.dead/1.Poisoned/1.png',
+        '../img/1.Sharkie/6.dead/1.Poisoned/2.png',
+        '../img/1.Sharkie/6.dead/1.Poisoned/3.png',
+        '../img/1.Sharkie/6.dead/1.Poisoned/4.png',
+        '../img/1.Sharkie/6.dead/1.Poisoned/5.png',
+        '../img/1.Sharkie/6.dead/1.Poisoned/6.png',
+        '../img/1.Sharkie/6.dead/1.Poisoned/7.png',
+        '../img/1.Sharkie/6.dead/1.Poisoned/8.png',
+        '../img/1.Sharkie/6.dead/1.Poisoned/9.png',
+        '../img/1.Sharkie/6.dead/1.Poisoned/10.png',
+        '../img/1.Sharkie/6.dead/1.Poisoned/11.png',
+        '../img/1.Sharkie/6.dead/1.Poisoned/12.png'
+    ]
+
     IMAGES_FIN_SLAP = [
         '../img/1.Sharkie/4.Attack/Fin slap/1.png',
         '../img/1.Sharkie/4.Attack/Fin slap/2.png',
@@ -29,7 +51,7 @@ class Character extends MovableObject {
         '../img/1.Sharkie/4.Attack/Fin slap/5.png',
         '../img/1.Sharkie/4.Attack/Fin slap/6.png',
         '../img/1.Sharkie/4.Attack/Fin slap/7.png',
-        '../img/1.Sharkie/4.Attack/Fin slap/8.png',
+        '../img/1.Sharkie/4.Attack/Fin slap/8.png'
     ]
     world;
 
@@ -37,6 +59,8 @@ class Character extends MovableObject {
         super().loadImage('../img/1.Sharkie/3.Swim/3.png');
         this.loadImages(this.IMAGES_SWIMMING);
         this.loadImages(this.IMAGES_FIN_SLAP);
+        this.loadImages(this.IMAGES_DEAD);
+        this.loadImages(this.IMAGES_HURT);
 
         this.animate();
     }
@@ -62,7 +86,12 @@ class Character extends MovableObject {
         }, 1000 / 60);
 
         setInterval(() => {
-        if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN) {
+
+        if(this.isDead()) {
+            this.playAnimation(this.IMAGES_DEAD);
+        }else if (this.isHurt()) {
+            this.playAnimation(this.IMAGES_HURT);
+        } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN) {
             this.playAnimation(this.IMAGES_SWIMMING);
             }
         }, 175);
