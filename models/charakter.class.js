@@ -7,6 +7,7 @@ class Character extends MovableObject {
     energy = 100;
     lastKeyPressed = new Date().getTime();
     finSlapped = false;
+    spacePressedLog = false;
 
     offSet = {
     top : 35,
@@ -147,13 +148,48 @@ class Character extends MovableObject {
         }, 175);
 
         setInterval(() => {
-            if (this.world.keyboard.SPACE) {
-                this.playAnimation(this.IMAGES_FIN_SLAP);
+            if (this.world.keyboard.SPACE && !this.spacePressedLog) {
+                this.finSlap();
                 }
+                this.spacePressedLog = this.world.keyboard.SPACE;
         }, 1000 / 60);
     }
     
     finSlap(){
+        if(this.finSlapped) return;
+        this.finSlapped = true;
 
+        let startingX = this.x;
+        let totalSlap = 500;
+        let frames = 30;
+        let slapDuration = totalSlap /frames;
+        let maxSlapToX = 30;
+        let movementFrame = 0;
+
+        this.currentFrame = 0;
+        
+        let moveInterval = setInterval(() => {
+            let progress = movementFrame / frames;
+            let slapToX = Math.sin(progress * Math.PI) * maxSlapToX;
+            this.x = Math.round(startingX + slapToX);
+
+            movementFrame++;
+            if (movementFrame > frames) {
+                clearInterval(moveInterval);
+                this.x = startingX;
+                this.finSlapped = false;
+            }
+        }, slapDuration);
+
+        let animationFrames = this.IMAGES_FIN_SLAP.length;
+        let animationIntervalTime = totalSlap / animationFrames;
+        let animationFrame = 0;
+        let animationInterval = setInterval(() => {
+            this.playAnimationOnce(this.IMAGES_FIN_SLAP, animationFrame);
+            animationFrame++;
+            if (animationFrame >= this.IMAGES_FIN_SLAP.length) {
+                clearInterval(animationInterval);
+            }
+        }, animationIntervalTime);
     }
 }

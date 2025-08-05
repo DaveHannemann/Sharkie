@@ -60,6 +60,14 @@ class MovableObject extends DrawableObject{
         this.currentImage++;
     }
 
+    playAnimationOnce(images, frameIndex) {
+        if (frameIndex < images.length){
+            let path = images[frameIndex];
+            this.img = this.imageCache[path];
+        }
+
+    }
+
     moveRight() {
         this.x += this.speed;
     }
