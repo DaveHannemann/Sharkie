@@ -1,7 +1,9 @@
 class Light extends MovableObject {
+    x = 0;
     y = 0;
     width = 720;
     height = 480;
+    speed = 1;
 
     constructor(imagePath, x){
         super().loadImage(imagePath);
@@ -11,6 +13,8 @@ class Light extends MovableObject {
 
 
     animate() {
-    this.moveLeft();
+        setInterval(() =>{
+        this.moveLeft();
+        }, 1000 / 20);
     }
 }

@@ -1,7 +1,6 @@
 class MovableObject extends DrawableObject{
     speed = 0.15;
     otherDirection = false;
-    energy = 100;
     lastHit = 0;
 
     offSet = {
@@ -33,11 +32,14 @@ class MovableObject extends DrawableObject{
     }
 
     hit() {
-        this.energy -= 5;
-        if(this.energy < 0) {
-            this.energy = 0;
-        } else {
-            this.lastHit = new Date().getTime();
+        let hitTimer = new Date().getTime();
+
+        if(!this.lastHit || hitTimer -this.lastHit >= 1000) {
+            this.energy -= 5;
+                if(this.energy < 0) {
+                    this.energy = 0;
+                }
+            this.lastHit = hitTimer;
         }
     }
 

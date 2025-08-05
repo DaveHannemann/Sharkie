@@ -4,6 +4,9 @@ class Character extends MovableObject {
     width = 150;
     height = 150;
     speed = 5;
+    energy = 100;
+    lastKeyPressed = new Date().getTime();
+    finSlapped = false;
 
     offSet = {
     top : 35,
@@ -11,6 +14,44 @@ class Character extends MovableObject {
     left : 25,
     right : 40
     };
+
+    IMAGES_IDLE = [
+        '../img/1.Sharkie/1.IDLE/1.png',
+        '../img/1.Sharkie/1.IDLE/2.png',
+        '../img/1.Sharkie/1.IDLE/3.png',
+        '../img/1.Sharkie/1.IDLE/4.png',
+        '../img/1.Sharkie/1.IDLE/5.png',
+        '../img/1.Sharkie/1.IDLE/6.png',
+        '../img/1.Sharkie/1.IDLE/7.png',
+        '../img/1.Sharkie/1.IDLE/8.png',
+        '../img/1.Sharkie/1.IDLE/9.png',
+        '../img/1.Sharkie/1.IDLE/10.png',
+        '../img/1.Sharkie/1.IDLE/11.png',
+        '../img/1.Sharkie/1.IDLE/12.png',
+        '../img/1.Sharkie/1.IDLE/13.png',
+        '../img/1.Sharkie/1.IDLE/14.png',
+        '../img/1.Sharkie/1.IDLE/15.png',
+        '../img/1.Sharkie/1.IDLE/16.png',
+        '../img/1.Sharkie/1.IDLE/17.png',
+        '../img/1.Sharkie/1.IDLE/18.png'
+    ];
+
+    IMAGES_LONG_IDLE = [
+        'img/1.Sharkie/2.Long_IDLE/i1.png',
+        'img/1.Sharkie/2.Long_IDLE/i2.png',
+        'img/1.Sharkie/2.Long_IDLE/i3.png',
+        'img/1.Sharkie/2.Long_IDLE/i4.png',
+        'img/1.Sharkie/2.Long_IDLE/i5.png',
+        'img/1.Sharkie/2.Long_IDLE/i6.png',
+        'img/1.Sharkie/2.Long_IDLE/i7.png',
+        'img/1.Sharkie/2.Long_IDLE/i8.png',
+        'img/1.Sharkie/2.Long_IDLE/i9.png',
+        'img/1.Sharkie/2.Long_IDLE/i10.png',
+        'img/1.Sharkie/2.Long_IDLE/i11.png',
+        'img/1.Sharkie/2.Long_IDLE/i12.png',
+        'img/1.Sharkie/2.Long_IDLE/i13.png',
+        'img/1.Sharkie/2.Long_IDLE/i14.png'
+    ]
 
     IMAGES_SWIMMING = [
         '../img/1.Sharkie/3.Swim/1.png',
@@ -26,7 +67,7 @@ class Character extends MovableObject {
         '../img/1.Sharkie/5.Hurt/1.Poisoned/2.png',
         '../img/1.Sharkie/5.Hurt/1.Poisoned/3.png',
         '../img/1.Sharkie/5.Hurt/1.Poisoned/4.png'
-    ]
+    ];
 
     IMAGES_DEAD = [
         '../img/1.Sharkie/6.dead/1.Poisoned/1.png',
@@ -41,7 +82,7 @@ class Character extends MovableObject {
         '../img/1.Sharkie/6.dead/1.Poisoned/10.png',
         '../img/1.Sharkie/6.dead/1.Poisoned/11.png',
         '../img/1.Sharkie/6.dead/1.Poisoned/12.png'
-    ]
+    ];
 
     IMAGES_FIN_SLAP = [
         '../img/1.Sharkie/4.Attack/Fin slap/1.png',
@@ -61,6 +102,8 @@ class Character extends MovableObject {
         this.loadImages(this.IMAGES_FIN_SLAP);
         this.loadImages(this.IMAGES_DEAD);
         this.loadImages(this.IMAGES_HURT);
+        this.loadImages(this.IMAGES_IDLE);
+        this.loadImages(this.IMAGES_LONG_IDLE);
 
         this.animate();
     }
@@ -86,24 +129,31 @@ class Character extends MovableObject {
         }, 1000 / 60);
 
         setInterval(() => {
-
-        if(this.isDead()) {
-            this.playAnimation(this.IMAGES_DEAD);
-        }else if (this.isHurt()) {
-            this.playAnimation(this.IMAGES_HURT);
-        } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN) {
-            this.playAnimation(this.IMAGES_SWIMMING);
-            }
+            if(this.isDead()) {
+                this.playAnimation(this.IMAGES_DEAD);
+            }else if (this.isHurt()) {
+                this.playAnimation(this.IMAGES_HURT);
+            } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN) {
+                this.lastKeyPressed = new Date().getTime();
+                this.playAnimation(this.IMAGES_SWIMMING);
+            } else {
+                let noKeyPressed = new Date().getTime() - this.lastKeyPressed;
+                if(noKeyPressed > 8000) {
+                    this.playAnimation(this.IMAGES_LONG_IDLE);
+                } else {
+                this.playAnimation(this.IMAGES_IDLE);
+                }
+            }        
         }, 175);
 
         setInterval(() => {
-        if (this.world.keyboard.SPACE) {
-            this.playAnimation(this.IMAGES_FIN_SLAP);
-            }
-        }, 1000 / 15);
+            if (this.world.keyboard.SPACE) {
+                this.playAnimation(this.IMAGES_FIN_SLAP);
+                }
+        }, 1000 / 60);
     }
     
-    jump(){
+    finSlap(){
 
     }
 }
