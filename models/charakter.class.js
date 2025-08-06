@@ -163,14 +163,15 @@ class Character extends MovableObject {
         let totalSlap = 500;
         let frames = 30;
         let slapDuration = totalSlap /frames;
-        let maxSlapToX = 30;
+        let maxSlapToX = 50;
         let movementFrame = 0;
+        let directionFactor = this.otherDirection ? -1 : 1;
 
         this.currentFrame = 0;
         
         let moveInterval = setInterval(() => {
             let progress = movementFrame / frames;
-            let slapToX = Math.sin(progress * Math.PI) * maxSlapToX;
+            let slapToX = Math.sin(progress * Math.PI) * maxSlapToX * directionFactor;
             this.x = Math.round(startingX + slapToX);
 
             movementFrame++;
