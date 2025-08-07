@@ -7,6 +7,8 @@ class StartScreen extends DrawableObject {
     backgroundObjects = [];
     statusBars = [];
     animatedButtons = [];
+    collectables = [];
+    onlyStartScreenObjects = [];
     
 
     constructor(){
@@ -22,10 +24,30 @@ class StartScreen extends DrawableObject {
         this.backgroundObjects.forEach(obj => this.loadImage(obj.img.src));
 
         this.statusBars = [
-         new StatusBar('health', 10 , 40, 100),
+        new StatusBar('health', 10 , 40, 100),
         new StatusBar('coin', 10 , 70, 100),
         new StatusBar('poison', 10 , 10, 100),
         ];
+
+        this.collectables = [
+            new CollectableObject('coin', 230, 325, 800),
+            new CollectableObject('coin', 270, 270, 800),
+            new CollectableObject('coin', 320, 220, 800),
+            new CollectableObject('coin', 380, 220, 800),
+            new CollectableObject('coin', 430, 270, 800),
+            new CollectableObject('coin', 470, 325, 800),
+            new CollectableObject('poison', 10, 9, 300, 30, 40),
+            new CollectableObject('poison-dark', 230, 370, 1000, 60, 60)
+        ];
+
+        this.collectables.forEach(obj => {
+    obj.animate();
+
+    if (obj.animationImages === obj.IMAGES_POISON) {
+        obj.width = 30;
+        obj.height = 40;
+    }
+});
 
         this.animatedButtons = [
             {
@@ -50,11 +72,22 @@ class StartScreen extends DrawableObject {
                 height: 40,
                 currentIndex: 0,
                 images: [
-                    'img/6.Botones/Full Screen/Mesa de trabajo 6.png',
-                    'img/6.Botones/Full Screen/Mesa de trabajo 7.png',
-                    'img/6.Botones/Full Screen/Mesa de trabajo 8.png',
-                    'img/6.Botones/Full Screen/Mesa de trabajo 9.png'
+                    '../img/6.Botones/Full Screen/Mesa de trabajo 6.png',
+                    '../img/6.Botones/Full Screen/Mesa de trabajo 7.png',
+                    '../img/6.Botones/Full Screen/Mesa de trabajo 8.png',
+                    '../img/6.Botones/Full Screen/Mesa de trabajo 9.png'
                 ]
+            },
+            {
+                name: 'howto',
+                x: 260,
+                y: -20,
+                width: 190,
+                height: 120,
+                currentIndex: 0,
+                images: ['../img/6.Botones/floss.png'],
+                isStatic: true,
+                text: 'How to'
             }
         ];
 
@@ -87,13 +120,21 @@ class StartScreen extends DrawableObject {
     bar.draw(ctx);
     });
 
-        this.animatedButtons.forEach(button => {
-            let img = this.imageCache[button.images[button.currentIndex]];
-            if (img) {
-                ctx.drawImage(img, button.x, button.y, button.width, button.height);
+    this.collectables.forEach(obj => obj.draw(ctx));
+
+    this.animatedButtons.forEach(button => {
+        let img = this.imageCache[button.images[button.currentIndex]];
+        if (img) {
+            ctx.drawImage(img, button.x, button.y, button.width, button.height);
+            if (button.text) {
+                ctx.font = '16px luckiestGuy-Regular';
+                ctx.fillStyle = 'yellow';
+                ctx.textAlign = 'center';
+                ctx.fillText(button.text, button.x + button.width / 2, button.y + button.height / 2 + 7);
             }
-        });
-    }
+        }
+    });
+}
 
     isButtonClicked(name, mouseX, mouseY) {
         const btn = this.animatedButtons.find(b => b.name === name);
