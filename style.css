@@ -23,6 +23,7 @@ h1{
     margin: 0;
     letter-spacing: 5px;
     text-shadow: 7px -4px 2px rgba(226, 72, 0, 0.5);
+    cursor: default;
 }
 
 canvas{

@@ -4,11 +4,29 @@ class StartScreen extends DrawableObject {
     width = 720;
     height = 480;
     buttonInterval;
+    backgroundObjects = [];
+    statusBars = [];
     animatedButtons = [];
+    
 
     constructor(){
         super();
-        this.loadImage('../img/4. Marcadores/op d1.png')
+    this.backgroundObjects = [
+        new BackgroundObject('../img/3. Background/Layers/5. Water/D1.png', 0),
+        new BackgroundObject('../img/3. Background/Layers/4.Fondo 2/D1.png', 0),
+        new BackgroundObject('../img/3. Background/Layers/3.Fondo 1/D1.png', 0),
+        new BackgroundObject('../img/3. Background/Layers/2. Floor/D1.png', 0),
+        new BackgroundObject('../img/3. Background/Layers/1. Light/1.png', 0)
+        ]
+
+        this.backgroundObjects.forEach(obj => this.loadImage(obj.img.src));
+
+        this.statusBars = [
+         new StatusBar('health', 10 , 40, 100),
+        new StatusBar('coin', 10 , 70, 100),
+        new StatusBar('poison', 10 , 10, 100),
+        ];
+
         this.animatedButtons = [
             {
                 name: 'start',
@@ -60,7 +78,15 @@ class StartScreen extends DrawableObject {
     }
 
     draw(ctx) {
-        super.draw(ctx);
+
+    this.backgroundObjects.forEach(obj => {
+        obj.draw(ctx);
+    });
+    
+    this.statusBars.forEach(bar => {
+    bar.draw(ctx);
+    });
+
         this.animatedButtons.forEach(button => {
             let img = this.imageCache[button.images[button.currentIndex]];
             if (img) {

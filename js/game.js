@@ -31,9 +31,9 @@ function init() {
 
     document.addEventListener('fullscreenchange', () => {
     if (!document.fullscreenElement) {
-        resetCanvasSize(canvas); // Zurück zur Standardgröße (720x480)
+        resetCanvasSize(canvas);
     } else {
-        scaleCanvasToFit(canvas); // Bei Eintritt in Fullscreen richtig skalieren
+        scaleCanvasToFit(canvas);
     }
     });
 }
@@ -53,14 +53,12 @@ function startGame() {
 
 function toggleFullScreen(canvas) {
     if (!document.fullscreenElement) {
-        // Vollbild starten
         if (canvas.requestFullscreen) {
             canvas.requestFullscreen().then(() => {
                 scaleCanvasToFit(canvas);   
             });
         }
     } else {
-        // Vollbild beenden
         document.exitFullscreen().then(() => {
             resetCanvasSize(canvas);
         });
