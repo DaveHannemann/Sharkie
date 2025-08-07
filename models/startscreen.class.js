@@ -144,4 +144,30 @@ class StartScreen extends DrawableObject {
                mouseY >= btn.y &&
                mouseY <= btn.y + btn.height;
     }
+
+    isMouseOverButton(mouseX, mouseY) {
+    return this.animatedButtons.some(button =>
+        mouseX >= button.x &&
+        mouseX <= button.x + button.width &&
+        mouseY >= button.y &&
+        mouseY <= button.y + button.height
+        );
+    }
+
+    toggleHowToButton(visible) {
+        let index = this.animatedButtons.findIndex(b => b.name === 'howto');
+        if (!visible && index !== -1) {
+                let removedButton = this.animatedButtons.splice(index, 1)[0];
+                this.onlyStartScreenObjects.push(removedButton);
+            }
+        if (visible) {
+            let alreadyThere = this.animatedButtons.some(b => b.name === 'howto');
+            let stored = this.onlyStartScreenObjects.find(b => b.name === 'howto');
+
+            if (!alreadyThere && stored) {
+                this.animatedButtons.push(stored);
+                this.onlyStartScreenObjects = this.onlyStartScreenObjects.filter(b => b.name !== 'howto');
+            }
+        }
+    }
 }

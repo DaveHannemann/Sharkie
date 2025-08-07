@@ -11,12 +11,12 @@ function init() {
     drawStartScreenLoop();
     
     canvas.addEventListener('click', function(event) {
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / canvas.clientWidth;
-    const scaleY = canvas.height / canvas.clientHeight;
+    let rect = canvas.getBoundingClientRect();
+    let scaleX = canvas.width / canvas.clientWidth;
+    let scaleY = canvas.height / canvas.clientHeight;
 
-    const mouseX = (event.clientX - rect.left) * scaleX;
-    const mouseY = (event.clientY - rect.top) * scaleY;
+    let mouseX = (event.clientX - rect.left) * scaleX;
+    let mouseY = (event.clientY - rect.top) * scaleY;
 
 
     if (startScreen.isButtonClicked('start', mouseX, mouseY)) {
@@ -27,14 +27,37 @@ function init() {
     if (startScreen.isButtonClicked('fullscreen', mouseX, mouseY)) {
         toggleFullScreen(canvas);
     }
+
+    if (startScreen.isButtonClicked('howto', mouseX, mouseY)) {
+        addOverlay();
+    }
     });
 
     document.addEventListener('fullscreenchange', () => {
-    if (!document.fullscreenElement) {
-        resetCanvasSize(canvas);
-    } else {
+    let fullScreen = !!document.fullscreenElement;
+
+    if (fullScreen) {
         scaleCanvasToFit(canvas);
+    } else {
+        resetCanvasSize(canvas);
     }
+
+    if (startScreen) {
+        startScreen.toggleHowToButton(!fullScreen);
+    }
+    });
+
+    canvas.addEventListener('mousemove', function(event) {
+    let rect = canvas.getBoundingClientRect();
+    let scaleX = canvas.width / canvas.clientWidth;
+    let scaleY = canvas.height / canvas.clientHeight;
+
+    let mouseX = (event.clientX - rect.left) * scaleX;
+    let mouseY = (event.clientY - rect.top) * scaleY;
+
+    canvas.style.cursor = startScreen.isMouseOverButton(mouseX, mouseY)
+        ? 'pointer'
+        : 'default';
     });
 }
 
@@ -89,9 +112,19 @@ function scaleCanvasToFit(canvas) {
     canvas.style.height = newHeight + 'px';
 }
 
+function addOverlay() {
+    let addOverlayRef = document.getElementById('overlay')
+    let dialogRef = document.getElementById('dialogContent')
+    addOverlayRef.classList.remove('d_none');
+    addOverlayRef.classList.add('show-overlay');
+    dialogRef.innerHTML = renderOverlayContent();
+}
 
-
-
+function closeOverlay() {
+    let overlay = document.getElementById('overlay');
+    overlay.classList.add('d_none');
+    overlay.classList.remove('show-overlay');
+}
 
 window.addEventListener("keydown", (e) => {
     if(e.keyCode == 39) {

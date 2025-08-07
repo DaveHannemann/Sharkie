@@ -24,6 +24,7 @@
     <script src="./models/endboss.class.js"></script>
     <script src="./levels/level1.js"></script>
     <script src="./js/game.js"></script>
+    <script src="./js/templates.js"></script>
 
 </head>
 <body onload="init()">
@@ -32,6 +33,13 @@
 
     <canvas id="canvas" width="720" height="480">
     </canvas>
+
+    <div id="overlay" class="d_none overlay" onclick="closeOverlay()">
+        <div id="dialog" class="dialog" onclick="event.stopPropagation()">
+            <span class="closeX" onclick="closeOverlay()">X</span>
+            <div id="dialogContent" class="dialogContent"></div>
+        </div>
+    </div>
 
 </body>
 </html>
