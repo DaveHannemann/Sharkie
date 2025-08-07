@@ -21,6 +21,7 @@ class World {
         this.run();
         this.draw();
         this.startEnemiesAnimation();
+        this.startCollectableAnimation(); 
     }
 
     setWorld() {
@@ -63,6 +64,7 @@ class World {
         this.ctx.translate(this.camera_x, 0);
         this.addObjectsToMap(this.level.light);
         this.addObjectsToMap(this.level.enemies);
+        this.addObjectsToMap(this.level.collectables);
         this.addObjectsToMap(this.throwableObjects);
         this.addToMap(this.charakter)
         this.ctx.translate(-this.camera_x, 0);
@@ -109,6 +111,14 @@ class World {
             if(enemy.animate) {
                 enemy.animate();
             }
-        })
+        });
+    }
+
+    startCollectableAnimation() {
+        this.level.collectables.forEach(obj => {
+            if(obj.animate) {
+                obj.animate();
+            }
+        });
     }
 }

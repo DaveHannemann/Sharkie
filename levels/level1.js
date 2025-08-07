@@ -31,6 +31,11 @@ let level1 = new Level([
         new BackgroundObject('../img/3. Background/Layers/4.Fondo 2/D2.png', 720*3),
         new BackgroundObject('../img/3. Background/Layers/3.Fondo 1/D2.png', 720*3),
         new BackgroundObject('../img/3. Background/Layers/2. Floor/D2.png', 720*3)
+    ],
+    [
+        new CollectableObject('coin', 800, 200),
+        new CollectableObject('coin', 1200, 150),
+        new CollectableObject('poison', 1600, 300)
     ]
 );
 
