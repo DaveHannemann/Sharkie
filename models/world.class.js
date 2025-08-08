@@ -36,6 +36,7 @@ class World {
             this.collisionManager.update();
             this.checkThrowObjects();
             this.throwableObjects.forEach(obj => obj.update());
+            this.level.enemies = this.level.enemies.filter(enemy => !enemy.readyToRemove);
         }, 1000 / 60);
     }
 

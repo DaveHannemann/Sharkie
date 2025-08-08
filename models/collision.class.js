@@ -13,6 +13,10 @@ class CollisionManager {
   checkEnemyCollisions() {
     this.world.level.enemies.forEach((enemy) => {
       if (this.world.charakter.isColliding(enemy)) {
+
+      if (enemy instanceof JellyFish && (enemy.isDead || enemy.readyToRemove)) {
+        return;
+      }
         if (this.world.charakter.finSlapped && enemy instanceof Fish) {
           return;
         }
@@ -21,7 +25,11 @@ class CollisionManager {
           enemy instanceof JellyFish ||
           enemy instanceof Endboss
         ) {
-          this.world.charakter.hit();
+        if (enemy instanceof JellyFish) {
+          this.world.charakter.hit(enemy.type);
+        } else {
+          this.world.charakter.hit("default");
+        }
           this.world.healthBar.setPercentage(this.world.charakter.energy);
           console.log("lost HP", this.world.charakter.energy);
         }
@@ -49,22 +57,30 @@ class CollisionManager {
   checkThrowableCollisions() {
     this.world.throwableObjects.forEach((bubble, bubbleIndex) => {
       this.world.level.enemies.forEach((enemy, enemyIndex) => {
-        if (bubble.isColliding(enemy) && enemy instanceof Fish) {
+  if (bubble.isColliding(enemy)) {
+        
+        if (enemy instanceof Fish) {
           if (enemy.state !== "bubbleswim" && enemy.state !== "transition") {
             enemy.state = "transition";
             setTimeout(() => {
               enemy.state = "bubbleswim";
             }, 1000);
           }
-          this.world.throwableObjects.splice(bubbleIndex, 1);
         }
-      });
 
-      if (this.world.level.boss && bubble.isColliding(this.world.level.boss)) {
-        this.world.level.boss.energy -= 10;
+        if (enemy instanceof JellyFish && !enemy.isDead) {
+          enemy.die();
+        }
+
         this.world.throwableObjects.splice(bubbleIndex, 1);
       }
     });
+
+    if (this.world.level.boss && bubble.isColliding(this.world.level.boss)) {
+      this.world.level.boss.energy -= 10;
+      this.world.throwableObjects.splice(bubbleIndex, 1);
+    }
+  });
   }
 
   checkFinSlapCollisions() {

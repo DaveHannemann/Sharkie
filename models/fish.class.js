@@ -5,6 +5,7 @@ class Fish extends MovableObject {
   type;
   state = "normal";
   energy = 10;
+  isDead = false;
 
   offSet = {
     top: 5,

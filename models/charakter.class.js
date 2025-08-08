@@ -63,11 +63,17 @@ class Character extends MovableObject {
         '../img/1.Sharkie/3.Swim/6.png'
     ];
 
-    IMAGES_HURT = [
+    IMAGES_HURT_POISONED = [
         '../img/1.Sharkie/5.Hurt/1.Poisoned/1.png',
         '../img/1.Sharkie/5.Hurt/1.Poisoned/2.png',
         '../img/1.Sharkie/5.Hurt/1.Poisoned/3.png',
         '../img/1.Sharkie/5.Hurt/1.Poisoned/4.png'
+    ];
+
+    IMAGES_HURT_SHOCKED = [
+        '../img/1.Sharkie/5.Hurt/2.Electric shock/1.png',
+        '../img/1.Sharkie/5.Hurt/2.Electric shock/2.png',
+        '../img/1.Sharkie/5.Hurt/2.Electric shock/3.png',
     ];
 
     IMAGES_DEAD = [
@@ -125,7 +131,8 @@ class Character extends MovableObject {
         this.loadImages(this.IMAGES_SWIMMING);
         this.loadImages(this.IMAGES_FIN_SLAP);
         this.loadImages(this.IMAGES_DEAD);
-        this.loadImages(this.IMAGES_HURT);
+        this.loadImages(this.IMAGES_HURT_POISONED);
+        this.loadImages(this.IMAGES_HURT_SHOCKED);
         this.loadImages(this.IMAGES_IDLE);
         this.loadImages(this.IMAGES_LONG_IDLE);
         this.loadImages(this.IMAGES_BUBBLE_ATTACK);
@@ -160,7 +167,13 @@ class Character extends MovableObject {
             if(this.isDead()) {
                 this.playAnimation(this.IMAGES_DEAD);
             }else if (this.isHurt()) {
-                this.playAnimation(this.IMAGES_HURT);
+            if (this.lastHitType === "poison") {
+                this.playAnimation(this.IMAGES_HURT_POISONED);
+            } else if (this.lastHitType === "electro") {
+                this.playAnimation(this.IMAGES_HURT_SHOCKED);
+            } else {
+                this.playAnimation(this.IMAGES_HURT_POISONED);
+            }
             } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN) {
                 this.lastKeyPressed = new Date().getTime();
                 this.playAnimation(this.IMAGES_SWIMMING);
