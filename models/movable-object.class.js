@@ -19,7 +19,6 @@ class MovableObject extends DrawableObject{
     };
     }
 
-    // character.isColliding(fish);
     isColliding(movableObject) {
         let a = this.getHitbox();
         let b = movableObject.getHitbox();
@@ -44,8 +43,8 @@ class MovableObject extends DrawableObject{
     }
 
     isHurt() {
-        let timeSinceHit = new Date().getTime() - this.lastHit; // Difference in ms
-        timeSinceHit = timeSinceHit / 1000; // Difference in s
+        let timeSinceHit = new Date().getTime() - this.lastHit;
+        timeSinceHit = timeSinceHit / 1000;
         return timeSinceHit < 1;
     }
 

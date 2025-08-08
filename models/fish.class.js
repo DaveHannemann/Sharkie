@@ -134,6 +134,13 @@ class Fish extends MovableObject {
     return [];
   }
 
+  getDeadImages() {
+      if (this.type === "easy") return this.IMAGES_FISH_EASY_DEAD;
+      if (this.type === "medium") return this.IMAGES_FISH_MEDIUM_DEAD;
+      if (this.type === "hard") return this.IMAGES_FISH_HARD_DEAD;
+      return [];
+  }
+
       setState(newState) {
         this.state = newState;
         this.currentFrame = 0;
@@ -146,6 +153,9 @@ class Fish extends MovableObject {
         } else if (newState === "bubbleswim") {
             this.energy = 20;
             this.animationImages = this.getBubbleSwimImages();
+            this.loadImages(this.animationImages);
+        } else if (newState === "dead") {
+            this.animationImages = this.getDeadImages();
             this.loadImages(this.animationImages);
         }
     }
