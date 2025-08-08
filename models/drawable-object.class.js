@@ -25,7 +25,7 @@ class DrawableObject {
     }
 
     drawFrame(ctx) {          
-        if(this instanceof Character || this instanceof Fish  || this instanceof Endboss || this instanceof CollectableObject) {
+        if(this instanceof Character || this instanceof Fish  || this instanceof Endboss || this instanceof CollectableObject || this instanceof JellyFish) {
         ctx.beginPath();
         ctx.lineWidth = '4';
         ctx.strokeStyle = 'red';

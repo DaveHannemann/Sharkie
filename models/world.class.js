@@ -9,12 +9,14 @@ class World {
     coinBar = new StatusBar('coin', 10 , 70);
     poisonBar = new StatusBar('poison', 10 , 10);
     throwableObjects = [];
+    collisionManager;
 
     constructor(canvas){
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
         this.keyboard = keyboard;
         this.setWorld();
+        this.collisionManager = new CollisionManager(this);
     }
 
     start() {
@@ -30,7 +32,7 @@ class World {
 
     run() {
         setInterval(() => {
-            this.checkCollisions();
+            this.collisionManager.update();
             this.checkThrowObjects();
         }, 200);
     }

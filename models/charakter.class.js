@@ -116,9 +116,11 @@ class Character extends MovableObject {
                 this.moveRight();
                 this.otherDirection = false;
             }
-            if (this.world.keyboard.LEFT && this.x > 0) {
+            if (this.world.keyboard.LEFT) {
+                if (this.x > 0 && this.x < this.world.level.level_end_x) {
                 this.x -= this.speed;
                 this.otherDirection = true;
+                }
             }
             if (this.world.keyboard.UP && this.y > this.world.level.level_end_top) {
                 this.y -= this.speed;
@@ -149,9 +151,11 @@ class Character extends MovableObject {
 
         setInterval(() => {
             if (this.world.keyboard.SPACE && !this.spacePressedLog) {
-                this.finSlap();
+                if (this.x < this.world.level.level_end_x) {
+                    this.finSlap();
                 }
-                this.spacePressedLog = this.world.keyboard.SPACE;
+            }
+            this.spacePressedLog = this.world.keyboard.SPACE;
         }, 1000 / 60);
     }
     

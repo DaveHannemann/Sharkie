@@ -87,7 +87,13 @@ class StartScreen extends DrawableObject {
                 currentIndex: 0,
                 images: ['../img/6.Botones/floss.png'],
                 isStatic: true,
-                text: 'How to'
+                text: 'How to',
+                hitboxOffset: {
+                top: 40,
+                left: 60,
+                right: 60,
+                bottom: 40
+                }
             }
         ];
 
@@ -146,12 +152,15 @@ class StartScreen extends DrawableObject {
     }
 
     isMouseOverButton(mouseX, mouseY) {
-    return this.animatedButtons.some(button =>
-        mouseX >= button.x &&
-        mouseX <= button.x + button.width &&
-        mouseY >= button.y &&
-        mouseY <= button.y + button.height
-        );
+    return this.animatedButtons.some(button => {
+        let offset = button.hitboxOffset || { top: 0, left: 0, right: 0, bottom: 0 };
+        let x1 = button.x + offset.left;
+        let y1 = button.y + offset.top;
+        let x2 = button.x + button.width - offset.right;
+        let y2 = button.y + button.height - offset.bottom;
+
+        return mouseX >= x1 && mouseX <= x2 && mouseY >= y1 && mouseY <= y2;
+    });
     }
 
     toggleHowToButton(visible) {
