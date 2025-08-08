@@ -24,11 +24,12 @@ class CollectableObject extends MovableObject{
         'img/4. Marcadores/Posión/Dark - Right.png'
     ];
 
-    constructor(type = 'coin', x = 500, y = 300, animSpeed = 200, customWidth = null, customHeight = null) {
+    constructor(type = 'coin', x = 500, y = 300, animSpeed = 200, customWidth = null, customHeight = null, value = 10) {
         super();
         this.x = x;
         this.y = y;
         this.animSpeed = animSpeed;
+        this.value = value;
         this.loadImagesByType(type);
 
         if (customWidth) this.width = customWidth;

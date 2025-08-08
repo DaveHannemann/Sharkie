@@ -2,6 +2,9 @@ class Fish extends MovableObject {
   x = 650;
   width = 50;
   height = 25;
+  type;
+  state = "normal";
+  energy = 10;
 
   offSet = {
     top: 5,
@@ -97,42 +100,73 @@ class Fish extends MovableObject {
   ];
 
 
-  constructor(
-    type = "easy",
-    x = 650,
-    y = Math.random() * 400,
-    speed = 0.2 + Math.random() * 0.4
-  ) {
+  constructor(type, x, y, speed) {
     super();
+    this.type = type;
     this.x = x;
     this.y = y;
     this.speed = speed;
 
     this.loadImagesFishType(type);
+    this.setState("normal");
+    this.animate();
   }
 
-  loadImagesFishType(type) {
-    if (type === "easy") {
-      this.loadImage(this.IMAGES_FISH_EASY[0]);
-      this.loadImages(this.IMAGES_FISH_EASY);
-      this.animationImages = this.IMAGES_FISH_EASY;
-    } else if (type === "medium") {
-      this.loadImage(this.IMAGES_FISH_MEDIUM[0]);
-      this.loadImages(this.IMAGES_FISH_MEDIUM);
-      this.animationImages = this.IMAGES_FISH_MEDIUM;
-    } else if (type === "hard") {
-      this.loadImage(this.IMAGES_FISH_HARD[0]);
-      this.loadImages(this.IMAGES_FISH_HARD);
-      this.animationImages = this.IMAGES_FISH_HARD;
+    loadImagesFishType(type) {
+        if (type === "easy") this.IMAGES_FISH = this.IMAGES_FISH_EASY;
+        if (type === "medium") this.IMAGES_FISH = this.IMAGES_FISH_MEDIUM;
+        if (type === "hard") this.IMAGES_FISH = this.IMAGES_FISH_HARD;
+        this.loadImages(this.IMAGES_FISH);
+        this.animationImages = this.IMAGES_FISH;
     }
+
+      getTransitionImages() {
+  if(this.type === "easy") return this.IMAGES_FISH_EASY_TRANSITION;
+  if(this.type === "medium") return this.IMAGES_FISH_MEDIUM_TRANSITION;
+  if(this.type === "hard") return this.IMAGES_FISH_HARD_TRANSITION;
+  return [];
+}
+
+  getBubbleSwimImages() {
+    if(this.type === "easy") return this.IMAGES_FISH_EASY_BUBBLESWIM;
+    if(this.type === "medium") return this.IMAGES_FISH_MEDIUM_BUBBLESWIM;
+    if(this.type === "hard") return this.IMAGES_FISH_HARD_BUBBLESWIM;
+    return [];
   }
+
+      setState(newState) {
+        this.state = newState;
+        this.currentFrame = 0;
+
+        if (newState === "normal") {
+            this.loadImagesFishType(this.type);
+        } else if (newState === "transition") {
+            this.animationImages = this.getTransitionImages();
+            this.loadImages(this.animationImages);
+        } else if (newState === "bubbleswim") {
+            this.energy = 20;
+            this.animationImages = this.getBubbleSwimImages();
+            this.loadImages(this.animationImages);
+        }
+    }
 
   animate() {
     setInterval(() => {
       this.moveLeft();
     }, 1000 / 60);
-    setInterval(() => {
-      this.playAnimation(this.animationImages);
-    }, 175);
+
+        setInterval(() => {
+            if (this.state === "transition") {
+                this.playAnimation(this.animationImages);
+                this.currentFrame++;
+                if (this.currentFrame >= this.animationImages.length) {
+                    this.setState("bubbleswim");
+                }
+            } else {
+                this.playAnimation(this.animationImages);
+            }
+        }, 175);
   }
+
+
 }

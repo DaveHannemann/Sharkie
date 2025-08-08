@@ -41,9 +41,21 @@ let level1 = new Level([
         new BackgroundObject('../img/3. Background/Layers/2. Floor/D1.png', 720*4)
     ],
     [
-        new CollectableObject('coin', 800, 200, 800),
-        new CollectableObject('coin', 1200, 150, 800),
-        new CollectableObject('poison', 1600, 300, 300)
+        new CollectableObject('coin', 250, 150, 800, null, null, 8.5),
+        new CollectableObject('coin', 250*2, 300, 800, null, null, 8.5),
+        new CollectableObject('coin', 250*3, 80, 800, null, null, 8.5),
+        new CollectableObject('coin', 250*4, 170, 800, null, null, 8.5),
+        new CollectableObject('coin', 250*5, 320, 800, null, null, 8.5),
+        new CollectableObject('coin', 250*6, 90, 800, null, null, 8.5),
+        new CollectableObject('coin', 250*7, 100, 800, null, null, 8.5),
+        new CollectableObject('coin', 250*8, 200, 800, null, null, 8.5),
+        new CollectableObject('coin', 250*9, 370, 800, null, null, 8.5),
+        new CollectableObject('coin', 250*10, 110, 800, null, null, 8.5),
+        new CollectableObject('poison', 800, 200, 300, null, null, 20),
+        new CollectableObject('poison', 1200, 400, 300, null, null, 20),
+        new CollectableObject('poison', 1600, 150, 300, null, null, 20),
+        new CollectableObject('poison', 2000, 350, 300, null, null, 20),
+        new CollectableObject('poison', 2400, 275, 300, null, null, 20)
     ]
 );
 

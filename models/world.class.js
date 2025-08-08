@@ -10,6 +10,7 @@ class World {
     poisonBar = new StatusBar('poison', 10 , 10);
     throwableObjects = [];
     collisionManager;
+    lastBubbleSpit = 0;
 
     constructor(canvas){
         this.ctx = canvas.getContext('2d');
@@ -34,13 +35,16 @@ class World {
         setInterval(() => {
             this.collisionManager.update();
             this.checkThrowObjects();
-        }, 200);
+            this.throwableObjects.forEach(obj => obj.update());
+        }, 1000 / 60);
     }
 
     checkThrowObjects(){
-        if(this.keyboard.D){
+        let now = Date.now();
+        if(this.keyboard.D && now - this.lastBubbleSpit >= 1000){
             let bubble = new ThrowableObject(this.charakter.x + 100, this.charakter.y + 100)
             this.throwableObjects.push(bubble);
+            this.lastBubbleSpit = now;
         }
     }
 
