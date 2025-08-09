@@ -10,6 +10,8 @@ class Character extends MovableObject {
     spacePressedLog = false;
     deadAnimationPlayed = false;
     floatUpActive = false;
+    bubbleAttacking = false;
+    poisonBubblesUnlocked = false;
 
     offSet = {
     top : 35,
@@ -160,17 +162,15 @@ class Character extends MovableObject {
     animate() {
 
         setInterval(() => {
-        if (this.isDead()) {
-            if (!this.floatUpActive) {
-                this.floatUpActive = true;
-            }
-
-            if (this.y > -50) {
-                this.y -= 1;
-            }
-
-            return;
-        }
+            if(this.isDead()) {
+                    if (!this.floatUpActive) this.floatUpActive = true;
+                    if(this.lastHitType === "poison" || this.lastHitType === "default") {
+                        if (this.y > -50) this.y -= 1;
+                    } else if (this.lastHitType === "electro") {
+                        if (this.y < 300) this.y += 1;
+                    }
+                    return;
+                }
             if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
                 this.moveRight();
                 this.otherDirection = false;
@@ -187,16 +187,25 @@ class Character extends MovableObject {
             if (this.world.keyboard.DOWN && this.y < this.world.level.level_end_bottom) {
                 this.y += this.speed;
             }
+            if (this.x >= this.world.level.level_end_x) {
+                this.poisonBubbleUnlocked = true;
+            }
             this.world.camera_x = -this.x + 50;
         }, 1000 / 60);
 
         setInterval(() => {
             if(this.isDead()) {
                 if (!this.deadAnimationPlayed) {
-                this.deadAnimationPlayed = true;
-                this.playAnimationSequence(this.IMAGES_DEAD_POISON, 150);
+                    this.deadAnimationPlayed = true;
+                    if (this.lastHitType === "poison") {
+                        this.playAnimationSequence(this.IMAGES_DEAD_POISON, 150);
+                    } else if (this.lastHitType === "electro") {
+                        this.playAnimationSequence(this.IMAGES_DEAD_SHOCKED, 150);
+                    } else {
+                        this.playAnimationSequence(this.IMAGES_DEAD_POISON, 150);
+                    }
                 }
-            } else if (this.isHurt()) {
+            }else if (this.isHurt()) {
                 if (this.lastHitType === "poison") {
                 this.playAnimation(this.IMAGES_HURT_POISONED);
             } else if (this.lastHitType === "electro") {
@@ -209,7 +218,7 @@ class Character extends MovableObject {
                 this.playAnimation(this.IMAGES_SWIMMING);
             } else {
                 let noKeyPressed = new Date().getTime() - this.lastKeyPressed;
-                if(noKeyPressed > 8000) {
+                if(noKeyPressed > 10000) {
                     this.playAnimation(this.IMAGES_LONG_IDLE);
                 } else {
                 this.playAnimation(this.IMAGES_IDLE);
@@ -257,5 +266,27 @@ class Character extends MovableObject {
         }, slapDuration);
 
         this.playAnimationSequence(this.IMAGES_FIN_SLAP, 60);
+    }
+
+    bubbleAttack() {
+        if (this.bubbleAttacking) return;
+        this.bubbleAttacking = true;
+        let usePoison = this.poisonBubbleUnlocked && this.world.poisonBar.percentage > 0;
+        if (usePoison) {
+            this.playAnimationSequence(this.IMAGES_BUBBLE_POISON_ATTACK, 60);
+        } else {
+            this.playAnimationSequence(this.IMAGES_BUBBLE_ATTACK, 60);
+        }
+        setTimeout(() => {
+            if (this.world) {
+                let type = usePoison ? 'poison' : 'normal';
+                let bubble = new ThrowableObject(this.x + 100, this.y + 100, type);
+                this.world.throwableObjects.push(bubble);
+                if (type === 'poison') {
+                    this.world.poisonBar.setPercentage(Math.max(this.world.poisonBar.percentage - 10, 0));
+                }
+            }
+            this.bubbleAttacking = false;
+        }, (this.world.poisonBar.percentage > 0 ? this.IMAGES_BUBBLE_POISON_ATTACK.length : this.IMAGES_BUBBLE_ATTACK.length) * 60);
     }
 }

@@ -42,10 +42,9 @@ class World {
 
     checkThrowObjects(){
         let now = Date.now();
-        if(this.keyboard.D && now - this.lastBubbleSpit >= 1000){
-            let bubble = new ThrowableObject(this.charakter.x + 100, this.charakter.y + 100)
-            this.throwableObjects.push(bubble);
-            this.lastBubbleSpit = now;
+        if(this.keyboard.D && !this.charakter.isDead() && now - this.lastBubbleSpit >= 900){
+            this.charakter.bubbleAttack();
+            this.lastBubbleSpit = now + this.charakter.IMAGES_BUBBLE_ATTACK.length * 60; 
         }
     }
 

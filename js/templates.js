@@ -4,7 +4,7 @@ function renderOverlayContent() {
     <p>Help Sharkie, a friendly underwater hero disguised as a shark, 
         who wants to save his world by defeating the odds against the much stronger, 
         bigger and natural aggressive shark and his underlings!<br>
-        Hit the puffer fishes with your fin slap and the jelly fishes with your bubbles,
+        Hit the pumped-up puffer fishes with your fin slap and the jelly fishes with your bubbles,
         collect some poison to get something special for the big bad shark at the end...</p>
     <h2>How To Play</h2>
     <div class="key_instructions">

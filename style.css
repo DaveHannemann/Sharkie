@@ -112,6 +112,8 @@ canvas{
 }
 
 p{
+    padding-left: 16px;
+    padding-right: 16px;
     margin: 0;
     color: rgb(56, 23, 133);
     cursor: default;

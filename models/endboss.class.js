@@ -7,7 +7,7 @@ class Endboss extends MovableObject {
 
     offSet = {
     top : 80,
-    bottom : 200,
+    bottom : 150,
     left : 15,
     right : 10
     };
@@ -78,8 +78,8 @@ constructor(){
     this.loadImages(this.IMAGES_ATTACKING)
 
     this.x = 99999;
-    this.speedY = 1.5;      // Bewegungsgeschwindigkeit vertikal
-    this.movingDown = true; // Start-Richtung
+    this.speedY = 1.5;
+    this.movingDown = true;
 }
 
 animate() {
@@ -108,8 +108,8 @@ animate() {
 }
 
     startMovement() {
-    let minY = -180;  // oberer Rand
-    let maxY = 150; // unterer Rand
+    let minY = -180;
+    let maxY = 150;
 
     setInterval(() => {
         if (this.isAttacking) return;
@@ -128,7 +128,7 @@ animate() {
         setInterval(() => {
             if (this.attackCD) return;
 
-            if (Math.random() < 0.5) { // 20% Chance alle 2 Sekunden
+            if (Math.random() < 0.5) {
                 this.attack();
             }
         }, 2000);
@@ -140,8 +140,8 @@ attack() {
     this.attackCD = true;
 
     let startX = this.x;
-    let swimDistance = 300;     // normale Schwimmphase
-    let attackDistance = 150;   // Animationsphase
+    let swimDistance = 300;
+    let attackDistance = 150; 
     let attackSpeed = 8;
 
     // -------- PHASE 1: normales Schwimmen --------
