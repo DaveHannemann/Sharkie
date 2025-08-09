@@ -64,6 +64,17 @@ class MovableObject extends DrawableObject{
         this.currentImage++;
     }
 
+    playAnimationSequence(images, intervalTime) {
+        let frameIndex = 0;
+        let animationInterval = setInterval(() => {
+            this.playAnimationOnce(images, frameIndex);
+            frameIndex++;
+            if (frameIndex >= images.length) {
+                clearInterval(animationInterval);
+            }
+        }, intervalTime);
+    }
+
     playAnimationOnce(images, frameIndex) {
         if (frameIndex < images.length){
             let path = images[frameIndex];

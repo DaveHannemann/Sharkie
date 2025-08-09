@@ -8,6 +8,8 @@ class Character extends MovableObject {
     lastKeyPressed = new Date().getTime();
     finSlapped = false;
     spacePressedLog = false;
+    deadAnimationPlayed = false;
+    floatUpActive = false;
 
     offSet = {
     top : 35,
@@ -76,7 +78,7 @@ class Character extends MovableObject {
         '../img/1.Sharkie/5.Hurt/2.Electric shock/3.png',
     ];
 
-    IMAGES_DEAD = [
+    IMAGES_DEAD_POISON = [
         '../img/1.Sharkie/6.dead/1.Poisoned/1.png',
         '../img/1.Sharkie/6.dead/1.Poisoned/2.png',
         '../img/1.Sharkie/6.dead/1.Poisoned/3.png',
@@ -90,6 +92,19 @@ class Character extends MovableObject {
         '../img/1.Sharkie/6.dead/1.Poisoned/11.png',
         '../img/1.Sharkie/6.dead/1.Poisoned/12.png'
     ];
+
+    IMAGES_DEAD_SHOCKED = [
+        '../img/1.Sharkie/6.dead/2.Electro_shock/1.png',
+        '../img/1.Sharkie/6.dead/2.Electro_shock/2.png',
+        '../img/1.Sharkie/6.dead/2.Electro_shock/3.png',
+        '../img/1.Sharkie/6.dead/2.Electro_shock/4.png',
+        '../img/1.Sharkie/6.dead/2.Electro_shock/5.png',
+        '../img/1.Sharkie/6.dead/2.Electro_shock/6.png',
+        '../img/1.Sharkie/6.dead/2.Electro_shock/7.png',
+        '../img/1.Sharkie/6.dead/2.Electro_shock/8.png',
+        '../img/1.Sharkie/6.dead/2.Electro_shock/9.png',
+        '../img/1.Sharkie/6.dead/2.Electro_shock/10.png'
+    ]
 
     IMAGES_FIN_SLAP = [
         '../img/1.Sharkie/4.Attack/Fin slap/1.png',
@@ -130,7 +145,8 @@ class Character extends MovableObject {
         super().loadImage('../img/1.Sharkie/3.Swim/3.png');
         this.loadImages(this.IMAGES_SWIMMING);
         this.loadImages(this.IMAGES_FIN_SLAP);
-        this.loadImages(this.IMAGES_DEAD);
+        this.loadImages(this.IMAGES_DEAD_POISON);
+        this.loadImages(this.IMAGES_DEAD_SHOCKED);
         this.loadImages(this.IMAGES_HURT_POISONED);
         this.loadImages(this.IMAGES_HURT_SHOCKED);
         this.loadImages(this.IMAGES_IDLE);
@@ -144,6 +160,17 @@ class Character extends MovableObject {
     animate() {
 
         setInterval(() => {
+        if (this.isDead()) {
+            if (!this.floatUpActive) {
+                this.floatUpActive = true;
+            }
+
+            if (this.y > -50) {
+                this.y -= 1;
+            }
+
+            return;
+        }
             if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
                 this.moveRight();
                 this.otherDirection = false;
@@ -165,9 +192,12 @@ class Character extends MovableObject {
 
         setInterval(() => {
             if(this.isDead()) {
-                this.playAnimation(this.IMAGES_DEAD);
-            }else if (this.isHurt()) {
-            if (this.lastHitType === "poison") {
+                if (!this.deadAnimationPlayed) {
+                this.deadAnimationPlayed = true;
+                this.playAnimationSequence(this.IMAGES_DEAD_POISON, 150);
+                }
+            } else if (this.isHurt()) {
+                if (this.lastHitType === "poison") {
                 this.playAnimation(this.IMAGES_HURT_POISONED);
             } else if (this.lastHitType === "electro") {
                 this.playAnimation(this.IMAGES_HURT_SHOCKED);
@@ -188,12 +218,14 @@ class Character extends MovableObject {
         }, 175);
 
         setInterval(() => {
+  if (!this.isDead()) {
             if (this.world.keyboard.SPACE && !this.spacePressedLog) {
                 if (this.x < this.world.level.level_end_x) {
                     this.finSlap();
                 }
             }
             this.spacePressedLog = this.world.keyboard.SPACE;
+        }
         }, 1000 / 60);
     }
     
@@ -224,15 +256,6 @@ class Character extends MovableObject {
             }
         }, slapDuration);
 
-        let animationFrames = this.IMAGES_FIN_SLAP.length;
-        let animationIntervalTime = totalSlap / animationFrames;
-        let animationFrame = 0;
-        let animationInterval = setInterval(() => {
-            this.playAnimationOnce(this.IMAGES_FIN_SLAP, animationFrame);
-            animationFrame++;
-            if (animationFrame >= this.IMAGES_FIN_SLAP.length) {
-                clearInterval(animationInterval);
-            }
-        }, animationIntervalTime);
+        this.playAnimationSequence(this.IMAGES_FIN_SLAP, 60);
     }
 }
