@@ -11,6 +11,7 @@ class World {
     throwableObjects = [];
     collisionManager;
     lastBubbleSpit = 0;
+    endbossHealthBar = new StatusBar('health', 0, 0);
 
     constructor(canvas){
         this.ctx = canvas.getContext('2d');
@@ -29,6 +30,11 @@ class World {
 
     setWorld() {
         this.charakter.world = this;
+        this.level.enemies.forEach(enemy => {
+        if (enemy instanceof Endboss) {
+            this.endboss = enemy;
+        }
+        });
     }
 
     run() {
@@ -37,6 +43,9 @@ class World {
             this.checkThrowObjects();
             this.throwableObjects.forEach(obj => obj.update());
             this.level.enemies = this.level.enemies.filter(enemy => !enemy.readyToRemove);
+            if (this.endboss) {
+            this.endbossHealthBar.setPercentage(this.endboss.energy);
+            }
         }, 1000 / 60);
     }
 
@@ -67,6 +76,9 @@ class World {
         this.addToMap(this.healthBar);
         this.addToMap(this.coinBar);
         this.addToMap(this.poisonBar);
+        if (this.endboss && this.endboss.endBossShow) {
+        this.drawFlippedHealthBar(this.endbossHealthBar);
+        }
         this.ctx.translate(this.camera_x, 0);
         this.addObjectsToMap(this.level.light);
         this.addObjectsToMap(this.level.enemies);
@@ -126,5 +138,15 @@ class World {
                 obj.animate();
             }
         });
+    }
+
+    drawFlippedHealthBar(healthBar) {
+        this.ctx.save();
+        let xPos = this.canvas.width - healthBar.width - 20;
+        let yPos = healthBar.y;
+        this.ctx.translate(xPos + healthBar.width, yPos);
+        this.ctx.scale(-1, 1);
+        healthBar.draw(this.ctx);
+        this.ctx.restore();
     }
 }

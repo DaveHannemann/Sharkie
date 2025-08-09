@@ -75,7 +75,9 @@ constructor(){
     super().loadImage(this.IMAGES_SWIMMING[0]);
     this.loadImages(this.IMAGES_ENTRANCE);
     this.loadImages(this.IMAGES_SWIMMING);
-    this.loadImages(this.IMAGES_ATTACKING)
+    this.loadImages(this.IMAGES_ATTACKING);
+    this.loadImages(this.IMAGES_HURT);
+    this.loadImages(this.IMAGES_DEAD);
 
     this.x = 99999;
     this.speedY = 1.5;
@@ -202,6 +204,41 @@ attack() {
             }
         }, 1000 / 60);
     };
+}
+
+takeDamage(amount) {
+    if (this.isAttacking || this.isHurtAnimationPlaying) return;
+
+    this.energy -= amount;
+    if (this.energy < 0) this.energy = 0;
+
+    this.isHurtAnimationPlaying = true;
+    this.pauseAllActions();
+
+    this.playAnimationSequence(this.IMAGES_HURT, 150);
+
+    setTimeout(() => {
+        this.isHurtAnimationPlaying = false;
+        this.resumeAllActions();
+    }, this.IMAGES_HURT.length * 150 + 500);
+}
+
+pauseAllActions() {
+    this.wasAttackingBeforePause = this.isAttacking;
+    this.isAttacking = false;
+    this.attackCD = true;
+    this.speedYBackup = this.speedY;
+    this.speedY = 0;
+    this.pausedX = this.x;
+}
+
+resumeAllActions() {
+    this.x = this.pausedX || this.x;
+    this.speedY = this.speedYBackup || 1.5;
+    this.attackCD = false;
+    if (this.wasAttackingBeforePause) {
+        this.attack();
+    }
 }
 
 }

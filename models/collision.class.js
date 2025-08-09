@@ -56,7 +56,7 @@ class CollisionManager {
 
   checkThrowableCollisions() {
     this.world.throwableObjects.forEach((bubble, bubbleIndex) => {
-      this.world.level.enemies.forEach((enemy, enemyIndex) => {
+      this.world.level.enemies.forEach((enemy) => {
   if (bubble.isColliding(enemy)) {
         
         if (enemy instanceof Fish) {
@@ -72,14 +72,17 @@ class CollisionManager {
           enemy.die();
         }
 
+        if (enemy instanceof Endboss) {
+          if (bubble.type === 'poison') {
+            enemy.takeDamage(15);
+          } else {
+            enemy.takeDamage(10);
+          }
+        }
+
         this.world.throwableObjects.splice(bubbleIndex, 1);
       }
     });
-
-    if (this.world.level.boss && bubble.isColliding(this.world.level.boss)) {
-      this.world.level.boss.energy -= 10;
-      this.world.throwableObjects.splice(bubbleIndex, 1);
-    }
   });
   }
 
