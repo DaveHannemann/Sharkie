@@ -16,6 +16,13 @@ class Endboss extends MovableObject {
     endBossShow = false;
     isAttacking = false;
     attackCD = false;
+    isDeadAnimationPlaying = false;
+
+    mainInterval;
+    entranceInterval;
+    swimmingInterval;
+    movementInterval;
+    attackInterval;
 
 IMAGES_ENTRANCE = [
     '../img/2.Enemy/3 Final Enemy/1.Introduce/1.png',
@@ -84,50 +91,69 @@ constructor(){
     this.movingDown = true;
 }
 
-animate() {
-    let i = 0;
+    animate() {
+        let i = 0;
 
-    setInterval(() => {
-        if (!this.endBossShow && world.charakter.x > 2600) {
-            this.endBossShow = true;
-            this.hadFirstContact = true;
-            this.x = 3250;
-            let entranceInterval = setInterval(() => {
-                if (i < this.IMAGES_ENTRANCE.length) {
-                    this.playAnimationOnce(this.IMAGES_ENTRANCE, i);
-                    i++;
-                } else {
-                    clearInterval(entranceInterval);
-                    setInterval(() => {
-                        this.playAnimation(this.IMAGES_SWIMMING);
-                    }, 175);
-                    this.startMovement();
-                    this.startRandomAttacks();
-                }
-            }, 175);
-        }
-    }, 1000 / 60);
-}
+        this.mainInterval = setInterval(() => {
+            if (this.isDead) {
+                clearInterval(this.mainInterval);
+                return;
+            }
+            if (!this.endBossShow && world.charakter.x > 2600) {
+                this.endBossShow = true;
+                this.hadFirstContact = true;
+                this.x = 3250;
+
+                this.entranceInterval = setInterval(() => {
+                    if (i < this.IMAGES_ENTRANCE.length) {
+                        this.playAnimationOnce(this.IMAGES_ENTRANCE, i);
+                        i++;
+                    } else {
+                        clearInterval(this.entranceInterval);
+
+                        this.swimmingInterval = setInterval(() => {
+                            if (this.isDead) {
+                                clearInterval(this.swimmingInterval);
+                                return;
+                            }
+                            this.playAnimation(this.IMAGES_SWIMMING);
+                        }, 175);
+
+                        this.startMovement();
+                        this.startRandomAttacks();
+                    }
+                }, 175);
+            }
+        }, 1000 / 60);
+    }
 
     startMovement() {
-    let minY = -180;
-    let maxY = 150;
+        let minY = -180;
+        let maxY = 150;
 
-    setInterval(() => {
-        if (this.isAttacking) return;
+        this.movementInterval = setInterval(() => {
+            if (this.isDead) {
+                clearInterval(this.movementInterval);
+                return;
+            }
+            if (this.isAttacking) return;
 
-        if (this.movingDown) {
-            this.y += this.speedY;
-            if (this.y > maxY) this.movingDown = false;
-        } else {
-            this.y -= this.speedY;
-            if (this.y < minY) this.movingDown = true;
-        }
-    }, 1000 / 60);
+            if (this.movingDown) {
+                this.y += this.speedY;
+                if (this.y > maxY) this.movingDown = false;
+            } else {
+                this.y -= this.speedY;
+                if (this.y < minY) this.movingDown = true;
+            }
+        }, 1000 / 60);
     }
 
     startRandomAttacks() {
-        setInterval(() => {
+        this.attackInterval = setInterval(() => {
+            if (this.isDead) {
+                clearInterval(this.attackInterval);
+                return;
+            }
             if (this.attackCD) return;
 
             if (Math.random() < 0.5) {
@@ -137,6 +163,7 @@ animate() {
     }
 
 attack() {
+    if (this.isDead) return; 
     if (this.isAttacking) return;
     this.isAttacking = true;
     this.attackCD = true;
@@ -153,6 +180,10 @@ attack() {
     let swimFrameRate = 6; // alle 6 Ticks neues Bild (≈10 FPS bei 60 FPS Bewegung)
 
     let swimInterval = setInterval(() => {
+        if (this.isDead) {
+            clearInterval(swimInterval);
+            return;
+        }
         this.x -= attackSpeed;
 
         // Animation nur alle swimFrameRate Ticks wechseln
@@ -207,20 +238,23 @@ attack() {
 }
 
 takeDamage(amount) {
-    if (this.isAttacking || this.isHurtAnimationPlaying) return;
+    if (this.isAttacking || this.isHurtAnimationPlaying || this.isDeadAnimationPlaying) return;
 
     this.energy -= amount;
-    if (this.energy < 0) this.energy = 0;
+    if (this.energy < 0) {
+        this.energy = 0;
+        this.die();
+    } else {
+        this.isHurtAnimationPlaying = true;
+        this.pauseAllActions();
 
-    this.isHurtAnimationPlaying = true;
-    this.pauseAllActions();
+        this.playAnimationSequence(this.IMAGES_HURT, 150);
 
-    this.playAnimationSequence(this.IMAGES_HURT, 150);
-
-    setTimeout(() => {
-        this.isHurtAnimationPlaying = false;
-        this.resumeAllActions();
-    }, this.IMAGES_HURT.length * 150 + 500);
+        setTimeout(() => {
+            this.isHurtAnimationPlaying = false;
+            this.resumeAllActions();
+        }, this.IMAGES_HURT.length * 150 + 500);
+    }
 }
 
 pauseAllActions() {
@@ -239,6 +273,22 @@ resumeAllActions() {
     if (this.wasAttackingBeforePause) {
         this.attack();
     }
+}
+
+die() {
+    this.isDead = true;
+    this.isDeadAnimationPlaying = true;
+    this.pauseAllActions();
+    clearInterval(this.mainInterval);
+    clearInterval(this.entranceInterval);
+    clearInterval(this.swimmingInterval);
+    clearInterval(this.movementInterval);
+    clearInterval(this.attackInterval);
+    this.playAnimationSequence(this.IMAGES_DEAD, 150);
+    setTimeout(() => {
+        this.isDeadAnimationPlaying = false;
+        this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1]];
+    }, this.IMAGES_DEAD.length * 150);
 }
 
 }
