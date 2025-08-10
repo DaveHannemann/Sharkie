@@ -12,6 +12,9 @@ class World {
     collisionManager;
     lastBubbleSpit = 0;
     endbossHealthBar = new StatusBar('health', 0, 0);
+    gameOverTriggered = false;
+    endScreen = null;
+
 
     constructor(canvas){
         this.ctx = canvas.getContext('2d');
@@ -45,6 +48,12 @@ class World {
             this.level.enemies = this.level.enemies.filter(enemy => !enemy.readyToRemove);
             if (this.endboss) {
             this.endbossHealthBar.setPercentage(this.endboss.energy);
+            }
+            if (this.charakter.isDead() && !this.gameOverTriggered) {
+                this.gameOverTriggered = true;
+                setTimeout(() => {
+                    this.endScreen = new EndScreen("lose");
+                }, 3000);
             }
         }, 1000 / 60);
     }
@@ -86,6 +95,9 @@ class World {
         this.addObjectsToMap(this.throwableObjects);
         this.addToMap(this.charakter)
         this.ctx.translate(-this.camera_x, 0);
+        if (this.endScreen) {
+            this.endScreen.draw(this.ctx);
+        }
 
         let self = this;
         requestAnimationFrame(function(){
