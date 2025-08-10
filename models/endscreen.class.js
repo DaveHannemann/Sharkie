@@ -9,10 +9,11 @@ class EndScreen extends DrawableObject {
     mode;
     
 
-    constructor(mode = "win", onRetry = null){
+    constructor(mode = "win", onRetry = null, onHome = null){
         super();
         this.mode = mode;
         this.onRetry = onRetry;
+        this.onHome = onHome;
 
         if (this.mode === "win"){
                     this.backgroundObjects = [
@@ -24,10 +25,10 @@ class EndScreen extends DrawableObject {
         this.animatedButtons = [
             {
                 name: 'win',
-                x: 280,
-                y: 325,
-                width: 180,
-                height: 40,
+                x: 190,
+                y: 242,
+                width: 340,
+                height: 80,
                 currentIndex: 0,
                 images: [
                     '../img/6.Botones/Tittles/You win/Recurso 20.png',
@@ -38,9 +39,9 @@ class EndScreen extends DrawableObject {
             },
             {
                 name: 'retry',
-                x: 580,
-                y: 10,
-                width: 130,
+                x: 280,
+                y: 325,
+                width: 180,
                 height: 40,
                 currentIndex: 0,
                 images: [
@@ -52,36 +53,24 @@ class EndScreen extends DrawableObject {
             },
             {
                 name: 'homescreen',
-                x: 260,
-                y: -20,
-                width: 190,
-                height: 120,
+                x: 670,
+                y: 10,
+                width: 40,
+                height: 40,
                 currentIndex: 0,
                 images: ['../img/6.Botones/shell_home.png'],
                 isStatic: true,
                 text: 'Home',
-                hitboxOffset: {
-                top: 40,
-                left: 60,
-                right: 60,
-                bottom: 40
-                }
             },
                         {
                 name: 'nextLevel',
-                x: 260,
-                y: -20,
-                width: 190,
-                height: 120,
+                x: 670,
+                y: 440,
+                width: 40,
+                height: 40,
                 currentIndex: 0,
                 images: ['../img/6.Botones/next_level.png'],
                 isStatic: true,
-                hitboxOffset: {
-                top: 40,
-                left: 60,
-                right: 60,
-                bottom: 40
-                }
             },
         ];
     }
@@ -127,12 +116,6 @@ class EndScreen extends DrawableObject {
                     images: ['../img/6.Botones/shell_home.png'],
                     isStatic: true,
                     text: 'Home',
-                    hitboxOffset: {
-                    top: 40,
-                    left: 60,
-                    right: 60,
-                    bottom: 40
-                    }
                 },
             ];
         }
@@ -161,7 +144,11 @@ class EndScreen extends DrawableObject {
                 this.onRetry();
             }
         }
-        // for more Buttons eg Next Level or HomeScreen
+        if (this.isButtonClicked('homescreen', mouseX, mouseY)) {
+            if (this.onHome) {
+                this.onHome();
+            }
+        }
     }
 
     stopButtonAnimation() {
@@ -170,11 +157,13 @@ class EndScreen extends DrawableObject {
 
     draw(ctx) {
         if (this.mode === "win") {
+            ctx.fillStyle = "rgba(0,0,0,0.8)";
+            ctx.fillRect(0, 0, this.width, this.height);
             this.backgroundObjects.forEach(obj => obj.draw(ctx));
         }
 
         if (this.mode === "lose") {
-            ctx.fillStyle = "rgba(0,0,0,0.5)";
+            ctx.fillStyle = "rgba(0,0,0,0.6)";
             ctx.fillRect(0, 0, this.width, this.height);
         }
 
@@ -185,7 +174,7 @@ class EndScreen extends DrawableObject {
             }
             if (button.text) {
                 ctx.font = '16px luckiestGuy-Regular';
-                ctx.fillStyle = "rgb(56, 23, 133)";
+                ctx.fillStyle = "white";
                 ctx.textAlign = "center";
                 ctx.fillText(button.text, button.x + button.width / 2, button.y + button.height);
             }
@@ -216,5 +205,21 @@ isButtonClicked(name, mouseX, mouseY) {
 
         return mouseX >= x1 && mouseX <= x2 && mouseY >= y1 && mouseY <= y2;
     });
+    }
+
+     isPointerButtonHovered(mouseX, mouseY) {
+        let pointerButtons = ['homescreen', 'nextLevel', 'retry'];
+        return this.animatedButtons.some(btn => {
+            if (pointerButtons.includes(btn.name)) {
+                const offset = btn.hitboxOffset || { top: 0, left: 0, right: 0, bottom: 0 };
+                const x1 = btn.x + offset.left;
+                const y1 = btn.y + offset.top;
+                const x2 = btn.x + btn.width - offset.right;
+                const y2 = btn.y + btn.height - offset.bottom;
+
+                return mouseX >= x1 && mouseX <= x2 && mouseY >= y1 && mouseY <= y2;
+            }
+            return false;
+        });
     }
 }

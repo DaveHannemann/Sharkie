@@ -67,6 +67,14 @@ class World {
             this.level.enemies = this.level.enemies.filter(enemy => !enemy.readyToRemove);
             if (this.endboss) {
             this.endbossHealthBar.setPercentage(this.endboss.energy);
+                if (this.endboss.energy <= 0 && !this.gameOverTriggered) {
+                    this.gameOverTriggered = true;
+                    setTimeout(() => {
+                        this.endScreen = new EndScreen("win", () => {
+                            this.restartLevel();
+                        });
+                    }, 3000);
+                }
             }
             if (this.charakter.isDead() && !this.gameOverTriggered) {
                 this.gameOverTriggered = true;

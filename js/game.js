@@ -62,7 +62,7 @@ function init() {
     let mouseY = (event.clientY - rect.top) * scaleY;
 
     if (world && world.endScreen) {
-        canvas.style.cursor = world.endScreen.isMouseOverButton(mouseX, mouseY) ? 'pointer' : 'default';
+        canvas.style.cursor = world.endScreen.isPointerButtonHovered(mouseX, mouseY) ? 'pointer' : 'default';
     } else if (startScreen) {
         canvas.style.cursor = startScreen.isMouseOverButton(mouseX, mouseY) ? 'pointer' : 'default';
     } else {
