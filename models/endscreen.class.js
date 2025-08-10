@@ -9,9 +9,10 @@ class EndScreen extends DrawableObject {
     mode;
     
 
-    constructor(mode = "win"){
+    constructor(mode = "win", onRetry = null){
         super();
         this.mode = mode;
+        this.onRetry = onRetry;
 
         if (this.mode === "win"){
                     this.backgroundObjects = [
@@ -58,7 +59,7 @@ class EndScreen extends DrawableObject {
                 currentIndex: 0,
                 images: ['../img/6.Botones/shell_home.png'],
                 isStatic: true,
-                text: 'HomeScreen',
+                text: 'Home',
                 hitboxOffset: {
                 top: 40,
                 left: 60,
@@ -110,12 +111,29 @@ class EndScreen extends DrawableObject {
                         '../img/6.Botones/Try again/Recurso 18.png'
                     ],
                     hitboxOffset: {
-                    top: -20,
+                    top: 0,
                     left: 10,
                     right: 10,
+                    bottom: 0
+                    }
+                },
+                {
+                    name: 'homescreen',
+                    x: 670,
+                    y: 10,
+                    width: 40,
+                    height: 40,
+                    currentIndex: 0,
+                    images: ['../img/6.Botones/shell_home.png'],
+                    isStatic: true,
+                    text: 'Home',
+                    hitboxOffset: {
+                    top: 40,
+                    left: 60,
+                    right: 60,
                     bottom: 40
                     }
-                }
+                },
             ];
         }
 
@@ -127,12 +145,23 @@ class EndScreen extends DrawableObject {
         this.startButtonAnimation();
     }
 
+
+
     startButtonAnimation() {
         this.buttonInterval = setInterval(() => {
             this.animatedButtons.forEach(button => {
                 button.currentIndex = (button.currentIndex + 1) % button.images.length;
             });
         }, 300);
+    }
+
+    handleClick(mouseX, mouseY) {
+        if (this.isButtonClicked('retry', mouseX, mouseY)) {
+            if (this.onRetry) {
+                this.onRetry();
+            }
+        }
+        // for more Buttons eg Next Level or HomeScreen
     }
 
     stopButtonAnimation() {
@@ -149,27 +178,18 @@ class EndScreen extends DrawableObject {
             ctx.fillRect(0, 0, this.width, this.height);
         }
 
-this.animatedButtons.forEach(button => {
-    let img = this.imageCache[button.images[button.currentIndex]];
-    if (img) {
-        ctx.drawImage(img, button.x, button.y, button.width, button.height);
-    }
-
-    // Debug-Rechteck NUR wenn mode "lose" ist, um es nicht überall zu sehen
-    if (this.mode === "lose") {
-        ctx.strokeStyle = 'red';
-        ctx.lineWidth = 2;
-
-        let offset = button.hitboxOffset || { top: 0, left: 0, right: 0, bottom: 0 };
-
-        ctx.strokeRect(
-            button.x + offset.left,
-            button.y + offset.top,
-            button.width - offset.left - offset.right,
-            button.height - offset.top - offset.bottom
-        );
-    }
-});
+        this.animatedButtons.forEach(button => {
+            let img = this.imageCache[button.images[button.currentIndex]];
+            if (img) {
+                ctx.drawImage(img, button.x, button.y, button.width, button.height);
+            }
+            if (button.text) {
+                ctx.font = '16px luckiestGuy-Regular';
+                ctx.fillStyle = "rgb(56, 23, 133)";
+                ctx.textAlign = "center";
+                ctx.fillText(button.text, button.x + button.width / 2, button.y + button.height);
+            }
+        });
     }
 
 isButtonClicked(name, mouseX, mouseY) {

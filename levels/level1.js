@@ -1,4 +1,6 @@
-let level1 = new Level([
+function createLevel1() {
+    return new Level(
+    [
         new Fish('easy', 700, 200, 0.3),
         new Fish('medium', 1000, 100, 0.5),
         new Fish('hard', 1400, 300, 0.6),
@@ -58,4 +60,5 @@ let level1 = new Level([
         new CollectableObject('poison', 2400, 275, 300, null, null, 20)
     ]
 );
+}
 

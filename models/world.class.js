@@ -1,6 +1,6 @@
 class World {
     charakter = new Character();
-    level = level1;
+    level = createLevel1();
     canvas;
     ctx;
     keyboard;
@@ -16,7 +16,7 @@ class World {
     endScreen = null;
 
 
-    constructor(canvas){
+    constructor(canvas, keyboard){
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
         this.keyboard = keyboard;
@@ -40,8 +40,27 @@ class World {
         });
     }
 
+    restartLevel() {
+        clearInterval(this.gameInterval);
+        this.charakter = new Character();
+        this.charakter.world = this;
+        this.level = createLevel1();
+        this.throwableObjects = [];
+        this.gameOverTriggered = false;
+        this.endScreen = null;
+        this.setWorld();
+        this.healthBar.setPercentage(this.charakter.energy);
+        this.coinBar.setPercentage(0);
+        this.poisonBar.setPercentage(0);
+        if (this.endboss) {
+            this.endbossHealthBar.setPercentage(this.endboss.energy);
+        }
+        this.start();
+    }
+
     run() {
-        setInterval(() => {
+        if(this.gameInterval) clearInterval(this.gameInterval);
+        this.gameInterval = setInterval(() => {
             this.collisionManager.update();
             this.checkThrowObjects();
             this.throwableObjects.forEach(obj => obj.update());
@@ -52,7 +71,9 @@ class World {
             if (this.charakter.isDead() && !this.gameOverTriggered) {
                 this.gameOverTriggered = true;
                 setTimeout(() => {
-                    this.endScreen = new EndScreen("lose");
+                    this.endScreen = new EndScreen("lose", () => {
+                        this.restartLevel();
+                    });
                 }, 3000);
             }
         }, 1000 / 60);

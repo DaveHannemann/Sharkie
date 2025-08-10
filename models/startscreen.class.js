@@ -9,6 +9,7 @@ class StartScreen extends DrawableObject {
     animatedButtons = [];
     collectables = [];
     onlyStartScreenObjects = [];
+    buttonsActive = true;
     
 
     constructor(){
@@ -142,8 +143,13 @@ class StartScreen extends DrawableObject {
     });
 }
 
+    disableButtons() {
+        this.buttonsActive = false;
+    }
+
     isButtonClicked(name, mouseX, mouseY) {
-        const btn = this.animatedButtons.find(b => b.name === name);
+        if (!this.buttonsActive) return false;
+        let btn = this.animatedButtons.find(b => b.name === name);
         if (!btn) return false;
         return mouseX >= btn.x &&
                mouseX <= btn.x + btn.width &&
@@ -152,6 +158,7 @@ class StartScreen extends DrawableObject {
     }
 
     isMouseOverButton(mouseX, mouseY) {
+        if (!this.buttonsActive) return false;
     return this.animatedButtons.some(button => {
         let offset = button.hitboxOffset || { top: 0, left: 0, right: 0, bottom: 0 };
         let x1 = button.x + offset.left;
@@ -179,4 +186,6 @@ class StartScreen extends DrawableObject {
             }
         }
     }
+
+
 }

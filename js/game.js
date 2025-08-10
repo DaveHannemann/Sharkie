@@ -3,6 +3,8 @@ let ctx;
 let startScreen;
 let world;
 let keyboard = new Keyboard();
+let startScreenMouseMoveHandler;
+let endScreenMouseMoveHandler;
 
 function init() {
     canvas = document.getElementById('canvas');
@@ -18,6 +20,10 @@ function init() {
     let mouseX = (event.clientX - rect.left) * scaleX;
     let mouseY = (event.clientY - rect.top) * scaleY;
 
+    if (world && world.endScreen) {
+        world.endScreen.handleClick(mouseX, mouseY);
+        return;
+    }
 
     if (startScreen.isButtonClicked('start', mouseX, mouseY)) {
         startScreen.stopButtonAnimation();
@@ -55,9 +61,13 @@ function init() {
     let mouseX = (event.clientX - rect.left) * scaleX;
     let mouseY = (event.clientY - rect.top) * scaleY;
 
-    canvas.style.cursor = startScreen.isMouseOverButton(mouseX, mouseY)
-        ? 'pointer'
-        : 'default';
+    if (world && world.endScreen) {
+        canvas.style.cursor = world.endScreen.isMouseOverButton(mouseX, mouseY) ? 'pointer' : 'default';
+    } else if (startScreen) {
+        canvas.style.cursor = startScreen.isMouseOverButton(mouseX, mouseY) ? 'pointer' : 'default';
+    } else {
+        canvas.style.cursor = 'default';
+    }
     });
 }
 
@@ -70,6 +80,7 @@ function drawStartScreenLoop() {
 }
 
 function startGame() {
+    startScreen.disableButtons();
     world = new World(canvas, keyboard);
     world.start();
 }
