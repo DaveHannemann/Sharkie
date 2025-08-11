@@ -1,4 +1,5 @@
 class Endboss extends MovableObject {
+    world;
     energy = 100;
     width = 200;
     height = 400;
@@ -78,7 +79,7 @@ IMAGES_DEAD = [
     '../img/2.Enemy/3 Final Enemy/Dead/Mesa de trabajo 2 copia 10.png'
 ];
 
-constructor(){
+constructor(world){
     super().loadImage(this.IMAGES_SWIMMING[0]);
     this.loadImages(this.IMAGES_ENTRANCE);
     this.loadImages(this.IMAGES_SWIMMING);
@@ -86,6 +87,9 @@ constructor(){
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_DEAD);
 
+    if (world) {
+        this.world = world;
+    }
     this.x = 99999;
     this.speedY = 1.5;
     this.movingDown = true;
@@ -99,7 +103,7 @@ constructor(){
                 clearInterval(this.mainInterval);
                 return;
             }
-            if (!this.endBossShow && world.charakter.x > 2600) {
+            if (!this.endBossShow && this.world && this.world.charakter && this.world.charakter.x > 2600) {
                 this.endBossShow = true;
                 this.hadFirstContact = true;
                 this.x = 3250;
@@ -290,5 +294,14 @@ die() {
         this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1]];
     }, this.IMAGES_DEAD.length * 150);
 }
+
+stopAllIntervals() {
+    clearInterval(this.mainInterval);
+    clearInterval(this.entranceInterval);
+    clearInterval(this.swimmingInterval);
+    clearInterval(this.movementInterval);
+    clearInterval(this.attackInterval);
+}
+
 
 }

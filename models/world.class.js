@@ -36,6 +36,7 @@ class World {
         this.level.enemies.forEach(enemy => {
         if (enemy instanceof Endboss) {
             this.endboss = enemy;
+            enemy.world = this;
         }
         });
     }
@@ -70,18 +71,32 @@ class World {
                 if (this.endboss.energy <= 0 && !this.gameOverTriggered) {
                     this.gameOverTriggered = true;
                     setTimeout(() => {
-                        this.endScreen = new EndScreen("win", () => {
-                            this.restartLevel();
-                        });
+                        this.endScreen = new EndScreen("win", 
+                            () => { this.restartLevel(); }, 
+                            () => {
+                                this.endScreen = null;
+                                world.cleanup();
+                                world = null;
+                                startScreen = new StartScreen();
+                                drawStartScreenLoop();
+                            }
+                        );
                     }, 3000);
                 }
             }
             if (this.charakter.isDead() && !this.gameOverTriggered) {
                 this.gameOverTriggered = true;
                 setTimeout(() => {
-                    this.endScreen = new EndScreen("lose", () => {
-                        this.restartLevel();
-                    });
+                    this.endScreen = new EndScreen("lose", 
+                        () => { this.restartLevel(); }, 
+                        () => {
+                            this.endScreen = null;
+                            world.cleanup();
+                            world = null;
+                            startScreen = new StartScreen();
+                            drawStartScreenLoop();
+                        }
+                    );
                 }, 3000);
             }
         }, 1000 / 60);
@@ -190,4 +205,10 @@ class World {
         healthBar.draw(this.ctx);
         this.ctx.restore();
     }
+
+    cleanup() {
+    if (this.endboss) {
+        this.endboss.stopAllIntervals();
+    }
+}
 }
