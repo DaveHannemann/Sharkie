@@ -9,11 +9,12 @@ class EndScreen extends DrawableObject {
     mode;
     
 
-    constructor(mode = "win", onRetry = null, onHome = null){
+    constructor(mode = "win", onRetry = null, onHome = null, onNextLevel = null){
         super();
         this.mode = mode;
         this.onRetry = onRetry;
         this.onHome = onHome;
+        this.onNextLevel = onNextLevel;
 
         if (this.mode === "win"){
                     this.backgroundObjects = [
@@ -149,6 +150,9 @@ class EndScreen extends DrawableObject {
                 this.onHome();
             }
         }
+        if (this.isButtonClicked('nextLevel', mouseX, mouseY)) {
+        if (this.onNextLevel) this.onNextLevel();
+    }
     }
 
     stopButtonAnimation() {

@@ -1,6 +1,7 @@
 class World {
     charakter = new Character();
     level = createLevel1();
+    currentLevelNumber = 1;
     canvas;
     ctx;
     keyboard;
@@ -14,6 +15,7 @@ class World {
     endbossHealthBar = new StatusBar('health', 0, 0);
     gameOverTriggered = false;
     endScreen = null;
+    animationFrameId = null;
 
 
     constructor(canvas, keyboard){
@@ -33,19 +35,30 @@ class World {
 
     setWorld() {
         this.charakter.world = this;
-        this.level.enemies.forEach(enemy => {
-        if (enemy instanceof Endboss) {
-            this.endboss = enemy;
-            enemy.world = this;
+        let foundEndboss = this.level.enemies.find(enemy => enemy instanceof Endboss);
+
+        if (foundEndboss) {
+            this.endboss = foundEndboss;
+            this.endboss.world = this;
+        } else {
+            this.endboss = null;
         }
-        });
     }
 
-    restartLevel() {
+    restartLevel(levelNumber = this.currentLevelNumber) {
+        this.stopDrawing();
+        this.stopEnemiesAnimation();
         clearInterval(this.gameInterval);
+
+                this.currentLevelNumber = levelNumber;
+            if (this.endboss) {
+        this.endboss.stopAllIntervals();
+        this.endboss = null;
+        this.endbossHealthBar.setPercentage(0);
+    }
         this.charakter = new Character();
         this.charakter.world = this;
-        this.level = createLevel1();
+        this.level = this.createLevel(levelNumber);
         this.throwableObjects = [];
         this.gameOverTriggered = false;
         this.endScreen = null;
@@ -58,6 +71,15 @@ class World {
         }
         this.start();
     }
+
+    createLevel(levelNumber) {
+    switch(levelNumber) {
+        case 1: return createLevel1();
+        case 2: return createLevel2();
+        case 3: return createLevel3(); 
+        default: return createLevel1();
+    }
+}
 
     run() {
         if(this.gameInterval) clearInterval(this.gameInterval);
@@ -72,13 +94,16 @@ class World {
                     this.gameOverTriggered = true;
                     setTimeout(() => {
                         this.endScreen = new EndScreen("win", 
-                            () => { this.restartLevel(); }, 
+                            () => { this.restartLevel(this.currentLevelNumber); }, 
                             () => {
                                 this.endScreen = null;
-                                world.cleanup();
+                                this.cleanup();
                                 world = null;
                                 startScreen = new StartScreen();
                                 drawStartScreenLoop();
+                            },
+                            () => {                                                   
+                                this.restartLevel(this.currentLevelNumber + 1);
                             }
                         );
                     }, 3000);
@@ -91,7 +116,7 @@ class World {
                         () => { this.restartLevel(); }, 
                         () => {
                             this.endScreen = null;
-                            world.cleanup();
+                            this.cleanup();
                             world = null;
                             startScreen = new StartScreen();
                             drawStartScreenLoop();
@@ -143,10 +168,14 @@ class World {
             this.endScreen.draw(this.ctx);
         }
 
-        let self = this;
-        requestAnimationFrame(function(){
-            self.draw();
-        });
+    this.animationFrameId = requestAnimationFrame(() => this.draw());
+    }
+
+    stopDrawing() {
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = null;
+        }
     }
 
     addObjectsToMap(objects) {
@@ -188,6 +217,12 @@ class World {
         });
     }
 
+    stopEnemiesAnimation() {
+    this.level.enemies.forEach(enemy => {
+        if(enemy.stopAllIntervals) enemy.stopAllIntervals();
+    });
+}
+
     startCollectableAnimation() {
         this.level.collectables.forEach(obj => {
             if(obj.animate) {
@@ -207,8 +242,11 @@ class World {
     }
 
     cleanup() {
+    this.stopDrawing();
+    clearInterval(this.gameInterval);
     if (this.endboss) {
         this.endboss.stopAllIntervals();
     }
+    this.stopEnemiesAnimation();
 }
 }

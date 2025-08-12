@@ -24,6 +24,9 @@ class Endboss extends MovableObject {
     swimmingInterval;
     movementInterval;
     attackInterval;
+    swimAttackInterval;
+    attackAttackInterval;
+    returnAttackInterval;
 
 IMAGES_ENTRANCE = [
     '../img/2.Enemy/3 Final Enemy/1.Introduce/1.png',
@@ -94,6 +97,26 @@ constructor(world){
     this.speedY = 1.5;
     this.movingDown = true;
 }
+
+    reset() {
+        this.stopAllIntervals();
+
+        this.energy = 100;
+        this.isDead = false;
+        this.isDeadAnimationPlaying = false;
+        this.isAttacking = false;
+        this.attackCD = false;
+        this.hadFirstContact = false;
+        this.endBossShow = false;
+        this.isHurtAnimationPlaying = false;
+
+        this.x = 99999;  // Startposition außerhalb sichtbar
+        this.y = -100;   // Start Y Position wie im Konstruktor
+        this.speedY = 1.5;
+        this.movingDown = true;
+
+        this.img = this.imageCache[this.IMAGES_SWIMMING[0]];  // Anfangsbild
+    }
 
     animate() {
         let i = 0;
@@ -183,9 +206,9 @@ attack() {
     let swimTicks = 0;
     let swimFrameRate = 6; // alle 6 Ticks neues Bild (≈10 FPS bei 60 FPS Bewegung)
 
-    let swimInterval = setInterval(() => {
+    this.swimAttackInterval = setInterval(() => {
         if (this.isDead) {
-            clearInterval(swimInterval);
+            clearInterval(this.swimAttackIntervall);
             return;
         }
         this.x -= attackSpeed;
@@ -210,7 +233,7 @@ attack() {
         let frameChangeRate = Math.ceil((attackDistance / attackSpeed) / attackFrames.length);
         let ticks = 0;
 
-        let attackInterval = setInterval(() => {
+        this.attackAttackInterval = setInterval(() => {
             this.x -= attackSpeed;
 
             if (ticks % frameChangeRate === 0 && frameIndex < attackFrames.length) {
@@ -220,7 +243,7 @@ attack() {
             ticks++;
 
             if (this.x <= startX - swimDistance - attackDistance) {
-                clearInterval(attackInterval);
+                clearInterval(this.attackAttackInterval);
                 this.img = this.imageCache[this.IMAGES_SWIMMING[0]];
                 returnToStart();
             }
@@ -229,11 +252,11 @@ attack() {
 
     // -------- Rückbewegung --------
     const returnToStart = () => {
-        let backInterval = setInterval(() => {
+        this.returnAttackInterval = setInterval(() => {
             this.x += attackSpeed / 2;
             if (this.x >= startX) {
                 this.x = startX;
-                clearInterval(backInterval);
+                clearInterval(this.returnAttackInterval);
                 this.isAttacking = false;
                 setTimeout(() => this.attackCD = false, 2000);
             }
@@ -301,6 +324,9 @@ stopAllIntervals() {
     clearInterval(this.swimmingInterval);
     clearInterval(this.movementInterval);
     clearInterval(this.attackInterval);
+    clearInterval(this.swimAttackInterval);
+    clearInterval(this.attackAttackInterval);
+    clearInterval(this.returnAttackInterval);
 }
 
 
