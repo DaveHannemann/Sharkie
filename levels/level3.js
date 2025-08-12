@@ -1,4 +1,4 @@
-function createLevel1() {
+function createLevel3() {
     return new Level(
     [
         new Fish('hard', 700, 200, 0.3),
