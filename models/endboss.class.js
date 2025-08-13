@@ -98,27 +98,8 @@ constructor(world){
     this.movingDown = true;
 }
 
-    reset() {
-        this.stopAllIntervals();
-
-        this.energy = 100;
-        this.isDead = false;
-        this.isDeadAnimationPlaying = false;
-        this.isAttacking = false;
-        this.attackCD = false;
-        this.hadFirstContact = false;
-        this.endBossShow = false;
-        this.isHurtAnimationPlaying = false;
-
-        this.x = 99999;  // Startposition außerhalb sichtbar
-        this.y = -100;   // Start Y Position wie im Konstruktor
-        this.speedY = 1.5;
-        this.movingDown = true;
-
-        this.img = this.imageCache[this.IMAGES_SWIMMING[0]];  // Anfangsbild
-    }
-
     animate() {
+        if (this.mainInterval) return;
         let i = 0;
 
         this.mainInterval = setInterval(() => {
@@ -208,7 +189,7 @@ attack() {
 
     this.swimAttackInterval = setInterval(() => {
         if (this.isDead) {
-            clearInterval(this.swimAttackIntervall);
+            clearInterval(this.swimAttackInterval);
             return;
         }
         this.x -= attackSpeed;
@@ -221,7 +202,7 @@ attack() {
         swimTicks++;
 
         if (this.x <= startX - swimDistance) {
-            clearInterval(swimInterval);
+            clearInterval(this.swimAttackInterval);
             startAttackPhase();
         }
     }, 1000 / 60);
@@ -329,5 +310,22 @@ stopAllIntervals() {
     clearInterval(this.returnAttackInterval);
 }
 
+reset() {
+    this.stopAllIntervals();
+    this.mainInterval = null;
+    this.energy = 100;
+    this.isDead = false;
+    this.isDeadAnimationPlaying = false;
+    this.isHurtAnimationPlaying = false;
+    this.isAttacking = false;
+    this.attackCD = false;
+    this.endBossShow = false;
+    this.hadFirstContact = false;
+    this.x = 99999; // weit weg
+    this.y = -100;
+    this.speedY = 1.5;
+    this.movingDown = true;
+    this.img = this.imageCache[this.IMAGES_SWIMMING[0]];
+}
 
 }

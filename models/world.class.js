@@ -33,44 +33,66 @@ class World {
         this.startCollectableAnimation(); 
     }
 
-    setWorld() {
-        this.charakter.world = this;
-        let foundEndboss = this.level.enemies.find(enemy => enemy instanceof Endboss);
+setWorld() {
+    this.charakter.world = this;
 
-        if (foundEndboss) {
-            this.endboss = foundEndboss;
-            this.endboss.world = this;
-        } else {
-            this.endboss = null;
-        }
+    // Endboss aus Level extrahieren, falls vorhanden
+    this.endboss = this.level.enemies.find(e => e instanceof Endboss) || null;
+    if (this.endboss) this.endboss.world = this;
+}
+
+restartLevel(levelNumber = this.currentLevelNumber) {
+    // Alte Intervalle stoppen
+    this.stopDrawing();
+    this.stopEnemiesAnimation();
+    clearInterval(this.gameInterval);
+    if (this.level && this.level.enemies) {
+        this.level.enemies.forEach(enemy => enemy.stopAllIntervals && enemy.stopAllIntervals());
+    }
+    if (this.endboss) this.endboss.stopAllIntervals();
+
+    // Canvas leeren
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    // Objekte zurücksetzen
+    this.camera_x = 0;
+    this.throwableObjects = [];
+    this.gameOverTriggered = false;
+    this.endScreen = null;
+
+    // Alte Level-Arrays leeren
+    if (this.level) {
+        this.level.backgroundObjects = [];
+        this.level.collectables = [];
+        this.level.enemies = [];
+        this.level.light = [];
     }
 
-    restartLevel(levelNumber = this.currentLevelNumber) {
-        this.stopDrawing();
-        this.stopEnemiesAnimation();
-        clearInterval(this.gameInterval);
+    // Neues Level erzeugen
+    this.currentLevelNumber = levelNumber;
+    this.level = this.createLevel(levelNumber);
 
-                this.currentLevelNumber = levelNumber;
-            if (this.endboss) {
-        this.endboss.stopAllIntervals();
-        this.endboss = null;
-        this.endbossHealthBar.setPercentage(0);
-    }
-        this.charakter = new Character();
-        this.charakter.world = this;
-        this.level = this.createLevel(levelNumber);
-        this.throwableObjects = [];
-        this.gameOverTriggered = false;
-        this.endScreen = null;
-        this.setWorld();
-        this.healthBar.setPercentage(this.charakter.energy);
-        this.coinBar.setPercentage(0);
-        this.poisonBar.setPercentage(0);
-        if (this.endboss) {
-            this.endbossHealthBar.setPercentage(this.endboss.energy);
-        }
-        this.start();
-    }
+    // Endboss aus Level übernehmen
+    this.endboss = this.level.enemies.find(e => e instanceof Endboss) || null;
+    if (this.endboss) this.endboss.world = this;
+
+    // Charakter neu
+    if(this.charakter) this.charakter.stopAllIntervals();
+    this.charakter = new Character();
+    this.charakter.world = this;
+
+    // Healthbars zurücksetzen
+    this.healthBar.setPercentage(this.charakter.energy);
+    this.coinBar.setPercentage(0);
+    this.poisonBar.setPercentage(0);
+    if (this.endboss) this.endbossHealthBar.setPercentage(this.endboss.energy);
+
+    // World korrekt setzen
+    this.setWorld();
+
+    // Starten
+    this.start();
+}
 
     createLevel(levelNumber) {
     switch(levelNumber) {
@@ -146,30 +168,34 @@ class World {
         });
     }
 
-    draw() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.translate(this.camera_x, 0);
-        this.addObjectsToMap(this.level.backgroundObjects);
-        this.ctx.translate(-this.camera_x, 0);
-        this.addToMap(this.healthBar);
-        this.addToMap(this.coinBar);
-        this.addToMap(this.poisonBar);
-        if (this.endboss && this.endboss.endBossShow) {
-        this.drawFlippedHealthBar(this.endbossHealthBar);
-        }
-        this.ctx.translate(this.camera_x, 0);
-        this.addObjectsToMap(this.level.light);
-        this.addObjectsToMap(this.level.enemies);
-        this.addObjectsToMap(this.level.collectables);
-        this.addObjectsToMap(this.throwableObjects);
-        this.addToMap(this.charakter)
-        this.ctx.translate(-this.camera_x, 0);
-        if (this.endScreen) {
-            this.endScreen.draw(this.ctx);
-        }
+draw() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    // 1️⃣ alles, was mit der Welt zu tun hat, verschieben
+    this.ctx.save();
+    this.ctx.translate(this.camera_x, 0);
+
+    this.addObjectsToMap(this.level.backgroundObjects);
+    this.addObjectsToMap(this.level.light);
+    this.addObjectsToMap(this.level.enemies.filter(e => !(e instanceof Endboss)));
+    if (this.endboss && this.endboss.endBossShow) this.addToMap(this.endboss);
+    this.addObjectsToMap(this.level.collectables);
+    this.addObjectsToMap(this.throwableObjects);
+    this.addToMap(this.charakter);
+
+    this.ctx.restore(); // Translation aufheben
+
+    // 2️⃣ UI / Healthbars separat, NICHT translate!
+    this.addToMap(this.healthBar);
+    this.addToMap(this.coinBar);
+    this.addToMap(this.poisonBar);
+    if (this.endboss && this.endboss.endBossShow) this.drawFlippedHealthBar(this.endbossHealthBar);
+
+    // 3️⃣ Endscreen, auch ohne Translation
+    if (this.endScreen) this.endScreen.draw(this.ctx);
 
     this.animationFrameId = requestAnimationFrame(() => this.draw());
-    }
+}
 
     stopDrawing() {
         if (this.animationFrameId) {
@@ -180,6 +206,8 @@ class World {
 
     addObjectsToMap(objects) {
         objects.forEach(obj => {
+            // Endboss nur zeichnen, wenn endBossShow true ist
+            if (obj instanceof Endboss && !obj.endBossShow) return;
             this.addToMap(obj);
         });
     }
@@ -209,14 +237,13 @@ class World {
         this.ctx.restore();
     }
 
-    startEnemiesAnimation() {
-        this.level.enemies.forEach(enemy => {
-            if(enemy.animate) {
-                enemy.animate();
-            }
-        });
-    }
+startEnemiesAnimation() {
+    this.level.enemies.forEach(enemy => {
+        if(enemy.animate) enemy.animate();
+    });
 
+    if (this.endboss) this.endboss.animate(); // separat
+}
     stopEnemiesAnimation() {
     this.level.enemies.forEach(enemy => {
         if(enemy.stopAllIntervals) enemy.stopAllIntervals();

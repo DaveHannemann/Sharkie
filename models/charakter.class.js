@@ -12,6 +12,7 @@ class Character extends MovableObject {
     floatUpActive = false;
     bubbleAttacking = false;
     poisonBubblesUnlocked = false;
+    intervals = [];
 
     offSet = {
     top : 35,
@@ -156,86 +157,80 @@ class Character extends MovableObject {
         this.loadImages(this.IMAGES_BUBBLE_ATTACK);
         this.loadImages(this.IMAGES_BUBBLE_POISON_ATTACK);
 
-        this.animate();
+        this.startAnimationLoops();
     }
 
-    animate() {
+    startAnimationLoops() {
+        // 🔹 Bewegung + Kamera
+        let moveInterval = setInterval(() => {
+            if(!this.world) return;
 
-        setInterval(() => {
             if(this.isDead()) {
-                    if (!this.floatUpActive) this.floatUpActive = true;
-                    if(this.lastHitType === "poison" || this.lastHitType === "default") {
-                        if (this.y > -50) this.y -= 1;
-                    } else if (this.lastHitType === "electro") {
-                        if (this.y < 300) this.y += 1;
-                    }
-                    return;
+                if (!this.floatUpActive) this.floatUpActive = true;
+                if(this.lastHitType === "poison" || this.lastHitType === "default") {
+                    if (this.y > -50) this.y -= 1;
+                } else if (this.lastHitType === "electro") {
+                    if (this.y < 300) this.y += 1;
                 }
+                return;
+            }
+
             if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
                 this.moveRight();
                 this.otherDirection = false;
             }
-            if (this.world.keyboard.LEFT) {
-                if (this.x > 0 && this.x < this.world.level.level_end_x) {
+            if (this.world.keyboard.LEFT && this.x > 0 && this.x < this.world.level.level_end_x) {
                 this.x -= this.speed;
                 this.otherDirection = true;
-                }
             }
-            if (this.world.keyboard.UP && this.y > this.world.level.level_end_top) {
-                this.y -= this.speed;
-            }
-            if (this.world.keyboard.DOWN && this.y < this.world.level.level_end_bottom) {
-                this.y += this.speed;
-            }
-            if (this.x >= this.world.level.level_end_x) {
-                this.poisonBubbleUnlocked = true;
-            }
+            if (this.world.keyboard.UP && this.y > this.world.level.level_end_top) this.y -= this.speed;
+            if (this.world.keyboard.DOWN && this.y < this.world.level.level_end_bottom) this.y += this.speed;
+            if (this.x >= this.world.level.level_end_x) this.poisonBubbleUnlocked = true;
+
             this.world.camera_x = -this.x + 50;
         }, 1000 / 60);
+        this.intervals.push(moveInterval);
 
-        setInterval(() => {
+        // 🔹 Animation
+        let animInterval = setInterval(() => {
             if(this.isDead()) {
                 if (!this.deadAnimationPlayed) {
                     this.deadAnimationPlayed = true;
-                    if (this.lastHitType === "poison") {
-                        this.playAnimationSequence(this.IMAGES_DEAD_POISON, 150);
-                    } else if (this.lastHitType === "electro") {
-                        this.playAnimationSequence(this.IMAGES_DEAD_SHOCKED, 150);
-                    } else {
-                        this.playAnimationSequence(this.IMAGES_DEAD_POISON, 150);
-                    }
+                    if (this.lastHitType === "poison") this.playAnimationSequence(this.IMAGES_DEAD_POISON, 150);
+                    else if (this.lastHitType === "electro") this.playAnimationSequence(this.IMAGES_DEAD_SHOCKED, 150);
+                    else this.playAnimationSequence(this.IMAGES_DEAD_POISON, 150);
                 }
-            }else if (this.isHurt()) {
-                if (this.lastHitType === "poison") {
-                this.playAnimation(this.IMAGES_HURT_POISONED);
-            } else if (this.lastHitType === "electro") {
-                this.playAnimation(this.IMAGES_HURT_SHOCKED);
-            } else {
-                this.playAnimation(this.IMAGES_HURT_POISONED);
-            }
+            } else if (this.isHurt()) {
+                if (this.lastHitType === "poison") this.playAnimation(this.IMAGES_HURT_POISONED);
+                else if (this.lastHitType === "electro") this.playAnimation(this.IMAGES_HURT_SHOCKED);
+                else this.playAnimation(this.IMAGES_HURT_POISONED);
             } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN) {
                 this.lastKeyPressed = new Date().getTime();
                 this.playAnimation(this.IMAGES_SWIMMING);
             } else {
                 let noKeyPressed = new Date().getTime() - this.lastKeyPressed;
-                if(noKeyPressed > 10000) {
-                    this.playAnimation(this.IMAGES_LONG_IDLE);
-                } else {
-                this.playAnimation(this.IMAGES_IDLE);
-                }
+                if(noKeyPressed > 10000) this.playAnimation(this.IMAGES_LONG_IDLE);
+                else this.playAnimation(this.IMAGES_IDLE);
             }        
         }, 175);
+        this.intervals.push(animInterval);
 
-        setInterval(() => {
-  if (!this.isDead()) {
-            if (this.world.keyboard.SPACE && !this.spacePressedLog) {
-                if (this.x < this.world.level.level_end_x) {
+        // 🔹 Space / Fin Slap
+        let attackInterval = setInterval(() => {
+            if (!this.isDead()) {
+                if (this.world.keyboard.SPACE && !this.spacePressedLog && this.x < this.world.level.level_end_x) {
                     this.finSlap();
                 }
+                this.spacePressedLog = this.world.keyboard.SPACE;
             }
-            this.spacePressedLog = this.world.keyboard.SPACE;
-        }
         }, 1000 / 60);
+        this.intervals.push(attackInterval);
+    }
+
+    // ----------------- Alle Intervalle stoppen -----------------
+    stopAllIntervals() {
+        this.intervals.forEach(i => clearInterval(i));
+        this.intervals = [];
     }
     
     finSlap(){
