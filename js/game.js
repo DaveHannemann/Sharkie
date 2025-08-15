@@ -10,6 +10,7 @@ function init() {
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
     startScreen = new StartScreen();
+    hideMobileControls();
     drawStartScreenLoop();
     
     canvas.addEventListener('click', function(event) {
@@ -83,6 +84,10 @@ function startGame() {
     startScreen.disableButtons();
     world = new World(canvas, keyboard);
     world.start();
+    setupJoystick();
+    if ('ontouchstart' in window) {
+        showMobileControls();
+    }
 }
 
 function toggleFullScreen(canvas) {
@@ -178,3 +183,62 @@ window.addEventListener("keyup", (e) => {
         keyboard.D = false;
     }        
 });
+
+function setupJoystick() {
+    const joystick = document.getElementById('joystick');
+    const stick = document.getElementById('stick');
+    let centerX, centerY;
+
+    joystick.addEventListener('touchstart', e => {
+        const rect = joystick.getBoundingClientRect();
+        centerX = rect.left + rect.width / 2;
+        centerY = rect.top + rect.height / 2;
+    });
+
+    joystick.addEventListener('touchmove', e => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const dx = touch.clientX - centerX;
+        const dy = touch.clientY - centerY;
+        const maxRadius = 40;
+        const distance = Math.min(Math.hypot(dx, dy), maxRadius);
+        const angle = Math.atan2(dy, dx);
+
+
+        const limitedX = Math.cos(angle) * distance;
+        const limitedY = Math.sin(angle) * distance;
+
+        stick.style.transform =
+            `translate(${limitedX}px, ${limitedY}px) translate(-50%, -50%)`;
+        keyboard.LEFT = keyboard.RIGHT = keyboard.UP = keyboard.DOWN = false;
+
+        if (distance > 10) {
+            if (limitedX < -10) keyboard.LEFT = true;
+            if (limitedX >  10) keyboard.RIGHT = true;
+            if (limitedY < -10) keyboard.UP = true;
+            if (limitedY >  10) keyboard.DOWN = true;
+        }
+    });
+
+    joystick.addEventListener('touchend', e => {
+        stick.style.transform = 'translate(-50%, -50%)';
+        keyboard.LEFT = keyboard.RIGHT = keyboard.UP = keyboard.DOWN = false;
+    });
+
+    document.getElementById('btn-attack').addEventListener('touchstart', k => { k.preventDefault(); keyboard.SPACE = true; });
+    document.getElementById('btn-attack').addEventListener('touchend', k => { k.preventDefault(); keyboard.SPACE = false; });
+    document.getElementById('btn-throw').addEventListener('touchstart', k => { k.preventDefault(); keyboard.D = true; });
+    document.getElementById('btn-throw').addEventListener('touchend', k => { k.preventDefault(); keyboard.D = false; });
+}
+
+function showMobileControls() {
+    document.getElementById('joystick').style.display = 'block';
+    document.getElementById('btn-attack').style.display = 'block';
+    document.getElementById('btn-throw').style.display = 'block';
+}
+
+function hideMobileControls() {
+    document.getElementById('joystick').style.display = 'none';
+    document.getElementById('btn-attack').style.display = 'none';
+    document.getElementById('btn-throw').style.display = 'none';
+}

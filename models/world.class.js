@@ -35,14 +35,11 @@ class World {
 
 setWorld() {
     this.charakter.world = this;
-
-    // Endboss aus Level extrahieren, falls vorhanden
     this.endboss = this.level.enemies.find(e => e instanceof Endboss) || null;
     if (this.endboss) this.endboss.world = this;
 }
 
 restartLevel(levelNumber = this.currentLevelNumber) {
-    // Alte Intervalle stoppen
     this.stopDrawing();
     this.stopEnemiesAnimation();
     clearInterval(this.gameInterval);
@@ -50,47 +47,29 @@ restartLevel(levelNumber = this.currentLevelNumber) {
         this.level.enemies.forEach(enemy => enemy.stopAllIntervals && enemy.stopAllIntervals());
     }
     if (this.endboss) this.endboss.stopAllIntervals();
-
-    // Canvas leeren
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-    // Objekte zurücksetzen
     this.camera_x = 0;
     this.throwableObjects = [];
     this.gameOverTriggered = false;
     this.endScreen = null;
-
-    // Alte Level-Arrays leeren
     if (this.level) {
         this.level.backgroundObjects = [];
         this.level.collectables = [];
         this.level.enemies = [];
         this.level.light = [];
     }
-
-    // Neues Level erzeugen
     this.currentLevelNumber = levelNumber;
     this.level = this.createLevel(levelNumber);
-
-    // Endboss aus Level übernehmen
     this.endboss = this.level.enemies.find(e => e instanceof Endboss) || null;
     if (this.endboss) this.endboss.world = this;
-
-    // Charakter neu
     if(this.charakter) this.charakter.stopAllIntervals();
     this.charakter = new Character();
     this.charakter.world = this;
-
-    // Healthbars zurücksetzen
     this.healthBar.setPercentage(this.charakter.energy);
     this.coinBar.setPercentage(0);
     this.poisonBar.setPercentage(0);
     if (this.endboss) this.endbossHealthBar.setPercentage(this.endboss.energy);
-
-    // World korrekt setzen
     this.setWorld();
-
-    // Starten
     this.start();
 }
 
@@ -114,18 +93,23 @@ restartLevel(levelNumber = this.currentLevelNumber) {
             this.endbossHealthBar.setPercentage(this.endboss.energy);
                 if (this.endboss.energy <= 0 && !this.gameOverTriggered) {
                     this.gameOverTriggered = true;
+                    hideMobileControls();
                     setTimeout(() => {
                         this.endScreen = new EndScreen("win", 
-                            () => { this.restartLevel(this.currentLevelNumber); }, 
+                            () => { this.restartLevel(this.currentLevelNumber);
+                                    if ('ontouchstart' in window) showMobileControls();
+                             }, 
                             () => {
                                 this.endScreen = null;
                                 this.cleanup();
                                 world = null;
                                 startScreen = new StartScreen();
+                                hideMobileControls();
                                 drawStartScreenLoop();
                             },
                             () => {                                                   
                                 this.restartLevel(this.currentLevelNumber + 1);
+                                if ('ontouchstart' in window) showMobileControls();
                             }
                         );
                     }, 3000);
@@ -133,14 +117,18 @@ restartLevel(levelNumber = this.currentLevelNumber) {
             }
             if (this.charakter.isDead() && !this.gameOverTriggered) {
                 this.gameOverTriggered = true;
+                hideMobileControls();
                 setTimeout(() => {
                     this.endScreen = new EndScreen("lose", 
-                        () => { this.restartLevel(); }, 
+                        () => { this.restartLevel(); 
+                                if ('ontouchstart' in window) showMobileControls();
+                        }, 
                         () => {
                             this.endScreen = null;
                             this.cleanup();
                             world = null;
                             startScreen = new StartScreen();
+                            hideMobileControls();
                             drawStartScreenLoop();
                         }
                     );
@@ -170,11 +158,8 @@ restartLevel(levelNumber = this.currentLevelNumber) {
 
 draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-    // 1️⃣ alles, was mit der Welt zu tun hat, verschieben
     this.ctx.save();
     this.ctx.translate(this.camera_x, 0);
-
     this.addObjectsToMap(this.level.backgroundObjects);
     this.addObjectsToMap(this.level.light);
     this.addObjectsToMap(this.level.enemies.filter(e => !(e instanceof Endboss)));
@@ -182,18 +167,12 @@ draw() {
     this.addObjectsToMap(this.level.collectables);
     this.addObjectsToMap(this.throwableObjects);
     this.addToMap(this.charakter);
-
-    this.ctx.restore(); // Translation aufheben
-
-    // 2️⃣ UI / Healthbars separat, NICHT translate!
+    this.ctx.restore();
     this.addToMap(this.healthBar);
     this.addToMap(this.coinBar);
     this.addToMap(this.poisonBar);
     if (this.endboss && this.endboss.endBossShow) this.drawFlippedHealthBar(this.endbossHealthBar);
-
-    // 3️⃣ Endscreen, auch ohne Translation
     if (this.endScreen) this.endScreen.draw(this.ctx);
-
     this.animationFrameId = requestAnimationFrame(() => this.draw());
 }
 
@@ -206,7 +185,6 @@ draw() {
 
     addObjectsToMap(objects) {
         objects.forEach(obj => {
-            // Endboss nur zeichnen, wenn endBossShow true ist
             if (obj instanceof Endboss && !obj.endBossShow) return;
             this.addToMap(obj);
         });
@@ -241,8 +219,7 @@ startEnemiesAnimation() {
     this.level.enemies.forEach(enemy => {
         if(enemy.animate) enemy.animate();
     });
-
-    if (this.endboss) this.endboss.animate(); // separat
+    if (this.endboss) this.endboss.animate();
 }
     stopEnemiesAnimation() {
     this.level.enemies.forEach(enemy => {

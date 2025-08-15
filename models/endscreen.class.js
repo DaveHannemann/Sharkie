@@ -38,20 +38,6 @@ class EndScreen extends DrawableObject {
                     '../img/6.Botones/Tittles/You win/Recurso 23.png'
                 ]
             },
-            // {
-            //     name: 'retry',
-            //     x: 280,
-            //     y: 325,
-            //     width: 180,
-            //     height: 40,
-            //     currentIndex: 0,
-            //     images: [
-            //         '../img/6.Botones/Try again/Recurso 15.png',
-            //         '../img/6.Botones/Try again/Recurso 16.png',
-            //         '../img/6.Botones/Try again/Recurso 17.png',
-            //         '../img/6.Botones/Try again/Recurso 18.png'
-            //     ]
-            // },
             {
                 name: 'homescreen',
                 x: 670,

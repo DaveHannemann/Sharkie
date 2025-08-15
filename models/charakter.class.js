@@ -161,7 +161,6 @@ class Character extends MovableObject {
     }
 
     startAnimationLoops() {
-        // 🔹 Bewegung + Kamera
         let moveInterval = setInterval(() => {
             if(!this.world) return;
 
@@ -191,7 +190,6 @@ class Character extends MovableObject {
         }, 1000 / 60);
         this.intervals.push(moveInterval);
 
-        // 🔹 Animation
         let animInterval = setInterval(() => {
             if(this.isDead()) {
                 if (!this.deadAnimationPlayed) {
@@ -215,7 +213,6 @@ class Character extends MovableObject {
         }, 175);
         this.intervals.push(animInterval);
 
-        // 🔹 Space / Fin Slap
         let attackInterval = setInterval(() => {
             if (!this.isDead()) {
                 if (this.world.keyboard.SPACE && !this.spacePressedLog && this.x < this.world.level.level_end_x) {
@@ -227,7 +224,6 @@ class Character extends MovableObject {
         this.intervals.push(attackInterval);
     }
 
-    // ----------------- Alle Intervalle stoppen -----------------
     stopAllIntervals() {
         this.intervals.forEach(i => clearInterval(i));
         this.intervals = [];

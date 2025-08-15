@@ -180,12 +180,10 @@ attack() {
     let swimDistance = 300;
     let attackDistance = 150; 
     let attackSpeed = 8;
-
-    // -------- PHASE 1: normales Schwimmen --------
     let swimFrames = [...this.IMAGES_SWIMMING];
     let swimFrameIndex = 0;
     let swimTicks = 0;
-    let swimFrameRate = 6; // alle 6 Ticks neues Bild (≈10 FPS bei 60 FPS Bewegung)
+    let swimFrameRate = 6;
 
     this.swimAttackInterval = setInterval(() => {
         if (this.isDead) {
@@ -193,8 +191,6 @@ attack() {
             return;
         }
         this.x -= attackSpeed;
-
-        // Animation nur alle swimFrameRate Ticks wechseln
         if (swimTicks % swimFrameRate === 0) {
             this.img = this.imageCache[swimFrames[swimFrameIndex]];
             swimFrameIndex = (swimFrameIndex + 1) % swimFrames.length;
@@ -206,8 +202,6 @@ attack() {
             startAttackPhase();
         }
     }, 1000 / 60);
-
-    // -------- PHASE 2: Angriff + Animation --------
     const startAttackPhase = () => {
         let attackFrames = [...this.IMAGES_ATTACKING];
         let frameIndex = 0;
@@ -230,8 +224,6 @@ attack() {
             }
         }, 1000 / 60);
     };
-
-    // -------- Rückbewegung --------
     const returnToStart = () => {
         this.returnAttackInterval = setInterval(() => {
             this.x += attackSpeed / 2;
@@ -321,7 +313,7 @@ reset() {
     this.attackCD = false;
     this.endBossShow = false;
     this.hadFirstContact = false;
-    this.x = 99999; // weit weg
+    this.x = 99999;
     this.y = -100;
     this.speedY = 1.5;
     this.movingDown = true;
