@@ -196,10 +196,32 @@ a{
   display: none;
 }
 
-@media (min-width: 769px) {
-  #joystick, #btn-attack, #btn-throw {
-    display: none !important;
+#rotate-overlay {
+  position: fixed;
+  inset: 0;
+  background:rgb(0 0 0 / 90%);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 2000;
+  font-size: 1.5em;
+}
+
+.tilt_me{
+    font-size: 46px;
+}
+
+@media screen and (orientation: portrait) {
+  #rotate-overlay {
+    display: flex;
   }
+}
+
+@media (pointer: coarse) and (orientation: landscape) {
+    #joystick, #btn-attack, #btn-throw {
+        display: block;
+    }
 }
 
 @media only screen and (max-width: 768px) {
