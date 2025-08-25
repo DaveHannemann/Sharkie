@@ -171,7 +171,7 @@ a{
 #btn-attack {
     border-radius: 15px;
   color: rgb(0 255 10);
-  background: none;
+  background: rgb(56 23 133 / 65%);
   position: fixed;
   bottom: 15px;
   right: 80px;
@@ -183,7 +183,7 @@ a{
 #btn-throw {
     border-radius: 15px;
   color: rgb(0 255 10);
-  background: none;
+  background: rgb(56 23 133 / 65%);
   position: fixed;
   bottom: 25px;
   right: 15px;
@@ -230,7 +230,7 @@ a{
     }
 }
 
-@media only screen and (max-height: 480px) {
+@media only screen and (max-height: 600px) {
     canvas {
         height: 100vh;
     }

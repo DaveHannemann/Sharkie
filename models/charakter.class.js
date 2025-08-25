@@ -12,6 +12,7 @@ class Character extends MovableObject {
     floatUpActive = false;
     bubbleAttacking = false;
     poisonBubblesUnlocked = false;
+    isPlayingHurtSound = false;
     intervals = [];
 
     offSet = {
@@ -20,6 +21,13 @@ class Character extends MovableObject {
     left : 25,
     right : 40
     };
+
+    AUDIO_BUBBLE = new Audio('../audio/bubble.mp3');
+    AUDIO_POISONED = new Audio('../audio/poisoned.mp3');
+    AUDIO_SHOCKED = new Audio('../audio/shocked.mp3');
+    AUDIO_SLAP = new Audio('../audio/slap.mp3');
+    AUDIO_CHAR_DEAD = new Audio('../audio/charakter_death.mp3');
+
 
     IMAGES_IDLE = [
         '../img/1.Sharkie/1.IDLE/1.png',
@@ -194,22 +202,27 @@ class Character extends MovableObject {
             if(this.isDead()) {
                 if (!this.deadAnimationPlayed) {
                     this.deadAnimationPlayed = true;
+                    this.AUDIO_CHAR_DEAD.play();
                     if (this.lastHitType === "poison") this.playAnimationSequence(this.IMAGES_DEAD_POISON, 150);
                     else if (this.lastHitType === "electro") this.playAnimationSequence(this.IMAGES_DEAD_SHOCKED, 150);
                     else this.playAnimationSequence(this.IMAGES_DEAD_POISON, 150);
                 }
             } else if (this.isHurt()) {
+                this.handleHurtSound();
                 if (this.lastHitType === "poison") this.playAnimation(this.IMAGES_HURT_POISONED);
                 else if (this.lastHitType === "electro") this.playAnimation(this.IMAGES_HURT_SHOCKED);
                 else this.playAnimation(this.IMAGES_HURT_POISONED);
-            } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN) {
+            } else {
+                this.isPlayingHurtSound = false;
+                if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN) {
                 this.lastKeyPressed = new Date().getTime();
                 this.playAnimation(this.IMAGES_SWIMMING);
             } else {
                 let noKeyPressed = new Date().getTime() - this.lastKeyPressed;
                 if(noKeyPressed > 10000) this.playAnimation(this.IMAGES_LONG_IDLE);
                 else this.playAnimation(this.IMAGES_IDLE);
-            }        
+            }
+        }        
         }, 175);
         this.intervals.push(animInterval);
 
@@ -263,6 +276,9 @@ class Character extends MovableObject {
         if (this.bubbleAttacking) return;
         this.bubbleAttacking = true;
         let usePoison = this.poisonBubbleUnlocked && this.world.poisonBar.percentage > 0;
+        this.AUDIO_BUBBLE.pause();  
+        this.AUDIO_BUBBLE.currentTime = 0;
+        this.AUDIO_BUBBLE.play();
         if (usePoison) {
             this.playAnimationSequence(this.IMAGES_BUBBLE_POISON_ATTACK, 60);
         } else {
@@ -279,5 +295,24 @@ class Character extends MovableObject {
             }
             this.bubbleAttacking = false;
         }, (this.world.poisonBar.percentage > 0 ? this.IMAGES_BUBBLE_POISON_ATTACK.length : this.IMAGES_BUBBLE_ATTACK.length) * 60);
+    }
+
+     handleHurtSound() {
+        if (!this.isPlayingHurtSound) {
+            if (this.lastHitType === "poison") {
+                this.AUDIO_POISONED.pause();
+                this.AUDIO_POISONED.currentTime = 0.4;
+                this.AUDIO_POISONED.play();
+            } else if (this.lastHitType === "electro") {
+                this.AUDIO_SHOCKED.pause();
+                this.AUDIO_SHOCKED.currentTime = 0;
+                this.AUDIO_SHOCKED.play();
+            } else {
+                this.AUDIO_POISONED.pause();
+                this.AUDIO_POISONED.currentTime = 0.4;
+                this.AUDIO_POISONED.play();
+            }
+            this.isPlayingHurtSound = true;
+        }
     }
 }
