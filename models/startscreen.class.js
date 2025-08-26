@@ -10,7 +10,6 @@ class StartScreen extends DrawableObject {
     collectables = [];
     onlyStartScreenObjects = [];
     buttonsActive = true;
-    
 
     constructor(){
         super();
@@ -95,7 +94,20 @@ class StartScreen extends DrawableObject {
                 right: 60,
                 bottom: 40
                 }
-            }
+            },
+            // {
+            //     name: 'mute',
+            //     x: 200,
+            //     y: 10,
+            //     width: 30,
+            //     height: 30,
+            //     currentIndex: 0,
+            //     images: [
+            //         '../img/6.Botones/sounds_on.png',
+            //         '../img/6.Botones/sounds_off.png'
+            //     ],
+            //     isStatic: true
+            // }
         ];
 
         this.animatedButtons.forEach(button => {
@@ -108,7 +120,9 @@ class StartScreen extends DrawableObject {
     startButtonAnimation() {
         this.buttonInterval = setInterval(() => {
             this.animatedButtons.forEach(button => {
+            // if (!button.isStatic) {
                 button.currentIndex = (button.currentIndex + 1) % button.images.length;
+            // }
             });
         }, 300);
     }

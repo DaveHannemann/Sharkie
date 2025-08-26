@@ -5,6 +5,22 @@ let world;
 let keyboard = new Keyboard();
 let startScreenMouseMoveHandler;
 let endScreenMouseMoveHandler;
+let audioManager = new AudioManager();
+
+// Musik hinzufügen
+audioManager.addMusic('start', '../audio/startscreen.mp3');
+audioManager.addMusic('lost', '../audio/game_lost.mp3');
+audioManager.addMusic('won', '../audio/game_won.mp3');
+audioManager.addMusic('main', '../audio/main.mp3', { loop: true });
+
+// Effekte hinzufügen
+audioManager.addSFX('bubble', '../audio/bubble.mp3');
+audioManager.addSFX('item', '../audio/pickup.mp3');
+audioManager.addSFX('poisoned', '../audio/poisoned.mp3');
+audioManager.addSFX('shocked', '../audio/shocked.mp3');
+audioManager.addSFX('slap', '../audio/slap.mp3');
+audioManager.addSFX('char_dead', '../audio/charakter_death.mp3');
+audioManager.addSFX('snoring', '../audio/snoring.mp3'); // kein Loop nötig
 
 function init() {
     canvas = document.getElementById('canvas');
@@ -14,6 +30,9 @@ function init() {
     drawStartScreenLoop();
     
     canvas.addEventListener('click', function(event) {
+                if (!audioManager.current) {
+            audioManager.playMusic('start');
+        }
     let rect = canvas.getBoundingClientRect();
     let scaleX = canvas.width / canvas.clientWidth;
     let scaleY = canvas.height / canvas.clientHeight;
@@ -37,6 +56,9 @@ function init() {
 
     if (startScreen.isButtonClicked('howto', mouseX, mouseY)) {
         addOverlay();
+    }
+    if (world && world.hud) {
+        world.hud.handleClick(mouseX, mouseY);
     }
     });
 
@@ -82,6 +104,7 @@ function drawStartScreenLoop() {
 
 function startGame() {
     startScreen.disableButtons();
+    audioManager.playMusic('main');
     world = new World(canvas, keyboard);
     world.start();
     setupJoystick();

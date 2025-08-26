@@ -28,6 +28,9 @@ class Endboss extends MovableObject {
     attackAttackInterval;
     returnAttackInterval;
 
+    AUDIO_ENDBOSS_DEATH = new Audio('../audio/endboss_death.mp3');
+    AUDIO_POISONED = new Audio('../audio/poisoned.mp3');
+
 IMAGES_ENTRANCE = [
     '../img/2.Enemy/3 Final Enemy/1.Introduce/1.png',
     '../img/2.Enemy/3 Final Enemy/1.Introduce/2.png',
@@ -249,6 +252,7 @@ takeDamage(amount) {
         this.pauseAllActions();
 
         this.playAnimationSequence(this.IMAGES_HURT, 150);
+        this.AUDIO_POISONED.play();
 
         setTimeout(() => {
             this.isHurtAnimationPlaying = false;
@@ -285,6 +289,7 @@ die() {
     clearInterval(this.movementInterval);
     clearInterval(this.attackInterval);
     this.playAnimationSequence(this.IMAGES_DEAD, 150);
+    this.AUDIO_ENDBOSS_DEATH.play();
     setTimeout(() => {
         this.isDeadAnimationPlaying = false;
         this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1]];

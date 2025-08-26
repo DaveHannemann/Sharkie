@@ -23,6 +23,7 @@ class World {
         this.canvas = canvas;
         this.keyboard = keyboard;
         this.setWorld();
+        this.hud = new HUD();
         this.collisionManager = new CollisionManager(this);
     }
 
@@ -171,6 +172,7 @@ draw() {
     this.addToMap(this.healthBar);
     this.addToMap(this.coinBar);
     this.addToMap(this.poisonBar);
+    this.hud.draw(this.ctx);
     if (this.endboss && this.endboss.endBossShow) this.drawFlippedHealthBar(this.endbossHealthBar);
     if (this.endScreen) this.endScreen.draw(this.ctx);
     this.animationFrameId = requestAnimationFrame(() => this.draw());

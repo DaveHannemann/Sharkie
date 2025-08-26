@@ -27,6 +27,7 @@ class Character extends MovableObject {
     AUDIO_SHOCKED = new Audio('../audio/shocked.mp3');
     AUDIO_SLAP = new Audio('../audio/slap.mp3');
     AUDIO_CHAR_DEAD = new Audio('../audio/charakter_death.mp3');
+    AUDIO_SNORING = new Audio('../audio/snoring.mp3');
 
 
     IMAGES_IDLE = [
@@ -216,11 +217,17 @@ class Character extends MovableObject {
                 this.isPlayingHurtSound = false;
                 if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN) {
                 this.lastKeyPressed = new Date().getTime();
+                this.AUDIO_SNORING.pause();
+                this.AUDIO_SNORING.currentTime = 0; 
                 this.playAnimation(this.IMAGES_SWIMMING);
             } else {
                 let noKeyPressed = new Date().getTime() - this.lastKeyPressed;
-                if(noKeyPressed > 10000) this.playAnimation(this.IMAGES_LONG_IDLE);
-                else this.playAnimation(this.IMAGES_IDLE);
+                if(noKeyPressed > 10000) {this.playAnimation(this.IMAGES_LONG_IDLE); this.AUDIO_SNORING.play();}
+                else {
+                    this.AUDIO_SNORING.pause();
+                    this.AUDIO_SNORING.currentTime = 0; 
+                    this.playAnimation(this.IMAGES_IDLE);
+                }
             }
         }        
         }, 175);
@@ -301,7 +308,7 @@ class Character extends MovableObject {
         if (!this.isPlayingHurtSound) {
             if (this.lastHitType === "poison") {
                 this.AUDIO_POISONED.pause();
-                this.AUDIO_POISONED.currentTime = 0.4;
+                this.AUDIO_POISONED.currentTime = 0;
                 this.AUDIO_POISONED.play();
             } else if (this.lastHitType === "electro") {
                 this.AUDIO_SHOCKED.pause();
@@ -309,7 +316,7 @@ class Character extends MovableObject {
                 this.AUDIO_SHOCKED.play();
             } else {
                 this.AUDIO_POISONED.pause();
-                this.AUDIO_POISONED.currentTime = 0.4;
+                this.AUDIO_POISONED.currentTime = 0;
                 this.AUDIO_POISONED.play();
             }
             this.isPlayingHurtSound = true;
