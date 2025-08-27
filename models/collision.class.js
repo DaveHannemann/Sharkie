@@ -41,10 +41,12 @@ class CollisionManager {
     this.world.level.collectables.forEach((item, index) => {
       if (this.world.charakter.isColliding(item)) {
         if (item.animationImages === item.IMAGES_COINS) {
+            audioManager.playSFX('coin');
           this.world.coinBar.setPercentage(
             this.world.coinBar.percentage + item.value
           );
         } else if (item.animationImages === item.IMAGES_POISON) {
+            audioManager.playSFX('poison');
           this.world.poisonBar.setPercentage(
             this.world.poisonBar.percentage + item.value
           );

@@ -6,21 +6,24 @@ let keyboard = new Keyboard();
 let startScreenMouseMoveHandler;
 let endScreenMouseMoveHandler;
 let audioManager = new AudioManager();
+let mainMusicPlayed = false;
 
-// Musik hinzufügen
 audioManager.addMusic('start', '../audio/startscreen.mp3');
-audioManager.addMusic('lost', '../audio/game_lost.mp3');
-audioManager.addMusic('won', '../audio/game_won.mp3');
+audioManager.musicTracks['start'].volume = 0.5;
 audioManager.addMusic('main', '../audio/main.mp3', { loop: true });
+audioManager.musicTracks['main'].volume = 0.5;
 
-// Effekte hinzufügen
 audioManager.addSFX('bubble', '../audio/bubble.mp3');
-audioManager.addSFX('item', '../audio/pickup.mp3');
+audioManager.sfxTracks['bubble'].volume = 0.4;
+audioManager.addSFX('coin', '../audio/pickup.mp3');
+audioManager.addSFX('poison', '../audio/poisonpickup.mp3');
 audioManager.addSFX('poisoned', '../audio/poisoned.mp3');
 audioManager.addSFX('shocked', '../audio/shocked.mp3');
 audioManager.addSFX('slap', '../audio/slap.mp3');
 audioManager.addSFX('char_dead', '../audio/charakter_death.mp3');
-audioManager.addSFX('snoring', '../audio/snoring.mp3'); // kein Loop nötig
+audioManager.addSFX('snoring', '../audio/snoring.mp3', true);
+audioManager.addSFX('lose', '../audio/game_lost.mp3');
+audioManager.addSFX('win', '../audio/game_won.mp3');
 
 function init() {
     canvas = document.getElementById('canvas');
@@ -30,8 +33,9 @@ function init() {
     drawStartScreenLoop();
     
     canvas.addEventListener('click', function(event) {
-                if (!audioManager.current) {
+                if (!mainMusicPlayed) {
             audioManager.playMusic('start');
+            mainMusicPlayed = true;
         }
     let rect = canvas.getBoundingClientRect();
     let scaleX = canvas.width / canvas.clientWidth;
@@ -44,6 +48,13 @@ function init() {
         world.endScreen.handleClick(mouseX, mouseY);
         return;
     }
+
+    if (startScreen.isButtonClicked('mute', mouseX, mouseY)) {
+    audioManager.toggleMute();
+
+    let muteBtn = startScreen.animatedButtons.find(b => b.name === 'mute');
+    muteBtn.currentIndex = audioManager.muted ? 1 : 0;
+}
 
     if (startScreen.isButtonClicked('start', mouseX, mouseY)) {
         startScreen.stopButtonAnimation();
@@ -86,6 +97,8 @@ function init() {
 
     if (world && world.endScreen) {
         canvas.style.cursor = world.endScreen.isPointerButtonHovered(mouseX, mouseY) ? 'pointer' : 'default';
+    } else if (world && world.hud && world.hud.isMouseOverMute(mouseX, mouseY)) {
+        canvas.style.cursor = 'pointer';
     } else if (startScreen) {
         canvas.style.cursor = startScreen.isMouseOverButton(mouseX, mouseY) ? 'pointer' : 'default';
     } else {

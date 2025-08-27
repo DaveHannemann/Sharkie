@@ -72,6 +72,7 @@ restartLevel(levelNumber = this.currentLevelNumber) {
     if (this.endboss) this.endbossHealthBar.setPercentage(this.endboss.energy);
     this.setWorld();
     this.start();
+    audioManager.playMusic('main');
 }
 
     createLevel(levelNumber) {
@@ -96,6 +97,10 @@ restartLevel(levelNumber = this.currentLevelNumber) {
                     this.gameOverTriggered = true;
                     hideMobileControls();
                     setTimeout(() => {
+                        audioManager.stopAll();
+                        audioManager.playSFX('win');
+                    }, 2900);
+                    setTimeout(() => {
                         this.endScreen = new EndScreen("win", 
                             () => { this.restartLevel(this.currentLevelNumber);
                                     if ('ontouchstart' in window) showMobileControls();
@@ -119,6 +124,10 @@ restartLevel(levelNumber = this.currentLevelNumber) {
             if (this.charakter.isDead() && !this.gameOverTriggered) {
                 this.gameOverTriggered = true;
                 hideMobileControls();
+                setTimeout(() => {
+                audioManager.stopAll();
+                audioManager.playSFX('lose');
+                }, 2900);
                 setTimeout(() => {
                     this.endScreen = new EndScreen("lose", 
                         () => { this.restartLevel(); 

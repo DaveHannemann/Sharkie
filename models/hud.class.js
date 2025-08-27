@@ -8,7 +8,7 @@ class HUD extends DrawableObject {
             '../img/6.Botones/sounds_on.png',
             '../img/6.Botones/sounds_off.png'
         ],
-        currentIndex: 0
+        currentIndex: audioManager.muted ? 1 : 0
     };
 
     constructor() {
@@ -16,18 +16,35 @@ class HUD extends DrawableObject {
         this.loadImages(this.muteButton.images);
     }
 
-    draw(ctx) {
-        let img = this.imageCache[this.muteButton.images[this.muteButton.currentIndex]];
-        if (img) ctx.drawImage(img, this.muteButton.x, this.muteButton.y, this.muteButton.width, this.muteButton.height);
-    }
+draw(ctx) {
+    let img = this.imageCache[this.muteButton.images[this.muteButton.currentIndex]];
+    if (!img) return;
+    ctx.drawImage(
+        img,
+        this.muteButton.x,
+        this.muteButton.y,
+        this.muteButton.width,
+        this.muteButton.height
+    );
+}
 
-    handleClick(mouseX, mouseY) {
-        if (mouseX >= this.muteButton.x &&
-            mouseX <= this.muteButton.x + this.muteButton.width &&
-            mouseY >= this.muteButton.y &&
-            mouseY <= this.muteButton.y + this.muteButton.height) {
-            audioManager.toggleMute();
-            this.muteButton.currentIndex = audioManager.muted ? 1 : 0;
-        }
+handleClick(mouseX, mouseY) {
+    let b = this.muteButton;
+    if (mouseX >= b.x && mouseX <= b.x + b.width &&
+        mouseY >= b.y && mouseY <= b.y + b.height) {
+        
+        audioManager.toggleMute();
+        b.currentIndex = audioManager.muted ? 1 : 0;
     }
+}
+
+isMouseOverMute(mouseX, mouseY) {
+    let btn = this.muteButton;
+    return (
+        mouseX >= btn.x &&
+        mouseX <= btn.x + btn.width &&
+        mouseY >= btn.y &&
+        mouseY <= btn.y + btn.height
+    );
+}
 }
