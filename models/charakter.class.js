@@ -220,12 +220,12 @@ class Character extends MovableObject {
             let idleTime = new Date().getTime() - this.lastKeyPressed;
             if (idleTime > 10000) {
                 this.playAnimation(this.IMAGES_LONG_IDLE);
+                if (!this.snoringPlaying) {
+                    audioManager.playSFX('snoring');
+                    this.snoringPlaying = true;
+                }
             } else {
                 this.playAnimation(this.IMAGES_IDLE);
-            }
-            if (idleTime > 10000 && !this.snoringPlaying) {
-                audioManager.playSFX('snoring');
-                this.snoringPlaying = true;
             }
         }
     }        

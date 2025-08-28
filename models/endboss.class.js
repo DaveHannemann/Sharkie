@@ -28,9 +28,6 @@ class Endboss extends MovableObject {
     attackAttackInterval;
     returnAttackInterval;
 
-    AUDIO_ENDBOSS_DEATH = new Audio('../audio/endboss_death.mp3');
-    AUDIO_POISONED = new Audio('../audio/poisoned.mp3');
-
 IMAGES_ENTRANCE = [
     '../img/2.Enemy/3 Final Enemy/1.Introduce/1.png',
     '../img/2.Enemy/3 Final Enemy/1.Introduce/2.png',
@@ -108,12 +105,15 @@ constructor(world){
         this.mainInterval = setInterval(() => {
             if (this.isDead) {
                 clearInterval(this.mainInterval);
+                audioManager.stopMusic('endboss');
                 return;
             }
             if (!this.endBossShow && this.world && this.world.charakter && this.world.charakter.x > 2600) {
                 this.endBossShow = true;
                 this.hadFirstContact = true;
                 this.x = 3250;
+                audioManager.stopMusic('main');
+                audioManager.playMusic('endboss');
 
                 this.entranceInterval = setInterval(() => {
                     if (i < this.IMAGES_ENTRANCE.length) {
@@ -216,6 +216,9 @@ attack() {
 
             if (ticks % frameChangeRate === 0 && frameIndex < attackFrames.length) {
                 this.img = this.imageCache[attackFrames[frameIndex]];
+                if (frameIndex === 0) {
+                audioManager.playSFX('boss_attack');
+                }
                 frameIndex++;
             }
             ticks++;
@@ -252,7 +255,7 @@ takeDamage(amount) {
         this.pauseAllActions();
 
         this.playAnimationSequence(this.IMAGES_HURT, 150);
-        this.AUDIO_POISONED.play();
+        audioManager.playSFX('poisoned');
 
         setTimeout(() => {
             this.isHurtAnimationPlaying = false;
@@ -289,7 +292,7 @@ die() {
     clearInterval(this.movementInterval);
     clearInterval(this.attackInterval);
     this.playAnimationSequence(this.IMAGES_DEAD, 150);
-    this.AUDIO_ENDBOSS_DEATH.play();
+    audioManager.playSFX('boss_dead');
     setTimeout(() => {
         this.isDeadAnimationPlaying = false;
         this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1]];

@@ -112,6 +112,8 @@ restartLevel(levelNumber = this.currentLevelNumber) {
                                 startScreen = new StartScreen();
                                 hideMobileControls();
                                 drawStartScreenLoop();
+                                audioManager.stopAll();
+                                audioManager.playMusic('start');
                             },
                             () => {                                                   
                                 this.restartLevel(this.currentLevelNumber + 1);
@@ -140,6 +142,8 @@ restartLevel(levelNumber = this.currentLevelNumber) {
                             startScreen = new StartScreen();
                             hideMobileControls();
                             drawStartScreenLoop();
+                            audioManager.stopAll();
+                            audioManager.playMusic('start');
                         }
                     );
                 }, 3000);

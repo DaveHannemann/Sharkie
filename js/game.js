@@ -8,22 +8,22 @@ let endScreenMouseMoveHandler;
 let audioManager = new AudioManager();
 let mainMusicPlayed = false;
 
-audioManager.addMusic('start', '../audio/startscreen.mp3');
-audioManager.musicTracks['start'].volume = 0.5;
-audioManager.addMusic('main', '../audio/main.mp3', { loop: true });
-audioManager.musicTracks['main'].volume = 0.5;
+audioManager.addMusic('start', '../audio/startscreen.mp3', { loop: true, volume: 0.5 });
+audioManager.addMusic('main', '../audio/main.mp3', { loop: true, volume: 0.5 });
+audioManager.addMusic('endboss', '../audio/endboss_theme.mp3', { loop: true, volume: 0.5 });
 
-audioManager.addSFX('bubble', '../audio/bubble.mp3');
-audioManager.sfxTracks['bubble'].volume = 0.4;
+audioManager.addSFX('bubble', '../audio/bubble.mp3', { volume: 0.4 });
 audioManager.addSFX('coin', '../audio/pickup.mp3');
 audioManager.addSFX('poison', '../audio/poisonpickup.mp3');
 audioManager.addSFX('poisoned', '../audio/poisoned.mp3');
 audioManager.addSFX('shocked', '../audio/shocked.mp3');
 audioManager.addSFX('slap', '../audio/slap.mp3');
 audioManager.addSFX('char_dead', '../audio/charakter_death.mp3');
-audioManager.addSFX('snoring', '../audio/snoring.mp3', true);
+audioManager.addSFX('snoring', '../audio/snoring.mp3', { loop: true });
 audioManager.addSFX('lose', '../audio/game_lost.mp3');
 audioManager.addSFX('win', '../audio/game_won.mp3');
+audioManager.addSFX('boss_attack', '../audio/endboss_attack.mp3');
+audioManager.addSFX('boss_dead', '../audio/endboss_death.mp3');
 
 function init() {
     canvas = document.getElementById('canvas');

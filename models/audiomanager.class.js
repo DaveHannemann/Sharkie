@@ -10,17 +10,19 @@ class AudioManager {
     addMusic(name, src, options = {}) {
         const audio = new Audio(src);
         audio.loop = options.loop ?? true;
+        audio.volume = options.volume ?? 1.0;
+        audio.preload = 'auto';
         this.musicTracks[name] = audio;
     }
 
-
-    addSFX(name, src, loop = false) {
+    addSFX(name, src, options = {}) {
         const audio = new Audio(src);
-        audio.loop = loop;
-        if (loop) this.sfxLoopTracks[name] = audio;
+        audio.loop = options.loop ?? false;
+        audio.volume = options.volume ?? 1.0;
+        audio.preload = 'auto';
+        if (audio.loop) this.sfxLoopTracks[name] = audio;
         else this.sfxTracks[name] = audio;
     }
-
 
     playMusic(name) {
         if (this.currentMusic) {
@@ -31,9 +33,7 @@ class AudioManager {
         const track = this.musicTracks[name];
         if (track) {
             this.currentMusic = track;
-            if (!this.muted) {
-                track.play();
-            }
+            if (!this.muted) track.play();
         }
     }
 
@@ -45,30 +45,29 @@ class AudioManager {
         }
     }
 
-playSFX(name) {
-    let audio = this.sfxTracks[name] || this.sfxLoopTracks[name];
-    if (audio && !this.muted) {
-        audio.pause();
-        audio.currentTime = 0;
-        audio.play();
-    }
-}
-
-    stopSFX(name) {
-        let audio = this.sfxLoopTracks[name];
-        if (audio) {
+    playSFX(name) {
+        let audio = this.sfxTracks[name] || this.sfxLoopTracks[name];
+        if (!audio || this.muted) return;
+        if (!audio.loop) {
             audio.pause();
             audio.currentTime = 0;
+            audio.play();
+        } else {
+            if (audio.paused) audio.play();
         }
     }
 
-toggleMute() {
-    this.muted = !this.muted;
-    if (this.currentMusic) {
-        if (this.muted) this.currentMusic.pause();
-        else this.currentMusic.play();
+    stopSFX(name) {
+        let audio = this.sfxLoopTracks[name];
+        if (audio) audio.pause();
     }
-    if (this.muted) {
+
+    toggleMute() {
+        this.muted = !this.muted;
+        if (this.currentMusic) {
+            if (this.muted) this.currentMusic.pause();
+            else this.currentMusic.play();
+        }
         for (let key in this.sfxTracks) {
             const audio = this.sfxTracks[key];
             audio.pause();
@@ -76,11 +75,10 @@ toggleMute() {
         }
         for (let key in this.sfxLoopTracks) {
             const audio = this.sfxLoopTracks[key];
-            audio.pause();
-            audio.currentTime = 0;
+            if (this.muted) audio.pause();
+            else if (audio.currentTime > 0 && !audio.ended) audio.play();
         }
     }
-}
 
     stopAll() {
         if (this.currentMusic) {
