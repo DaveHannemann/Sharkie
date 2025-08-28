@@ -84,6 +84,13 @@ restartLevel(levelNumber = this.currentLevelNumber) {
     }
 }
 
+    updateSlapButtonVisibility() {
+        const btnSlap = document.getElementById('btn-attack');
+        if (this.endboss && this.endboss.endBossShow) {
+            btnSlap.style.display = 'none';
+        } 
+    }
+
     run() {
         if(this.gameInterval) clearInterval(this.gameInterval);
         this.gameInterval = setInterval(() => {
@@ -91,6 +98,7 @@ restartLevel(levelNumber = this.currentLevelNumber) {
             this.checkThrowObjects();
             this.throwableObjects.forEach(obj => obj.update());
             this.level.enemies = this.level.enemies.filter(enemy => !enemy.readyToRemove);
+            this.updateSlapButtonVisibility();
             if (this.endboss) {
             this.endbossHealthBar.setPercentage(this.endboss.energy);
                 if (this.endboss.energy <= 0 && !this.gameOverTriggered) {

@@ -159,19 +159,38 @@ constructor(world){
         }, 1000 / 60);
     }
 
-    startRandomAttacks() {
-        this.attackInterval = setInterval(() => {
-            if (this.isDead) {
-                clearInterval(this.attackInterval);
-                return;
-            }
-            if (this.attackCD) return;
-
-            if (Math.random() < 0.5) {
-                this.attack();
-            }
-        }, 2000);
+startRandomAttacks() {
+    let attackChance;
+    let attackIntervalTime;
+    switch(this.world.currentLevelNumber) {
+        case 1: 
+            attackChance = 0.5;
+            attackIntervalTime = 2000;
+            break;
+        case 2:
+            attackChance = 0.65;
+            attackIntervalTime = 1700;
+            break;
+        case 3:
+            attackChance = 0.8;
+            attackIntervalTime = 1400;
+            break;
+        default:
+            attackChance = 0.5;
+            attackIntervalTime = 2000;
     }
+    this.attackInterval = setInterval(() => {
+        if (this.isDead) {
+            clearInterval(this.attackInterval);
+            return;
+        }
+        if (this.attackCD) return;
+
+        if (Math.random() < attackChance) {
+            this.attack();
+        }
+    }, attackIntervalTime);
+}
 
 attack() {
     if (this.isDead) return; 

@@ -12,27 +12,26 @@ class CollisionManager {
 
   checkEnemyCollisions() {
     this.world.level.enemies.forEach((enemy) => {
-      if (this.world.charakter.isColliding(enemy)) {
+      if (!this.world.charakter.isColliding(enemy)) return;
+      if (enemy instanceof JellyFish && (enemy.isDead || enemy.readyToRemove)) return;
+      if (this.world.charakter.finSlapped && enemy instanceof Fish) return;
 
-      if (enemy instanceof JellyFish && (enemy.isDead || enemy.readyToRemove)) {
-        return;
-      }
-        if (this.world.charakter.finSlapped && enemy instanceof Fish) {
-          return;
-        }
-        if (
-          enemy.state === "bubbleswim" ||
-          enemy instanceof JellyFish ||
-          enemy instanceof Endboss
-        ) {
-        if (enemy instanceof JellyFish) {
+      if (enemy.state === "bubbleswim" || enemy instanceof JellyFish || enemy instanceof Endboss) {
+        if (enemy instanceof Endboss) {
+          let damageToChar;
+          switch (this.world.currentLevelNumber) {
+            case 1: damageToChar = 10; break;
+            case 2: damageToChar = 20; break;
+            case 3: damageToChar = 30; break;
+            default: damageToChar = 10;
+          }
+          this.world.charakter.hit(damageToChar);
+        } else if (enemy instanceof JellyFish) {
           this.world.charakter.hit(enemy.type);
         } else {
           this.world.charakter.hit("default");
         }
-          this.world.healthBar.setPercentage(this.world.charakter.energy);
-          console.log("lost HP", this.world.charakter.energy);
-        }
+        this.world.healthBar.setPercentage(this.world.charakter.energy);
       }
     });
   }
@@ -59,14 +58,12 @@ class CollisionManager {
   checkThrowableCollisions() {
     this.world.throwableObjects.forEach((bubble, bubbleIndex) => {
       this.world.level.enemies.forEach((enemy) => {
-  if (bubble.isColliding(enemy)) {
-        
+        if (!bubble.isColliding(enemy)) return;
+
         if (enemy instanceof Fish) {
           if (enemy.state !== "bubbleswim" && enemy.state !== "transition") {
             enemy.state = "transition";
-            setTimeout(() => {
-              enemy.state = "bubbleswim";
-            }, 1000);
+            setTimeout(() => { enemy.state = "bubbleswim"; }, 1000);
           }
         }
 
@@ -75,17 +72,19 @@ class CollisionManager {
         }
 
         if (enemy instanceof Endboss) {
-          if (bubble.type === 'poison') {
-            enemy.takeDamage(15);
-          } else {
-            enemy.takeDamage(10);
+          let damageToBoss;
+          switch (this.world.currentLevelNumber) {
+            case 1: damageToBoss = 20; break;
+            case 2: damageToBoss = 15; break;
+            case 3: damageToBoss = 10; break;
+            default: damageToBoss = 20;
           }
+          if (bubble.type === 'poison') damageToBoss += 5;
+          enemy.takeDamage(damageToBoss);
         }
-
         this.world.throwableObjects.splice(bubbleIndex, 1);
-      }
+      });
     });
-  });
   }
 
   checkFinSlapCollisions() {

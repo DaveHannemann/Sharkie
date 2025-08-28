@@ -39,8 +39,15 @@
     
     <h1>Sharkie</h1>
 
-    <canvas id="canvas" width="720" height="480">
-    </canvas>
+    <div class="game-container" style="position: relative; display: inline-block;">
+        <canvas id="canvas" width="720" height="480"></canvas>
+
+        <div id="joystick">
+          <div id="stick"></div>
+        </div>
+        <button id="btn-attack">Slap</button>
+        <button id="btn-throw">Bubble</button>
+    </div>
 
     <div id="overlay" class="d_none overlay" onclick="closeOverlay()">
         <div id="dialog" class="dialog" onclick="event.stopPropagation()">
@@ -48,12 +55,6 @@
             <div id="dialogContent" class="dialogContent"></div>
         </div>
     </div>
-
-<div id="joystick">
-  <div id="stick"></div>
-</div>
-<button id="btn-attack">Slap</button>
-<button id="btn-throw">Bubble</button>
 
 <div id="rotate-overlay">
   <p class="tilt_me">Please<br> tilt to<br> play!</p>

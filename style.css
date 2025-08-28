@@ -40,6 +40,11 @@ canvas{
     display: block;
 }
 
+.game-container{
+    position: relative;
+    display: inline-block;
+}
+
 .d_none{
     display: none;
 }
@@ -147,7 +152,7 @@ a{
 }
 
 #joystick {
-  position: fixed;
+  position: absolute;
   bottom: 20px;
   left: 20px;
   width: 120px;
@@ -172,7 +177,7 @@ a{
     border-radius: 15px;
   color: rgb(0 255 10);
   background: rgb(56 23 133 / 65%);
-  position: fixed;
+  position: absolute;
   bottom: 15px;
   right: 80px;
   width: 60px;
@@ -184,7 +189,7 @@ a{
     border-radius: 15px;
   color: rgb(0 255 10);
   background: rgb(56 23 133 / 65%);
-  position: fixed;
+  position: absolute;
   bottom: 25px;
   right: 15px;
   width: 60px;
