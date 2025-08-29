@@ -7,6 +7,12 @@ class AudioManager {
         this.muted = false;
     }
 
+    /**
+     * Adds music track to manager.
+     * @param {string} name - music name
+     * @param {string} src - path of audio
+     * @param {{loop?: boolean, volume?: number}} [options] - Optional settings
+     */
     addMusic(name, src, options = {}) {
         const audio = new Audio(src);
         audio.loop = options.loop ?? true;
@@ -15,6 +21,12 @@ class AudioManager {
         this.musicTracks[name] = audio;
     }
 
+    /**
+     * Adds sound effect to manager
+     * @param {string} name - SFX name
+     * @param {string} src - path of audio
+     * @param {{loop?: boolean, volume?: number}} [options] - Optional settings
+     */
     addSFX(name, src, options = {}) {
         const audio = new Audio(src);
         audio.loop = options.loop ?? false;
@@ -24,12 +36,15 @@ class AudioManager {
         else this.sfxTracks[name] = audio;
     }
 
+    /**
+     * Plays the named track
+     * @param {string} name - name of music 
+     */
     playMusic(name) {
         if (this.currentMusic) {
             this.currentMusic.pause();
             this.currentMusic.currentTime = 0;
         }
-
         const track = this.musicTracks[name];
         if (track) {
             this.currentMusic = track;
@@ -37,6 +52,9 @@ class AudioManager {
         }
     }
 
+    /**
+     * Stops current music
+     */
     stopMusic() {
         if (this.currentMusic) {
             this.currentMusic.pause();
@@ -45,6 +63,11 @@ class AudioManager {
         }
     }
 
+    /**
+     * Plays named SFX
+     * @param {string} name - name of SFX 
+     * @returns {void}
+     */
     playSFX(name) {
         let audio = this.sfxTracks[name] || this.sfxLoopTracks[name];
         if (!audio || this.muted) return;
@@ -57,11 +80,18 @@ class AudioManager {
         }
     }
 
+    /**
+     * Stops looping SFX
+     * @param {string} name - SFX name 
+     */
     stopSFX(name) {
         let audio = this.sfxLoopTracks[name];
         if (audio) audio.pause();
     }
 
+    /**
+     * Stops all audio and keeps going if unmute
+     */
     toggleMute() {
         this.muted = !this.muted;
         if (this.currentMusic) {
@@ -80,6 +110,9 @@ class AudioManager {
         }
     }
 
+    /**
+     * Stops all audio
+     */
     stopAll() {
         if (this.currentMusic) {
             this.currentMusic.pause();

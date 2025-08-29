@@ -49,9 +49,9 @@
         <button id="btn-throw">Bubble</button>
     </div>
 
-    <div id="overlay" class="d_none overlay" onclick="closeOverlay()">
+    <div id="overlay" class="d_none overlay" onclick="toggleOverlay(false);">
         <div id="dialog" class="dialog" onclick="event.stopPropagation()">
-            <span class="closeX" onclick="closeOverlay()">X</span>
+            <span class="closeX" onclick="toggleOverlay(false);">X</span>
             <div id="dialogContent" class="dialogContent"></div>
         </div>
     </div>

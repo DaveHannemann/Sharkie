@@ -11,7 +11,6 @@ let mainMusicPlayed = false;
 audioManager.addMusic('start', '../audio/startscreen.mp3', { loop: true, volume: 0.5 });
 audioManager.addMusic('main', '../audio/main.mp3', { loop: true, volume: 0.5 });
 audioManager.addMusic('endboss', '../audio/endboss_theme.mp3', { loop: true, volume: 0.5 });
-
 audioManager.addSFX('bubble', '../audio/bubble.mp3', { volume: 0.4 });
 audioManager.addSFX('coin', '../audio/pickup.mp3');
 audioManager.addSFX('poison', '../audio/poisonpickup.mp3');
@@ -25,88 +24,163 @@ audioManager.addSFX('win', '../audio/game_won.mp3');
 audioManager.addSFX('boss_attack', '../audio/endboss_attack.mp3');
 audioManager.addSFX('boss_dead', '../audio/endboss_death.mp3');
 
+/**
+ * Initialize the canvas, game and events.
+ */
 function init() {
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
     startScreen = new StartScreen();
     hideMobileControls();
     drawStartScreenLoop();
-    
-    canvas.addEventListener('click', function(event) {
-                if (!mainMusicPlayed) {
-            audioManager.playMusic('start');
-            mainMusicPlayed = true;
-        }
-    let rect = canvas.getBoundingClientRect();
-    let scaleX = canvas.width / canvas.clientWidth;
-    let scaleY = canvas.height / canvas.clientHeight;
+    bindKeys();
+    setupEventListeners();
+}
 
-    let mouseX = (event.clientX - rect.left) * scaleX;
-    let mouseY = (event.clientY - rect.top) * scaleY;
+/**
+ * Sets up all global event listeners for canvas.
+ */
+function setupEventListeners() {
+    canvas.addEventListener('click', onCanvasClick);
+    canvas.addEventListener('mousemove', onCanvasMouseMove);
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+}
 
-    if (world && world.endScreen) {
-        world.endScreen.handleClick(mouseX, mouseY);
-        return;
+/**
+ * Handles click events on the canvas.
+ * @param {MouseEvent} e - mouse-click-event 
+ */
+function onCanvasClick(e) {
+    playStartMusicOnce();
+    const { x, y } = getMousePos(e, canvas);
+    handleCanvasClick(x, y);
+}
+
+/**
+ * Handles mouse move events on the canvas.
+ * @param {MouseEvent} e - mouse movement 
+ */
+function onCanvasMouseMove(e) {
+    const { x, y } = getMousePos(e, canvas);
+    handleMouseHover(x, y);
+}
+
+/**
+ * Adjusts canvas scaling when fullscreen mode changes.
+ */
+function onFullscreenChange() {
+    const fullScreen = !!document.fullscreenElement;
+    fullScreen ? scaleCanvasToFit(canvas) : resetCanvasSize(canvas);
+    startScreen?.toggleHowToButton(!fullScreen);
+}
+
+/**
+ * Plays startscreen music once.
+ */
+function playStartMusicOnce() {
+    if (!mainMusicPlayed) {
+        audioManager.playMusic('start');
+        mainMusicPlayed = true;
     }
+}
 
-    if (startScreen.isButtonClicked('mute', mouseX, mouseY)) {
+/**
+ * Gets the scaled mouse coordinates relative to the canvas.
+ * @param {MouseEvent} event - mouse event
+ * @param {HTMLCanvasElement} canvas - game
+ * @returns {{x:number, y:number}} Mouse position on canvas.
+ */
+function getMousePos(event, canvas) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / canvas.clientWidth;
+    const scaleY = canvas.height / canvas.clientHeight;
+    return { x: (event.clientX - rect.left) * scaleX, y: (event.clientY - rect.top) * scaleY };
+}
+
+/**
+ * Handles click logic for buttons.
+ * @param {number} mouseX - position mouse x
+ * @param {number} mouseY - position mouse y
+ * @returns {void}
+ */
+function handleCanvasClick(mouseX, mouseY) {
+    if (world?.endScreen) return world.endScreen.handleClick(mouseX, mouseY);
+    const button = getClickedButton(mouseX, mouseY);
+    if (button) runButtonAction(button);
+
+    world?.hud?.handleClick(mouseX, mouseY);
+}
+
+/**
+ * Checks for a clicked button on the startscreen
+ * @param {number} x - position mouse x 
+ * @param {number} y - position mouse y
+ * @returns {string|null} Name of clicked button or null
+ */
+function getClickedButton(x, y) {
+    const buttons = ['mute', 'start', 'fullscreen', 'howto'];
+    return buttons.find(name => startScreen.isButtonClicked(name, x, y)) || null;
+}
+
+/**
+ * Executes action for the clicked button.
+ * @param {string} name - button name 
+ * @returns {void}
+ */
+function runButtonAction(name) {
+    switch (name) {
+        case 'mute':       return handleMuteButton();
+        case 'start':      return handleStartButton();
+        case 'fullscreen': return handleFullscreenButton();
+        case 'howto':      return handleHowToButton();
+    }
+}
+
+/**
+ * Toggles audio mute state.
+ */
+function handleMuteButton() {
     audioManager.toggleMute();
-
-    let muteBtn = startScreen.animatedButtons.find(b => b.name === 'mute');
+    const muteBtn = startScreen.animatedButtons.find(b => b.name === 'mute');
     muteBtn.currentIndex = audioManager.muted ? 1 : 0;
 }
 
-    if (startScreen.isButtonClicked('start', mouseX, mouseY)) {
-        startScreen.stopButtonAnimation();
-        startGame();
-    }
-
-    if (startScreen.isButtonClicked('fullscreen', mouseX, mouseY)) {
-        toggleFullScreen(canvas);
-    }
-
-    if (startScreen.isButtonClicked('howto', mouseX, mouseY)) {
-        addOverlay();
-    }
-    if (world && world.hud) {
-        world.hud.handleClick(mouseX, mouseY);
-    }
-    });
-
-    document.addEventListener('fullscreenchange', () => {
-    let fullScreen = !!document.fullscreenElement;
-
-    if (fullScreen) {
-        scaleCanvasToFit(canvas);
-    } else {
-        resetCanvasSize(canvas);
-    }
-
-    if (startScreen) {
-        startScreen.toggleHowToButton(!fullScreen);
-    }
-    });
-
-    canvas.addEventListener('mousemove', function(event) {
-    let rect = canvas.getBoundingClientRect();
-    let scaleX = canvas.width / canvas.clientWidth;
-    let scaleY = canvas.height / canvas.clientHeight;
-
-    let mouseX = (event.clientX - rect.left) * scaleX;
-    let mouseY = (event.clientY - rect.top) * scaleY;
-
-    if (world && world.endScreen) {
-        canvas.style.cursor = world.endScreen.isPointerButtonHovered(mouseX, mouseY) ? 'pointer' : 'default';
-    } else if (world && world.hud && world.hud.isMouseOverMute(mouseX, mouseY)) {
-        canvas.style.cursor = 'pointer';
-    } else if (startScreen) {
-        canvas.style.cursor = startScreen.isMouseOverButton(mouseX, mouseY) ? 'pointer' : 'default';
-    } else {
-        canvas.style.cursor = 'default';
-    }
-    });
+/**
+ * Handles game start button click.
+ */
+function handleStartButton() {
+    startScreen.stopButtonAnimation();
+    startGame();
 }
 
+/**
+ * Handles fullscreen button click.
+ */
+function handleFullscreenButton() {
+    toggleFullScreen(canvas);
+}
+
+/**
+ * Handles "How To Play" button click.
+ */
+function handleHowToButton() {
+    toggleOverlay(true);
+}
+
+/**
+ * Changes cursor style when hovering over interactive elements.
+ * @param {number} x - position mouse x 
+ * @param {number} y - position mouse y
+ */
+function handleMouseHover(x, y) {
+    if(world?.endScreen) canvas.style.cursor = world.endScreen.isPointerButtonHovered(x, y)?'pointer':'default';
+    else if(world?.hud?.isMouseOverMute(x, y)) canvas.style.cursor = 'pointer';
+    else canvas.style.cursor = startScreen?.isMouseOverButton(x, y)?'pointer':'default';
+}
+
+/**
+ * Main start screen rendering loop.
+ */
 function drawStartScreenLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (startScreen) {
@@ -115,17 +189,22 @@ function drawStartScreenLoop() {
     }
 }
 
+/**
+ * Starts the main game world.
+ */
 function startGame() {
     startScreen.disableButtons();
     audioManager.playMusic('main');
     world = new World(canvas, keyboard);
     world.start();
     setupJoystick();
-    if ('ontouchstart' in window) {
-        showMobileControls();
-    }
+    if ('ontouchstart' in window) showMobileControls();
 }
 
+/**
+ * Toggles fullscreen mode for the canvas.
+ * @param {HTMLCanvasElement} canvas - game 
+ */
 function toggleFullScreen(canvas) {
     if (!document.fullscreenElement) {
         if (canvas.requestFullscreen) {
@@ -140,139 +219,213 @@ function toggleFullScreen(canvas) {
     }
 }
 
-function resetCanvasSize(canvas) {
-    canvas.style.width = '720px';
-    canvas.style.height = '480px';
-    canvas.style.maxWidth = '';
-    canvas.style.maxHeight = '';
-}
+/**
+ * Resets canvas to default size.
+ * @param {HTMLCanvasElement} canvas - game
+ */
+function resetCanvasSize(canvas) { setCanvasSize(canvas, 720, 480); }
 
+/**
+ * Scales canvas proportionally to fit window.
+ * @param {HTMLCanvasElement} canvas - game
+ */
 function scaleCanvasToFit(canvas) {
-    const vw = window.innerWidth * 0.8;
-    const vh = window.innerHeight * 0.8;
-
-    const aspectRatio = 720 / 480;
-    let newWidth = vw;
-    let newHeight = vw / aspectRatio;
-
-    if (newHeight > vh) {
-        newHeight = vh;
-        newWidth = vh * aspectRatio;
-    }
-
-    canvas.style.width = newWidth + 'px';
-    canvas.style.height = newHeight + 'px';
+    const vw = window.innerWidth*0.8, vh = window.innerHeight*0.8, aspect=720/480;
+    let w=vw,h=vw/aspect; if(h>vh){ h=vh; w=vh*aspect; }
+    setCanvasSize(canvas,w,h);
 }
 
-function addOverlay() {
-    let addOverlayRef = document.getElementById('overlay')
-    let dialogRef = document.getElementById('dialogContent')
-    addOverlayRef.classList.remove('d_none');
-    addOverlayRef.classList.add('show-overlay');
-    dialogRef.innerHTML = renderOverlayContent();
+/**
+ * Sets the canvas display size.
+ * @param {HTMLCanvasElement} canvas - game 
+ * @param {number} width - width in px
+ * @param {number} height - height in px
+ */
+function setCanvasSize(canvas, width, height){
+    canvas.style.width = width+'px';
+    canvas.style.height = height+'px';
+    canvas.style.maxWidth=''; canvas.style.maxHeight='';
 }
 
-function closeOverlay() {
-    let overlay = document.getElementById('overlay');
-    overlay.classList.add('d_none');
-    overlay.classList.remove('show-overlay');
+/**
+ * Toggles the overlay screen.
+ * @param {boolean} [show=false] - show/not show overlay
+ */
+function toggleOverlay(show = false) {
+    const overlay = document.getElementById('overlay');
+    const dialog = document.getElementById('dialogContent');
+    if (show) {
+        overlay.classList.remove('d_none');
+        overlay.classList.add('show-overlay');
+        dialog.innerHTML = renderOverlayContent();
+    } else {
+        overlay.classList.add('d_none');
+        overlay.classList.remove('show-overlay');
+    }
 }
 
-window.addEventListener("keydown", (e) => {
-    if(e.keyCode == 39) {
-        keyboard.RIGHT = true;
-    }
-    if(e.keyCode == 37) {
-        keyboard.LEFT = true;
-    }
-    if(e.keyCode == 38) {
-        keyboard.UP = true;
-    }
-    if(e.keyCode == 40) {
-        keyboard.DOWN = true;
-    }
-    if(e.keyCode == 32) {
-        keyboard.SPACE = true;
-    }
-    if(e.keyCode == 68) {
-        keyboard.D = true;
-    }    
-});
+/**
+ * Binds keys for game controls.
+ */
+function bindKeys() {
+    const keyMap = {
+        39: 'RIGHT',
+        37: 'LEFT',
+        38: 'UP',
+        40: 'DOWN',
+        32: 'SPACE',
+        68: 'D'
+    };
 
-window.addEventListener("keyup", (e) => {
-    if(e.keyCode == 39) {
-        keyboard.RIGHT = false;
-    }
-    if(e.keyCode == 37) {
-        keyboard.LEFT = false;
-    }
-    if(e.keyCode == 38) {
-        keyboard.UP = false;
-    }
-    if(e.keyCode == 40) {
-        keyboard.DOWN = false;
-    }
-    if(e.keyCode == 32) {
-        keyboard.SPACE = false;
-    }
-    if(e.keyCode == 68) {
-        keyboard.D = false;
-    }        
-});
+    Object.entries(keyMap).forEach(([code, key]) => {
+        bindKey(parseInt(code), key);
+    });
+}
 
+/**
+ * Binds single key to keyboard state.
+ * @param {number} keyCode 
+ * @param {string} keyName 
+ */
+function bindKey(keyCode, keyName) {
+    window.addEventListener('keydown', e => {
+        if (e.keyCode === keyCode) {
+            keyboard[keyName] = true;
+        }
+    });
+
+    window.addEventListener('keyup', e => {
+        if (e.keyCode === keyCode) {
+            keyboard[keyName] = false;
+        }
+    });
+}
+
+/**
+ * Sets up mobile joystick controls.
+ */
 function setupJoystick() {
     const joystick = document.getElementById('joystick');
     const stick = document.getElementById('stick');
     let centerX, centerY;
-
     joystick.addEventListener('touchstart', e => {
-        const rect = joystick.getBoundingClientRect();
-        centerX = rect.left + rect.width / 2;
-        centerY = rect.top + rect.height / 2;
+        ({ centerX, centerY } = getJoystickCenter(joystick));
     });
-
     joystick.addEventListener('touchmove', e => {
         e.preventDefault();
-        const touch = e.touches[0];
-        const dx = touch.clientX - centerX;
-        const dy = touch.clientY - centerY;
-        const maxRadius = 40;
-        const distance = Math.min(Math.hypot(dx, dy), maxRadius);
-        const angle = Math.atan2(dy, dx);
-
-
-        const limitedX = Math.cos(angle) * distance;
-        const limitedY = Math.sin(angle) * distance;
-
-        stick.style.transform =
-            `translate(${limitedX}px, ${limitedY}px) translate(-50%, -50%)`;
-        keyboard.LEFT = keyboard.RIGHT = keyboard.UP = keyboard.DOWN = false;
-
-        if (distance > 10) {
-            if (limitedX < -10) keyboard.LEFT = true;
-            if (limitedX >  10) keyboard.RIGHT = true;
-            if (limitedY < -10) keyboard.UP = true;
-            if (limitedY >  10) keyboard.DOWN = true;
-        }
+        handleJoystickMove(e, stick, centerX, centerY);
     });
-
-    joystick.addEventListener('touchend', e => {
-        stick.style.transform = 'translate(-50%, -50%)';
-        keyboard.LEFT = keyboard.RIGHT = keyboard.UP = keyboard.DOWN = false;
+    joystick.addEventListener('touchend', () => {
+        resetJoystick(stick);
     });
-
-    document.getElementById('btn-attack').addEventListener('touchstart', k => { k.preventDefault(); keyboard.SPACE = true; });
-    document.getElementById('btn-attack').addEventListener('touchend', k => { k.preventDefault(); keyboard.SPACE = false; });
-    document.getElementById('btn-throw').addEventListener('touchstart', k => { k.preventDefault(); keyboard.D = true; });
-    document.getElementById('btn-throw').addEventListener('touchend', k => { k.preventDefault(); keyboard.D = false; });
+    setupActionButtons();
 }
 
+/**
+ * Calculates joystick center coordinates.
+ * @param {HTMLElement} joystick - joystick 
+ * @returns {{centerX:number, centerY:number}}
+ */
+function getJoystickCenter(joystick) {
+    const rect = joystick.getBoundingClientRect();
+    return {
+        centerX: rect.left + rect.width / 2,
+        centerY: rect.top + rect.height / 2
+    };
+}
+
+/**
+ * Handles joystick movement
+ * @param {TouchEvent} e - Touch event 
+ * @param {HTMLElement} stick - Stick Element
+ * @param {number} centerX - Stick center X
+ * @param {number} centerY - Stick center Y
+ */
+function handleJoystickMove(e, stick, centerX, centerY) {
+    const touch = e.touches[0];
+    const dx = touch.clientX - centerX;
+    const dy = touch.clientY - centerY;
+    const maxRadius = 40;
+    const distance = Math.min(Math.hypot(dx, dy), maxRadius);
+    const angle = Math.atan2(dy, dx);
+    const limitedX = Math.cos(angle) * distance;
+    const limitedY = Math.sin(angle) * distance;
+    moveStick(stick, limitedX, limitedY);
+    updateKeyboardFromStick(limitedX, limitedY, distance);
+}
+
+/**
+ * Joystick visual movement
+ * @param {HTMLElement} stick - Stick Element 
+ * @param {number} x - Offset X
+ * @param {number} y - Offset Y
+ */
+function moveStick(stick, x, y) {
+    stick.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
+}
+
+/**
+ * Updates keyboard state from joystick input.
+ * @param {number} x - Movement X
+ * @param {number} y - Movement Y
+ * @param {number} distance - Distance center
+ */
+function updateKeyboardFromStick(x, y, distance) {
+    keyboard.LEFT = keyboard.RIGHT = keyboard.UP = keyboard.DOWN = false;
+    if (distance > 10) {
+        if (x < -10) keyboard.LEFT = true;
+        if (x >  10) keyboard.RIGHT = true;
+        if (y < -10) keyboard.UP = true;
+        if (y >  10) keyboard.DOWN = true;
+    }
+}
+
+/**
+ * Resets joystick to center and clears movement.
+ * @param {HTMLElement} stick - Joystick 
+ */
+function resetJoystick(stick) {
+    moveStick(stick, 0, 0);
+    keyboard.LEFT = keyboard.RIGHT = keyboard.UP = keyboard.DOWN = false;
+}
+
+/**
+ * Sets up action buttons for mobile version.
+ */
+function setupActionButtons() {
+    bindTouchButton('btn-attack', 'SPACE');
+    bindTouchButton('btn-throw', 'D');
+}
+
+/**
+ * Binds touch button to keyboard.
+ * @param {string} buttonId - Button ID
+ * @param {string} keyName - Keyboard action name
+ */
+function bindTouchButton(buttonId, keyName) {
+    const btn = document.getElementById(buttonId);
+    btn.addEventListener('touchstart', e => {
+        e.preventDefault();
+        keyboard[keyName] = true;
+    });
+    btn.addEventListener('touchend', e => {
+        e.preventDefault();
+        keyboard[keyName] = false;
+    });
+}
+
+/**
+ * Shows mobile controls.
+ */
 function showMobileControls() {
     document.getElementById('joystick').style.display = 'block';
     document.getElementById('btn-attack').style.display = 'block';
     document.getElementById('btn-throw').style.display = 'block';
 }
 
+/**
+ * Hides mobile controls.
+ */
 function hideMobileControls() {
     document.getElementById('joystick').style.display = 'none';
     document.getElementById('btn-attack').style.display = 'none';
