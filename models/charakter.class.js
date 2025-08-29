@@ -5,7 +5,9 @@ class Character extends MovableObject {
     height = 150;
     speed = 5;
     energy = 100;
-    lastKeyPressed = new Date().getTime();
+    lastKeyPressed = Date.now();
+    intervals = [];
+    snoringPlaying = false;
     finSlapped = false;
     spacePressedLog = false;
     deadAnimationPlayed = false;
@@ -13,14 +15,9 @@ class Character extends MovableObject {
     bubbleAttacking = false;
     poisonBubblesUnlocked = false;
     isPlayingHurtSound = false;
-    intervals = [];
 
-    offSet = {
-    top : 35,
-    bottom : 70,
-    left : 25,
-    right : 40
-    };
+    world;
+    offSet = {top : 35, bottom : 70, left : 25, right : 40};
 
     IMAGES_IDLE = [
         '../img/1.Sharkie/1.IDLE/1.png',
@@ -143,8 +140,6 @@ class Character extends MovableObject {
         '../img/1.Sharkie/4.Attack/Bubble trap/For Whale/8.png'
     ];
 
-    world;
-
     constructor(){
         super().loadImage('../img/1.Sharkie/3.Swim/3.png');
         this.loadImages(this.IMAGES_SWIMMING);
@@ -158,163 +153,159 @@ class Character extends MovableObject {
         this.loadImages(this.IMAGES_BUBBLE_ATTACK);
         this.loadImages(this.IMAGES_BUBBLE_POISON_ATTACK);
 
-        this.lastKeyPressed = new Date().getTime();
-        this.snoringPlaying = false;
-
         this.startAnimationLoops();
     }
 
-    startAnimationLoops() {
-        let moveInterval = setInterval(() => {
-            if(!this.world) return;
 
-            if(this.isDead()) {
-                if (!this.floatUpActive) this.floatUpActive = true;
-                if(this.lastHitType === "poison" || this.lastHitType === "default") {
-                    if (this.y > -50) this.y -= 1;
-                } else if (this.lastHitType === "electro") {
-                    if (this.y < 300) this.y += 1;
-                }
-                return;
-            }
-
-            if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-                this.moveRight();
-                this.otherDirection = false;
-            }
-            if (this.world.keyboard.LEFT && this.x > 0 && this.x < this.world.level.level_end_x) {
-                this.x -= this.speed;
-                this.otherDirection = true;
-            }
-            if (this.world.keyboard.UP && this.y > this.world.level.level_end_top) this.y -= this.speed;
-            if (this.world.keyboard.DOWN && this.y < this.world.level.level_end_bottom) this.y += this.speed;
-            if (this.x >= this.world.level.level_end_x) this.poisonBubbleUnlocked = true;
-
-            this.world.camera_x = -this.x + 50;
-        }, 1000 / 60);
-        this.intervals.push(moveInterval);
-
-        let animInterval = setInterval(() => {
-            if(!this.world) return;
-            if(this.isDead()) {
-                if (!this.deadAnimationPlayed) {
-                    this.deadAnimationPlayed = true;
-                    audioManager.playSFX('char_dead');
-                    if (this.lastHitType === "poison") this.playAnimationSequence(this.IMAGES_DEAD_POISON, 150);
-                    else if (this.lastHitType === "electro") this.playAnimationSequence(this.IMAGES_DEAD_SHOCKED, 150);
-                    else this.playAnimationSequence(this.IMAGES_DEAD_POISON, 150);
-                }
-            } else if (this.isHurt()) {
-                this.handleHurtSound();
-                if (this.lastHitType === "poison") this.playAnimation(this.IMAGES_HURT_POISONED);
-                else if (this.lastHitType === "electro") this.playAnimation(this.IMAGES_HURT_SHOCKED);
-                else this.playAnimation(this.IMAGES_HURT_POISONED);
-            } else {
-                this.isPlayingHurtSound = false;
-        let isMoving = this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN;
-
-        if (isMoving) {
-            if (this.snoringPlaying) {
-                audioManager.stopSFX('snoring');
-                this.snoringPlaying = false;
-            }
-            this.lastKeyPressed = new Date().getTime();
-            this.playAnimation(this.IMAGES_SWIMMING);
-        } else {
-            let idleTime = new Date().getTime() - this.lastKeyPressed;
-            if (this.world && this.world.currentLevelNumber && idleTime > 10000) {
-                this.playAnimation(this.IMAGES_LONG_IDLE);
-                if (!this.snoringPlaying) {
-                    audioManager.playSFX('snoring');
-                    this.snoringPlaying = true;
-                }
-            } else {
-                this.playAnimation(this.IMAGES_IDLE);
-            }
-        }
-    }        
-        }, 175);
-        this.intervals.push(animInterval);
-
-        let attackInterval = setInterval(() => {
-            if (!this.isDead()) {
-                if (this.world.keyboard.SPACE && !this.spacePressedLog && this.x < this.world.level.level_end_x) {
-                    this.finSlap();
-                }
-                this.spacePressedLog = this.world.keyboard.SPACE;
-            }
-        }, 1000 / 60);
-        this.intervals.push(attackInterval);
+startAnimationLoops() {
+        this.intervals.push(this.createInterval(() => this.handleMovement(), 1000/60));
+        this.intervals.push(this.createInterval(() => this.handleAnimation(), 175));
+        this.intervals.push(this.createInterval(() => this.handleAttacks(), 1000/60));
     }
 
-stopAllIntervals() {
-    this.intervals.forEach(i => clearInterval(i));
-    this.intervals = [];
-    if (this.snoringPlaying) {
-        audioManager.stopSFX('snoring');
+    createInterval(fn, ms) {
+        const id = setInterval(fn, ms);
+        return id;
+    }
+
+handleMovement() {
+    if (!this.world || this.isDead()) return this.handleDeathMovement();
+    let levelEndX = this.world.level.level_end_x;
+    if (this.x < levelEndX) {
+        if (this.world.keyboard.RIGHT) {
+            this.moveRight();
+            this.otherDirection = false;
+        } else if (this.world.keyboard.LEFT && this.x > 0) {
+            this.x -= this.speed;
+            this.otherDirection = true;
+        }
+    } else {
+        this.x = levelEndX;
+        this.poisonBubblesUnlocked = true;
+        this.otherDirection = false;
+    }
+    if (this.world.keyboard.UP && this.y > this.world.level.level_end_top) this.y -= this.speed;
+    if (this.world.keyboard.DOWN && this.y < this.world.level.level_end_bottom) this.y += this.speed;
+    this.world.camera_x = -this.x + 50;
+}
+
+    handleAnimation() {
+        if (!this.world) return;
+        if (this.isDead()) return this.playDeathAnimation();
+        if (this.isHurt()) return this.playHurtAnimation();
+
+        this.isPlayingHurtSound = false;
+        const moving = this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN;
+        if (moving) return this.playMovingAnimation();
+        
+        const idleTime = Date.now() - this.lastKeyPressed;
+        if (idleTime > 10000) return this.playLongIdleAnimation();
+        this.playAnimation(this.IMAGES_IDLE);
+    }
+
+    handleAttacks() {
+        if (!this.isDead() && this.world.keyboard.SPACE && !this.spacePressedLog) this.finSlap();
+        this.spacePressedLog = this.world.keyboard.SPACE;
+    }
+
+    stopAllIntervals() {
+        this.intervals.forEach(clearInterval);
+        this.intervals = [];
+        if (this.snoringPlaying) audioManager.stopSFX('snoring');
         this.snoringPlaying = false;
     }
-}
-    
-    finSlap(){
-        if(this.finSlapped) return;
-        this.finSlapped = true;
-        audioManager.playSFX('slap');
-        let startingX = this.x;
-        let totalSlap = 500;
-        let frames = 30;
-        let slapDuration = totalSlap /frames;
-        let maxSlapToX = 50;
-        let movementFrame = 0;
-        let directionFactor = this.otherDirection ? -1 : 1;
 
-        this.currentFrame = 0;
-        
-        let moveInterval = setInterval(() => {
-            let progress = movementFrame / frames;
-            let slapToX = Math.sin(progress * Math.PI) * maxSlapToX * directionFactor;
-            this.x = Math.round(startingX + slapToX);
-
-            movementFrame++;
-            if (movementFrame > frames) {
-                clearInterval(moveInterval);
-                this.x = startingX;
-                this.finSlapped = false;
-            }
-        }, slapDuration);
-        this.playAnimationSequence(this.IMAGES_FIN_SLAP, 60);
-    }
-
-    bubbleAttack() {
-        if (this.bubbleAttacking) return;
-        this.bubbleAttacking = true;
-        let usePoison = this.poisonBubbleUnlocked && this.world.poisonBar.percentage > 0;
-        audioManager.playSFX('bubble');
-        if (usePoison) {
-            this.playAnimationSequence(this.IMAGES_BUBBLE_POISON_ATTACK, 60);
-        } else {
-            this.playAnimationSequence(this.IMAGES_BUBBLE_ATTACK, 60);
+    handleDeathMovement() {
+        if (!this.floatUpActive) this.floatUpActive = true;
+        if (this.lastHitType === "poison" || this.lastHitType === "default") {
+            if (this.y > -50) this.y -= 1;
+        } else if (this.lastHitType === "electro") {
+            if (this.y < 300) this.y += 1;
         }
-        setTimeout(() => {
-            if (this.world) {
-                let type = usePoison ? 'poison' : 'normal';
-                let bubble = new ThrowableObject(this.x + 100, this.y + 100, type);
-                this.world.throwableObjects.push(bubble);
-                if (type === 'poison') {
-                    this.world.poisonBar.setPercentage(Math.max(this.world.poisonBar.percentage - 10, 0));
-                }
-            }
-            this.bubbleAttacking = false;
-        }, (this.world.poisonBar.percentage > 0 ? this.IMAGES_BUBBLE_POISON_ATTACK.length : this.IMAGES_BUBBLE_ATTACK.length) * 60);
     }
 
-    handleHurtSound() {
-        if (!this.isPlayingHurtSound) {
-            if (this.lastHitType === "poison") audioManager.playSFX('poisoned');
-            else if (this.lastHitType === "electro") audioManager.playSFX('shocked');
-            else audioManager.playSFX('poisoned');
+    playDeathAnimation() {
+        if (!this.deadAnimationPlayed) {
+            this.deadAnimationPlayed = true;
+            audioManager.playSFX('char_dead');
+            const anim = this.lastHitType === "electro" ? this.IMAGES_DEAD_SHOCKED : this.IMAGES_DEAD_POISON;
+            this.playAnimationSequence(anim, 150);
+        }
+    }
 
+    playHurtAnimation() {
+        if (!this.isPlayingHurtSound) {
+            const sound = this.lastHitType === "electro" ? 'shocked' : 'poisoned';
+            audioManager.playSFX(sound);
             this.isPlayingHurtSound = true;
         }
+        const anim = this.lastHitType === "electro" ? this.IMAGES_HURT_SHOCKED : this.IMAGES_HURT_POISONED;
+        this.playAnimation(anim);
     }
+
+    playMovingAnimation() {
+        if (this.snoringPlaying) {
+            audioManager.stopSFX('snoring');
+            this.snoringPlaying = false;
+        }
+        this.lastKeyPressed = Date.now();
+        this.playAnimation(this.IMAGES_SWIMMING);
+    }
+
+    playLongIdleAnimation() {
+        this.playAnimation(this.IMAGES_LONG_IDLE);
+        if (!this.snoringPlaying) {
+            audioManager.playSFX('snoring');
+            this.snoringPlaying = true;
+        }
+    }
+
+finSlap() {
+    if (this.finSlapped) return;
+    this.finSlapped = true;
+    audioManager.playSFX('slap');
+
+    this.animateMovement(30, 50, this.otherDirection, progress => 
+        Math.sin(progress * Math.PI)
+    , () => this.finSlapped = false);
+
+    this.playAnimationSequence(this.IMAGES_FIN_SLAP, 60);
+}
+
+bubbleAttack() {
+    if (this.bubbleAttacking || !this.world || this.otherDirection) return;
+    this.bubbleAttacking = true;
+    const usePoison = this.poisonBubblesUnlocked && this.world.poisonBar.percentage > 0;
+    const anim = usePoison ? this.IMAGES_BUBBLE_POISON_ATTACK : this.IMAGES_BUBBLE_ATTACK;
+    audioManager.playSFX('bubble');
+    this.playAnimationSequence(anim, 60);
+    const startX = this.getBubbleStartX();
+    setTimeout(() => {
+        if (!this.world) return;
+        const type = usePoison ? 'poison' : 'normal';
+        this.world.throwableObjects.push(new ThrowableObject(startX, this.y + 100, type, 1));
+        if (usePoison) this.world.poisonBar.setPercentage(Math.max(this.world.poisonBar.percentage - 10, 0));
+        this.bubbleAttacking = false;
+    }, anim.length * 60);
+}
+
+getBubbleStartX() {
+    const moving = this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN;
+    const offset = moving ? 100 : -20;
+    return this.x + this.width + offset;
+}
+
+animateMovement(frames, maxX, reverse, progressFn, onComplete) {
+    const startX = this.x;
+    let frame = 0;
+    const direction = reverse ? -1 : 1;
+    const interval = setInterval(() => {
+        this.x = Math.round(startX + progressFn(frame / frames) * maxX * direction);
+        if (++frame > frames) {
+            clearInterval(interval);
+            this.x = startX;
+            onComplete?.();
+        }
+    }, 500 / frames);
+}
 }
