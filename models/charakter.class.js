@@ -222,7 +222,7 @@ class Character extends MovableObject {
             this.playAnimation(this.IMAGES_SWIMMING);
         } else {
             let idleTime = new Date().getTime() - this.lastKeyPressed;
-            if (idleTime > 10000) {
+            if (this.world && this.world.currentLevelNumber && idleTime > 10000) {
                 this.playAnimation(this.IMAGES_LONG_IDLE);
                 if (!this.snoringPlaying) {
                     audioManager.playSFX('snoring');
