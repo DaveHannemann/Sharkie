@@ -168,12 +168,12 @@ startRandomAttacks() {
             attackIntervalTime = 2000;
             break;
         case 2:
-            attackChance = 0.65;
-            attackIntervalTime = 1700;
+            attackChance = 0.55;
+            attackIntervalTime = 1800;
             break;
         case 3:
-            attackChance = 0.8;
-            attackIntervalTime = 1400;
+            attackChance = 0.6;
+            attackIntervalTime = 1600;
             break;
         default:
             attackChance = 0.5;
@@ -266,7 +266,7 @@ takeDamage(amount) {
     if (this.isAttacking || this.isHurtAnimationPlaying || this.isDeadAnimationPlaying) return;
 
     this.energy -= amount;
-    if (this.energy < 0) {
+    if (this.energy <= 0) {
         this.energy = 0;
         this.die();
     } else {

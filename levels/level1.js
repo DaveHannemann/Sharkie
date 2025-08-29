@@ -1,11 +1,19 @@
 function createLevel1() {
     return new Level(
     [
-        new Fish('easy', 700, 200, 0.3),
-        new Fish('medium', 1000, 100, 0.5),
-        new Fish('hard', 1400, 300, 0.6),
-        new JellyFish('electro', 'green', 900, 250, 0.4),
-        new JellyFish('poison', 'purple', 1500, 250, 0.4),
+        new Fish('easy', 800, 180, 0.3),
+        new Fish('easy', 1010, 360, 0.3),
+        new Fish('easy', 1430, 45, 0.3),
+        new Fish('easy', 1640, 270, 0.3),
+        new Fish('easy', 2060, 135, 0.3),
+        new Fish('easy', 2270, 225, 0.3),
+        new Fish('easy', 2690, 315, 0.3),
+        new Fish('medium', 2900, 90, 0.5),
+        new Fish('medium', 3320, 385, 0.5),
+        new JellyFish('electro', 'green', 1220, 125, 0.4),
+        new JellyFish('poison', 'purple', 1850, 275, 0.4),
+        new JellyFish('electro', 'pink', 2480, 225, 0.4),
+        new JellyFish('poison', 'yellow', 3110, 175, 0.4),
         new Endboss(),
     ],
     [

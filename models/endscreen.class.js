@@ -49,17 +49,19 @@ class EndScreen extends DrawableObject {
                 isStatic: true,
                 text: 'Home',
             },
-                        {
-                name: 'nextLevel',
-                x: 640,
-                y: 420,
-                width: 60,
-                height: 60,
-                currentIndex: 0,
-                images: ['../img/6.Botones/next_level.png'],
-                isStatic: true,
-            },
         ];
+                    if (this.onNextLevel) {
+                this.animatedButtons.push({
+                    name: 'nextLevel',
+                    x: 640,
+                    y: 420,
+                    width: 60,
+                    height: 60,
+                    currentIndex: 0,
+                    images: ['../img/6.Botones/next_level.png'],
+                    isStatic: true,
+                });
+            }
     }
 
             if (this.mode === "lose") {

@@ -158,6 +158,9 @@ class Character extends MovableObject {
         this.loadImages(this.IMAGES_BUBBLE_ATTACK);
         this.loadImages(this.IMAGES_BUBBLE_POISON_ATTACK);
 
+        this.lastKeyPressed = new Date().getTime();
+        this.snoringPlaying = false;
+
         this.startAnimationLoops();
     }
 
@@ -192,6 +195,7 @@ class Character extends MovableObject {
         this.intervals.push(moveInterval);
 
         let animInterval = setInterval(() => {
+            if(!this.world) return;
             if(this.isDead()) {
                 if (!this.deadAnimationPlayed) {
                     this.deadAnimationPlayed = true;
@@ -243,10 +247,14 @@ class Character extends MovableObject {
         this.intervals.push(attackInterval);
     }
 
-    stopAllIntervals() {
-        this.intervals.forEach(i => clearInterval(i));
-        this.intervals = [];
+stopAllIntervals() {
+    this.intervals.forEach(i => clearInterval(i));
+    this.intervals = [];
+    if (this.snoringPlaying) {
+        audioManager.stopSFX('snoring');
+        this.snoringPlaying = false;
     }
+}
     
     finSlap(){
         if(this.finSlapped) return;

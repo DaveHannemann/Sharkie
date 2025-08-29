@@ -123,10 +123,12 @@ restartLevel(levelNumber = this.currentLevelNumber) {
                                 audioManager.stopAll();
                                 audioManager.playMusic('start');
                             },
-                            () => {                                                   
-                                this.restartLevel(this.currentLevelNumber + 1);
-                                if ('ontouchstart' in window) showMobileControls();
-                            }
+                            this.currentLevelNumber < 3 
+                                ? () => {                                                   
+                                    this.restartLevel(this.currentLevelNumber + 1);
+                                    if ('ontouchstart' in window) showMobileControls();
+                                }
+                                : null
                         );
                     }, 3000);
                 }
