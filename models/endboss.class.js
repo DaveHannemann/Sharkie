@@ -210,40 +210,41 @@ attack() {
     this.attackCD = true;
     const startX = this.x;
     const swimDistance = 300, attackDistance = 150, attackSpeed = 8;
-    this.performSwimPhase(startX, swimDistance, attackSpeed);
+    this.performSwimPhase(startX, swimDistance, attackDistance, attackSpeed);
 }
 
 /**
  * Handles swim phase during attack
  * @param {number} startX - X position start
- * @param {number} distance - swim distance
+ * @param {number} swimDistance - swim distance
+ * @param {number} attackDistance - attack distance
  * @param {number} speed - movement speed
  */
-performSwimPhase(startX, distance, speed) {
+performSwimPhase(startX, swimDistance, attackDistance, speed) {
     let i = 0, ticks = 0, frames = [...this.IMAGES_SWIMMING];
     this.intervals.swimAttack = setInterval(() => {
         if (this.isDead) return clearInterval(this.intervals.swimAttack);
         this.x -= speed;
         if (ticks % 6 === 0) this.img = this.imageCache[frames[i]], i = (i + 1) % frames.length;
         ticks++;
-        if (this.x <= startX - distance) clearInterval(this.intervals.swimAttack), this.performAttackPhase(startX, distance, speed);
+        if (this.x <= startX - swimDistance) clearInterval(this.intervals.swimAttack), this.performAttackPhase(startX, attackDistance, speed);
     }, 1000 / 60);
 }
 
 /**
  * Handles attack phase
  * @param {number} startX - X position start
- * @param {number} distance - swim distance
+ * @param {number} distance - attack distance
  * @param {number} speed - movement speed
  */
-performAttackPhase(startX, distance, speed) {
+performAttackPhase(startX, attackDistance, speed) {
     let i = 0, ticks = 0, frames = [...this.IMAGES_ATTACKING];
-    const frameRate = Math.ceil(distance / speed / frames.length);
+    const frameRate = Math.ceil(attackDistance / speed / frames.length);
     this.intervals.attackAttack = setInterval(() => {
         this.x -= speed;
         if (ticks % frameRate === 0 && i < frames.length) { this.img = this.imageCache[frames[i]]; if (i === 0) audioManager.playSFX('boss_attack'); i++; }
         ticks++;
-        if (this.x <= startX - distance * 2) clearInterval(this.intervals.attackAttack), this.returnToStart(startX, speed);
+        if (this.x <= startX - 300 - attackDistance) clearInterval(this.intervals.attackAttack), this.returnToStart(startX, speed);
     }, 1000 / 60);
 }
 
