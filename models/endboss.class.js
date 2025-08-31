@@ -19,14 +19,7 @@ class Endboss extends MovableObject {
     attackCD = false;
     isDeadAnimationPlaying = false;
 
-    mainInterval;
-    entranceInterval;
-    swimmingInterval;
-    movementInterval;
-    attackInterval;
-    swimAttackInterval;
-    attackAttackInterval;
-    returnAttackInterval;
+    intervals = {};
 
 IMAGES_ENTRANCE = [
     '../img/2.Enemy/3 Final Enemy/1.Introduce/1.png',
@@ -98,191 +91,213 @@ constructor(world){
     this.movingDown = true;
 }
 
-    animate() {
-        if (this.mainInterval) return;
-        let i = 0;
+/**
+ * Starts animation for endboss.
+ * @returns {void}
+ */
+animate() {
+    if (this.intervals.main) return;
+    this.intervals.main = setInterval(() => this.handleMainLoop(), 1000 / 60);
+}
 
-        this.mainInterval = setInterval(() => {
-            if (this.isDead) {
-                clearInterval(this.mainInterval);
-                audioManager.stopMusic('endboss');
-                return;
-            }
-            if (!this.endBossShow && this.world && this.world.charakter && this.world.charakter.x > 2600) {
-                this.endBossShow = true;
-                this.hadFirstContact = true;
-                this.x = 3250;
-                audioManager.stopMusic('main');
-                audioManager.playMusic('endboss');
+/**
+ * Handles main loop logic and condition to meet endboss.
+ * @returns {void}
+ */
+handleMainLoop() {
+    if (this.isDead) return this.stopAllIntervals();
+    if (!this.endBossShow && this.world?.charakter?.x > 2600) this.triggerEntrance();
+}
 
-                this.entranceInterval = setInterval(() => {
-                    if (i < this.IMAGES_ENTRANCE.length) {
-                        this.playAnimationOnce(this.IMAGES_ENTRANCE, i);
-                        i++;
-                    } else {
-                        clearInterval(this.entranceInterval);
+/**
+ * Triggers entrance animation and music for endboss.
+ */
+triggerEntrance() {
+    this.endBossShow = true;
+    this.hadFirstContact = true;
+    this.x = 3250;
+    audioManager.stopMusic('main');
+    audioManager.playMusic('endboss');
+    this.playEntranceAnimation();
+}
 
-                        this.swimmingInterval = setInterval(() => {
-                            if (this.isDead) {
-                                clearInterval(this.swimmingInterval);
-                                return;
-                            }
-                            this.playAnimation(this.IMAGES_SWIMMING);
-                        }, 175);
+/**
+ * Plays entrance animation.
+ */
+playEntranceAnimation() {
+    let i = 0;
+    this.intervals.entrance = setInterval(() => {
+        if (i < this.IMAGES_ENTRANCE.length) this.playAnimationOnce(this.IMAGES_ENTRANCE, i++);
+        else {
+            clearInterval(this.intervals.entrance);
+            this.startSwimming();
+            this.startMovement();
+            this.startRandomAttacks();
+        }
+    }, 175);
+}
 
-                        this.startMovement();
-                        this.startRandomAttacks();
-                    }
-                }, 175);
-            }
-        }, 1000 / 60);
-    }
+/**
+ * Plays swimming animation.
+ */
+startSwimming() {
+    this.intervals.swimming = setInterval(() => {
+        if (this.isDead) return clearInterval(this.intervals.swimming);
+        this.playAnimation(this.IMAGES_SWIMMING);
+    }, 175);
+}
 
-    startMovement() {
-        let minY = -180;
-        let maxY = 150;
+/**
+ * Starts movement for endboss.
+ */
+startMovement() {
+    const [minY, maxY] = [-180, 150];
+    this.intervals.movement = setInterval(() => {
+        if (this.isDead) return clearInterval(this.intervals.movement);
+        if (this.isAttacking) return;
+        this.movingDown ? this.moveDown(maxY) : this.moveUp(minY);
+    }, 1000 / 60);
+}
 
-        this.movementInterval = setInterval(() => {
-            if (this.isDead) {
-                clearInterval(this.movementInterval);
-                return;
-            }
-            if (this.isAttacking) return;
+/**
+ * Moves the endboss down.
+ * @param {number} maxY - Max Y position
+ */
+moveDown(maxY) {
+    this.y += this.speedY;
+    if (this.y > maxY) this.movingDown = false;
+}
 
-            if (this.movingDown) {
-                this.y += this.speedY;
-                if (this.y > maxY) this.movingDown = false;
-            } else {
-                this.y -= this.speedY;
-                if (this.y < minY) this.movingDown = true;
-            }
-        }, 1000 / 60);
-    }
+/**
+ * Moves the endboss up.
+ * @param {number} minY - Min Y position 
+ */
+moveUp(minY) {
+    this.y -= this.speedY;
+    if (this.y < minY) this.movingDown = true;
+}
 
+/**
+ * Starts random attacks.
+ */
 startRandomAttacks() {
-    let attackChance;
-    let attackIntervalTime;
-    switch(this.world.currentLevelNumber) {
-        case 1: 
-            attackChance = 0.5;
-            attackIntervalTime = 2000;
-            break;
-        case 2:
-            attackChance = 0.55;
-            attackIntervalTime = 1800;
-            break;
-        case 3:
-            attackChance = 0.6;
-            attackIntervalTime = 1600;
-            break;
-        default:
-            attackChance = 0.5;
-            attackIntervalTime = 2000;
-    }
-    this.attackInterval = setInterval(() => {
-        if (this.isDead) {
-            clearInterval(this.attackInterval);
-            return;
-        }
-        if (this.attackCD) return;
-
-        if (Math.random() < attackChance) {
-            this.attack();
-        }
+    const { attackChance, attackIntervalTime } = this.getAttackSettings();
+    this.intervals.attack = setInterval(() => {
+        if (this.isDead) return clearInterval(this.intervals.attack);
+        if (!this.attackCD && Math.random() < attackChance) this.attack();
     }, attackIntervalTime);
 }
 
-attack() {
-    if (this.isDead) return; 
-    if (this.isAttacking) return;
-    this.isAttacking = true;
-    this.attackCD = true;
-
-    let startX = this.x;
-    let swimDistance = 300;
-    let attackDistance = 150; 
-    let attackSpeed = 8;
-    let swimFrames = [...this.IMAGES_SWIMMING];
-    let swimFrameIndex = 0;
-    let swimTicks = 0;
-    let swimFrameRate = 6;
-
-    this.swimAttackInterval = setInterval(() => {
-        if (this.isDead) {
-            clearInterval(this.swimAttackInterval);
-            return;
-        }
-        this.x -= attackSpeed;
-        if (swimTicks % swimFrameRate === 0) {
-            this.img = this.imageCache[swimFrames[swimFrameIndex]];
-            swimFrameIndex = (swimFrameIndex + 1) % swimFrames.length;
-        }
-        swimTicks++;
-
-        if (this.x <= startX - swimDistance) {
-            clearInterval(this.swimAttackInterval);
-            startAttackPhase();
-        }
-    }, 1000 / 60);
-    const startAttackPhase = () => {
-        let attackFrames = [...this.IMAGES_ATTACKING];
-        let frameIndex = 0;
-        let frameChangeRate = Math.ceil((attackDistance / attackSpeed) / attackFrames.length);
-        let ticks = 0;
-
-        this.attackAttackInterval = setInterval(() => {
-            this.x -= attackSpeed;
-
-            if (ticks % frameChangeRate === 0 && frameIndex < attackFrames.length) {
-                this.img = this.imageCache[attackFrames[frameIndex]];
-                if (frameIndex === 0) {
-                audioManager.playSFX('boss_attack');
-                }
-                frameIndex++;
-            }
-            ticks++;
-
-            if (this.x <= startX - swimDistance - attackDistance) {
-                clearInterval(this.attackAttackInterval);
-                this.img = this.imageCache[this.IMAGES_SWIMMING[0]];
-                returnToStart();
-            }
-        }, 1000 / 60);
-    };
-    const returnToStart = () => {
-        this.returnAttackInterval = setInterval(() => {
-            this.x += attackSpeed / 2;
-            if (this.x >= startX) {
-                this.x = startX;
-                clearInterval(this.returnAttackInterval);
-                this.isAttacking = false;
-                setTimeout(() => this.attackCD = false, 2000);
-            }
-        }, 1000 / 60);
-    };
-}
-
-takeDamage(amount) {
-    if (this.isAttacking || this.isHurtAnimationPlaying || this.isDeadAnimationPlaying) return;
-
-    this.energy -= amount;
-    if (this.energy <= 0) {
-        this.energy = 0;
-        this.die();
-    } else {
-        this.isHurtAnimationPlaying = true;
-        this.pauseAllActions();
-
-        this.playAnimationSequence(this.IMAGES_HURT, 150);
-        audioManager.playSFX('poisoned');
-
-        setTimeout(() => {
-            this.isHurtAnimationPlaying = false;
-            this.resumeAllActions();
-        }, this.IMAGES_HURT.length * 150 + 500);
+/**
+ * Attack probability based on level.
+ * @returns {{attackChance: number, attackIntervalTime: number}}
+ */
+getAttackSettings() {
+    switch (this.world.currentLevelNumber) {
+        case 2: return { attackChance: 0.55, attackIntervalTime: 1800 };
+        case 3: return { attackChance: 0.6, attackIntervalTime: 1600 };
+        default: return { attackChance: 0.5, attackIntervalTime: 2000 };
     }
 }
 
+/**
+ * Initiates attack sequence.
+ * @returns {void}
+ */
+attack() {
+    if (this.isDead || this.isAttacking) return;
+    this.isAttacking = true;
+    this.attackCD = true;
+    const startX = this.x;
+    const swimDistance = 300, attackDistance = 150, attackSpeed = 8;
+    this.performSwimPhase(startX, swimDistance, attackSpeed);
+}
+
+/**
+ * Handles swim phase during attack
+ * @param {number} startX - X position start
+ * @param {number} distance - swim distance
+ * @param {number} speed - movement speed
+ */
+performSwimPhase(startX, distance, speed) {
+    let i = 0, ticks = 0, frames = [...this.IMAGES_SWIMMING];
+    this.intervals.swimAttack = setInterval(() => {
+        if (this.isDead) return clearInterval(this.intervals.swimAttack);
+        this.x -= speed;
+        if (ticks % 6 === 0) this.img = this.imageCache[frames[i]], i = (i + 1) % frames.length;
+        ticks++;
+        if (this.x <= startX - distance) clearInterval(this.intervals.swimAttack), this.performAttackPhase(startX, distance, speed);
+    }, 1000 / 60);
+}
+
+/**
+ * Handles attack phase
+ * @param {number} startX - X position start
+ * @param {number} distance - swim distance
+ * @param {number} speed - movement speed
+ */
+performAttackPhase(startX, distance, speed) {
+    let i = 0, ticks = 0, frames = [...this.IMAGES_ATTACKING];
+    const frameRate = Math.ceil(distance / speed / frames.length);
+    this.intervals.attackAttack = setInterval(() => {
+        this.x -= speed;
+        if (ticks % frameRate === 0 && i < frames.length) { this.img = this.imageCache[frames[i]]; if (i === 0) audioManager.playSFX('boss_attack'); i++; }
+        ticks++;
+        if (this.x <= startX - distance * 2) clearInterval(this.intervals.attackAttack), this.returnToStart(startX, speed);
+    }, 1000 / 60);
+}
+
+/**
+ * Returns endboss to start position after attack phase
+ * @param {number} startX - X position start
+ * @param {number} speed - movement speed
+ */
+returnToStart(startX, speed) {
+    this.intervals.returnAttack = setInterval(() => {
+        this.x += speed / 2;
+        if (this.x >= startX) this.x = startX, clearInterval(this.intervals.returnAttack), this.isAttacking = false, setTimeout(() => this.attackCD = false, 2000);
+    }, 1000 / 60);
+}
+
+/**
+ * Applies damage to the boss.
+ * @param {number} amount - damage taken 
+ * @returns {void}
+ */
+takeDamage(amount) {
+    if (this.isAttacking || this.isHurtAnimationPlaying || this.isDeadAnimationPlaying) return;
+    this.energy -= amount;
+    if (this.energy <= 0) return this.die();
+    this.playHurtSequence();
+}
+
+/**
+ * Plays endboss hurt animation
+ */
+playHurtSequence() {
+    this.isHurtAnimationPlaying = true;
+    this.pauseAllActions();
+    this.playAnimationSequence(this.IMAGES_HURT, 150);
+    audioManager.playSFX('poisoned');
+    setTimeout(() => { this.isHurtAnimationPlaying = false; this.resumeAllActions(); }, this.IMAGES_HURT.length * 150 + 500);
+}
+
+/**
+ * Plays endboss death animation and stops other actions
+ */
+die() {
+    this.isDead = true;
+    this.isDeadAnimationPlaying = true;
+    this.pauseAllActions();
+    this.stopAllIntervals();
+    this.playAnimationSequence(this.IMAGES_DEAD, 150);
+    audioManager.playSFX('boss_dead');
+    setTimeout(() => { this.isDeadAnimationPlaying = false; this.img = this.imageCache[this.IMAGES_DEAD.at(-1)]; }, this.IMAGES_DEAD.length * 150);
+}
+
+/**
+ * Pauses all actions
+ */
 pauseAllActions() {
     this.wasAttackingBeforePause = this.isAttacking;
     this.isAttacking = false;
@@ -292,58 +307,62 @@ pauseAllActions() {
     this.pausedX = this.x;
 }
 
+/**
+ * Resumes all actions previously paused
+ */
 resumeAllActions() {
     this.x = this.pausedX || this.x;
     this.speedY = this.speedYBackup || 1.5;
     this.attackCD = false;
-    if (this.wasAttackingBeforePause) {
-        this.attack();
-    }
+    if (this.wasAttackingBeforePause) this.attack();
 }
 
-die() {
-    this.isDead = true;
-    this.isDeadAnimationPlaying = true;
-    this.pauseAllActions();
-    clearInterval(this.mainInterval);
-    clearInterval(this.entranceInterval);
-    clearInterval(this.swimmingInterval);
-    clearInterval(this.movementInterval);
-    clearInterval(this.attackInterval);
-    this.playAnimationSequence(this.IMAGES_DEAD, 150);
-    audioManager.playSFX('boss_dead');
-    setTimeout(() => {
-        this.isDeadAnimationPlaying = false;
-        this.img = this.imageCache[this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1]];
-    }, this.IMAGES_DEAD.length * 150);
-}
-
+/**
+ * Stops everything the endboss is doing
+ */
 stopAllIntervals() {
-    clearInterval(this.mainInterval);
-    clearInterval(this.entranceInterval);
-    clearInterval(this.swimmingInterval);
-    clearInterval(this.movementInterval);
-    clearInterval(this.attackInterval);
-    clearInterval(this.swimAttackInterval);
-    clearInterval(this.attackAttackInterval);
-    clearInterval(this.returnAttackInterval);
+    Object.values(this.intervals).forEach(clearInterval);
+    this.intervals = {};
 }
 
+/**
+ * Resets for next level or retry
+ */
 reset() {
     this.stopAllIntervals();
-    this.mainInterval = null;
+    this.resetStatus();
+    this.resetPosition();
+    this.resetImage();
+    this.attackCD = false;
+}
+
+/**
+ * Resets flags and energy
+ */
+resetStatus() {
     this.energy = 100;
     this.isDead = false;
     this.isDeadAnimationPlaying = false;
     this.isHurtAnimationPlaying = false;
     this.isAttacking = false;
-    this.attackCD = false;
     this.endBossShow = false;
     this.hadFirstContact = false;
+}
+
+/**
+ * Resets position and movement
+ */
+resetPosition() {
     this.x = 99999;
     this.y = -100;
     this.speedY = 1.5;
     this.movingDown = true;
+}
+
+/**
+ * Resets image
+ */
+resetImage() {
     this.img = this.imageCache[this.IMAGES_SWIMMING[0]];
 }
 
