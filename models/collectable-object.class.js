@@ -32,33 +32,64 @@ class CollectableObject extends MovableObject{
         this.value = value;
         this.loadImagesByType(type);
 
-        if (customWidth) this.width = customWidth;
-        if (customHeight) this.height = customHeight;
+        this.setupCollectable(type, customWidth, customHeight);
         this.animate(this.animSpeed);
     }
 
-    loadImagesByType(type) {
-        if (type === 'coin') {
-            this.width = 40;
-            this.height = 40;
-            this.loadImage(this.IMAGES_COINS[0]);
-            this.loadImages(this.IMAGES_COINS);
-            this.animationImages = this.IMAGES_COINS;
-        } else if (type === 'poison') {
-            this.width = 50;
-            this.height = 60;
-            this.loadImage(this.IMAGES_POISON[0]);
-            this.loadImages(this.IMAGES_POISON);
-            this.animationImages = this.IMAGES_POISON;
-        } else if (type === 'poison-dark') {
-            this.width = 35;
-            this.height = 45;
-            this.loadImage(this.IMAGES_POISON_DARK[0]);
-            this.loadImages(this.IMAGES_POISON_DARK);
-            this.animationImages = this.IMAGES_POISON_DARK;
-        }
+    /**
+     * Initializes the final collectable object.
+     * @param {'coin'|'poison'|'poison-dark'} type - Collectables
+     * @param {number} customWidth - custom width
+     * @param {number} customHeight - custom height
+     */
+    setupCollectable(type, customWidth, customHeight) {
+        this.loadImagesByType(type);
+        if (customWidth) this.width = customWidth;
+        if (customHeight) this.height = customHeight;
     }
 
+    /**
+     * Loads images with custom dimension
+     * @param {'coin'|'poison'|'poison-dark'} type - Collectables
+     * @returns 
+     */
+    loadImagesByType(type) {
+        let typeMap = {
+            'coin': { w: 40, h: 40, imgs: this.IMAGES_COINS },
+            'poison': { w: 50, h: 60, imgs: this.IMAGES_POISON },
+            'poison-dark': { w: 35, h: 45, imgs: this.IMAGES_POISON_DARK }
+        };
+        let finalImg = typeMap[type];
+        if (!finalImg) return;
+
+        this.setDimensions(finalImg.w, finalImg.h);
+        this.setupAnimation(finalImg.imgs);
+    }
+
+    /**
+     * Sets dimensions of collectable item
+     * @param {number} w - Width
+     * @param {number} h - Height
+     */
+    setDimensions(w, h) {
+        this.width = w;
+        this.height = h;
+    }
+
+    /**
+     * Prepares animation by loading images
+     * @param {string[]} images - Array of image paths
+     */
+    setupAnimation(images) {
+        this.loadImage(images[0]);
+        this.loadImages(images);
+        this.animationImages = images;
+    }
+
+    /**
+     * Starts animation
+     * @param {number} intervalTime - Interval in ms for frame switching
+     */
     animate(intervalTime = 200) {
         this.animationInterval = setInterval(() => {
             this.playAnimation(this.animationImages);
