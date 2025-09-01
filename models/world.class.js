@@ -255,7 +255,7 @@ class World {
     addToMap(obj) {
         if(obj.otherDirection) this.flipImage(obj); 
         obj.draw(this.ctx); 
-        obj.drawFrame(this.ctx); 
+        // obj.drawFrame(this.ctx); 
         if(obj.otherDirection) this.flipImageBack(obj);
     }
 
