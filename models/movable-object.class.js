@@ -11,6 +11,10 @@ class MovableObject extends DrawableObject{
         right : 0
     };
 
+    /**
+     * Returns current hitbox of object
+     * @returns {{left: number, right: number, top: number, bottom: number}} The hitbox boundaries.
+     */
     getHitbox() {
     return {
         left: this.x + this.offSet.right,
@@ -20,6 +24,11 @@ class MovableObject extends DrawableObject{
     };
     }
 
+    /**
+     * Checks for collision
+     * @param {MovableObject} movableObject - object to check collision against 
+     * @returns {boolean} True if colliding
+     */
     isColliding(movableObject) {
         let a = this.getHitbox();
         let b = movableObject.getHitbox();
@@ -31,6 +40,10 @@ class MovableObject extends DrawableObject{
         );
     }
 
+    /**
+     * Applies damage to object, has a timer to prevent multiple hits directly
+     * @param {string|null} type - type of hit (electro or poison) 
+     */
     hit(type = null) {
         let hitTimer = new Date().getTime();
 
@@ -46,16 +59,29 @@ class MovableObject extends DrawableObject{
         }
     }
 
+    /**
+     * Checks if object is hurt
+     * @returns {boolean} True if hurt
+     */
     isHurt() {
         let timeSinceHit = new Date().getTime() - this.lastHit;
         timeSinceHit = timeSinceHit / 1000;
         return timeSinceHit < 1;
     }
 
+    /**
+     * Checks if object is dead
+     * @returns {boolean} True if dead
+     */
     isDead() {
         return this.energy <= 0;
     }
 
+    /**
+     * Plays animation by going through given imgs array
+     * @param {string[]} images - Array of imgs path 
+     * @returns {void}
+     */
     playAnimation(images) {
         if (!images || images.length === 0) return;
         let i = this.currentImage % images.length;
@@ -64,6 +90,11 @@ class MovableObject extends DrawableObject{
         this.currentImage++;
     }
 
+    /**
+     * Plays animation Sequence, the stops
+     * @param {string[]} images - Array of imgs path 
+     * @param {number} intervalTime - Delay between frames
+     */
     playAnimationSequence(images, intervalTime) {
         let frameIndex = 0;
         let animationInterval = setInterval(() => {
@@ -75,6 +106,11 @@ class MovableObject extends DrawableObject{
         }, intervalTime);
     }
 
+    /**
+     * Plays animation once
+     * @param {string[]} images - Array of imgs path  
+     * @param {number} frameIndex - frame index to display
+     */
     playAnimationOnce(images, frameIndex) {
         if (frameIndex < images.length){
             let path = images[frameIndex];
@@ -83,10 +119,16 @@ class MovableObject extends DrawableObject{
 
     }
 
+    /**
+     * Moves object to the right
+     */
     moveRight() {
         this.x += this.speed;
     }
 
+    /**
+     * Moves object to the left
+     */
     moveLeft() {
         this.x -= this.speed;
     }
