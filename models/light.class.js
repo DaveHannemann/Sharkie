@@ -11,7 +11,9 @@ class Light extends MovableObject {
         this.animate();
     }
 
-
+    /**
+     * Moves the light in the background slightly to the left
+     */
     animate() {
         setInterval(() =>{
         this.moveLeft();

@@ -1,5 +1,10 @@
 class CollectableObject extends MovableObject{
-   
+    offSet = {
+    top: 5,
+    bottom: 5,
+    left: 10,
+    right: 10,
+    };
     
     IMAGES_COINS = [
         '../img/4. Marcadores/1. Coins/1.png',
