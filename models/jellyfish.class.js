@@ -10,6 +10,13 @@ class JellyFish extends MovableObject {
   type;
   color;
 
+  offSet = {
+    top: 5,
+    bottom: 5,
+    left: 10,
+    right: 10,
+  };
+
   IMAGES_JELLYFISH_POISON_PURPLE = [
     "../img/2.Enemy/2 Jelly fish/Regular damage/Lila 1.png",
     "../img/2.Enemy/2 Jelly fish/Regular damage/Lila 2.png",
@@ -88,6 +95,12 @@ class JellyFish extends MovableObject {
     this.setState("normal");
   }
 
+  /**
+   * Loads normal images of jellyfish
+   * @param {string} type - jellyfish type
+   * @param {string} color - jellyfish color
+   * @returns {string[]} Array of image paths
+   */
   loadImagesByTypeAndColor(type, color) {
     if (type === "poison" && color === "purple") return this.IMAGES_JELLYFISH_POISON_PURPLE;
     if (type === "poison" && color === "yellow") return this.IMAGES_JELLYFISH_POISON_YELLOW;
@@ -96,6 +109,12 @@ class JellyFish extends MovableObject {
     return [];
   }
 
+  /**
+   * Loads death images of jellyfish
+   * @param {string} type - jellyfish type
+   * @param {string} color - jellyfish color
+   * @returns {string[]} Array of image paths
+   */
   loadDeadImagesByTypeAndColor(type, color) {
     if (type === "poison" && color === "purple") return this.IMAGES_JELLYFISH_POISON_PURPLE_DEAD;
     if (type === "poison" && color === "yellow") return this.IMAGES_JELLYFISH_POISON_YELLOW_DEAD;
@@ -104,10 +123,25 @@ class JellyFish extends MovableObject {
     return [];
   }
 
+  /**
+   * Sets current state of jellyfish
+   * @param {"normal"|"dead"} newState - new state for jellyfish 
+   */
   setState(newState) {
     this.state = newState;
     this.currentFrame = 0;
+    this.resetIntervals();
+    if (newState === "normal") {
+      this.applyNormalState();
+    } else if (newState === "dead") {
+      this.applyDeadState();
+    }
+  }
 
+  /**
+   * Clears all movement and animation
+   */
+  resetIntervals() {
     if (this.movementInterval) {
       clearInterval(this.movementInterval);
       this.movementInterval = null;
@@ -116,38 +150,51 @@ class JellyFish extends MovableObject {
       clearInterval(this.animationInterval);
       this.animationInterval = null;
     }
-
-    if (newState === "normal") {
-      this.animationImages = this.loadImagesByTypeAndColor(this.type, this.color);
-      this.loadImage(this.animationImages[0]);
-      this.loadImages(this.animationImages);
-      this.startNormalAnimation();
-      this.isDead = false;
-      this.readyToRemove = false;
-    } else if (newState === "dead") {
-      this.animationImages = this.loadDeadImagesByTypeAndColor(this.type, this.color);
-      this.loadImage(this.animationImages[0]);
-      this.loadImages(this.animationImages);
-      this.isDead = true;
-      this.speed = 0;
-      this.startDeathAnimation(() => {
-        this.readyToRemove = true;
-      });
-    }
   }
 
+  /**
+   * Normal state and animation
+   */
+  applyNormalState() {
+    this.animationImages = this.loadImagesByTypeAndColor(this.type, this.color);
+    this.loadImage(this.animationImages[0]);
+    this.loadImages(this.animationImages);
+    this.startNormalAnimation();
+    this.isDead = false;
+    this.readyToRemove = false;
+  }
 
+  /**
+   * Death state and animation
+   */
+  applyDeadState() {
+    this.animationImages = this.loadDeadImagesByTypeAndColor(this.type, this.color);
+    this.loadImage(this.animationImages[0]);
+    this.loadImages(this.animationImages);
+    this.isDead = true;
+    this.speed = 0;
+    this.startDeathAnimation(() => {
+      this.readyToRemove = true;
+    });
+  }
+
+  /**
+   * Normal swimming animation
+   */
   startNormalAnimation() {
     this.movementInterval = setInterval(() => {
       this.x -= this.speed;
       this.y = this.baseY + Math.sin(this.x * this.waveFrequency + this.waveOffset) * this.waveAmplitude;
     }, 1000 / 60);
-
     this.animationInterval = setInterval(() => {
       this.playAnimation(this.animationImages);
     }, 175);
   }
 
+  /**
+   * Plays Death animation frame by frame
+   * @param {Function} onComplete - Callback when animation ends
+   */
   startDeathAnimation(onComplete) {
     let frame = 0;
     this.animationInterval = setInterval(() => {
@@ -161,6 +208,10 @@ class JellyFish extends MovableObject {
     }, 150);
   }
 
+  /**
+   * Kills jellyfish and sets state to "dead"
+   * @returns {void}
+   */
   die() {
     if (this.isDead) return;
     this.setState("dead");
