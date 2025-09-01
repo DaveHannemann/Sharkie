@@ -46,9 +46,12 @@ IMAGES_POISON_BAR =[
         }
     }
 
+    /**
+     * Sets type of status bar and loads imgs
+     * @param {string} type - all different types 
+     */
     setStatusBarType(type) {
         this.type = type;
-
         if (type === 'health'){
             this.images = this.IMAGES_HEALTH_BAR;
         } else if (type === 'coin') {
@@ -59,6 +62,10 @@ IMAGES_POISON_BAR =[
         this.loadImages(this.images);
     }
 
+    /**
+     * Sets/updates current percentage of status bar
+     * @param {number} percentage - Percentage from 0 to 100
+     */
     setPercentage(percentage) {
         this.percentage = percentage;
         let index = this.statusbarImageIndex();
@@ -66,6 +73,10 @@ IMAGES_POISON_BAR =[
         this.img = this.imageCache[imgPath];
     }
 
+    /**
+     * Determines the index of the image to show
+     * @returns {number} Index of image in the loaded imgs array
+     */
     statusbarImageIndex() {
         if (this.percentage > 80) {
             return 5;
