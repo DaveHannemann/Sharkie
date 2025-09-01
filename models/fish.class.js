@@ -108,76 +108,120 @@ class Fish extends MovableObject {
     this.y = y;
     this.speed = speed;
 
-    this.loadImagesFishType(type);
+    this.initFish();
+  }
+
+  /**
+   * Initializes fish by loading images and animate
+   */
+  initFish() {
+    this.loadImagesFishType(this.type);
     this.setState("normal");
     this.animate();
   }
 
-    loadImagesFishType(type) {
-        if (type === "easy") this.IMAGES_FISH = this.IMAGES_FISH_EASY;
-        if (type === "medium") this.IMAGES_FISH = this.IMAGES_FISH_MEDIUM;
-        if (type === "hard") this.IMAGES_FISH = this.IMAGES_FISH_HARD;
-        this.loadImages(this.IMAGES_FISH);
-        this.animationImages = this.IMAGES_FISH;
-    }
-
-      getTransitionImages() {
-  if(this.type === "easy") return this.IMAGES_FISH_EASY_TRANSITION;
-  if(this.type === "medium") return this.IMAGES_FISH_MEDIUM_TRANSITION;
-  if(this.type === "hard") return this.IMAGES_FISH_HARD_TRANSITION;
-  return [];
-}
-
-  getBubbleSwimImages() {
-    if(this.type === "easy") return this.IMAGES_FISH_EASY_BUBBLESWIM;
-    if(this.type === "medium") return this.IMAGES_FISH_MEDIUM_BUBBLESWIM;
-    if(this.type === "hard") return this.IMAGES_FISH_HARD_BUBBLESWIM;
-    return [];
+  /**
+   * Loads images of the fish based on type
+   * @param {string} type - type of fish
+   */
+  loadImagesFishType(type) {
+    const typeMap = {
+      easy: this.IMAGES_FISH_EASY,
+      medium: this.IMAGES_FISH_MEDIUM,
+      hard: this.IMAGES_FISH_HARD,
+    };
+    this.IMAGES_FISH = typeMap[type];
+    this.loadImages(this.IMAGES_FISH);
+    this.animationImages = this.IMAGES_FISH;
   }
 
-  getDeadImages() {
-      if (this.type === "easy") return this.IMAGES_FISH_EASY_DEAD;
-      if (this.type === "medium") return this.IMAGES_FISH_MEDIUM_DEAD;
-      if (this.type === "hard") return this.IMAGES_FISH_HARD_DEAD;
-      return [];
+  /**
+   * Sets the current state and updates images
+   * @param {string} newState - new state after bubble or fin slap
+   */
+  setState(newState) {
+    this.state = newState;
+    this.currentFrame = 0;
+    const stateMap = {
+      normal: () => this.loadImagesFishType(this.type),
+      transition: () => this.loadAnimation(this.getTransitionImages()),
+      bubbleswim: () => this.enableBubbleSwim(),
+      dead: () => this.loadAnimation(this.getDeadImages()),
+    };
+    stateMap[newState]?.();
   }
 
-      setState(newState) {
-        this.state = newState;
-        this.currentFrame = 0;
+  /**
+   * Loads set of animation imgs
+   * @param {string[]} images - images to load
+   */
+  loadAnimation(images) {
+    this.animationImages = images;
+    this.loadImages(images);
+  }
 
-        if (newState === "normal") {
-            this.loadImagesFishType(this.type);
-        } else if (newState === "transition") {
-            this.animationImages = this.getTransitionImages();
-            this.loadImages(this.animationImages);
-        } else if (newState === "bubbleswim") {
-            this.energy = 20;
-            this.animationImages = this.getBubbleSwimImages();
-            this.loadImages(this.animationImages);
-        } else if (newState === "dead") {
-            this.animationImages = this.getDeadImages();
-            this.loadImages(this.animationImages);
-        }
-    }
+  /**
+   * Enables bubble swim mode with new animation
+   */
+  enableBubbleSwim() {
+    this.energy = 20;
+    this.loadAnimation(this.getBubbleSwimImages());
+  }
 
+  /**
+   * Starts movement and animation
+   */
   animate() {
-    setInterval(() => {
-      this.moveLeft();
-    }, 1000 / 60);
-
-        setInterval(() => {
-            if (this.state === "transition") {
-                this.playAnimation(this.animationImages);
-                this.currentFrame++;
-                if (this.currentFrame >= this.animationImages.length) {
-                    this.setState("bubbleswim");
-                }
-            } else {
-                this.playAnimation(this.animationImages);
-            }
-        }, 175);
+    setInterval(() => this.moveLeft(), 1000 / 60);
+    setInterval(() => this.animateState(), 175);
   }
 
+  /**
+   * Handles transition from normal to bubbleswim
+   */
+  animateState() {
+    this.playAnimation(this.animationImages);
+    if (this.state === "transition") {
+      this.currentFrame++;
+      if (this.currentFrame >= this.animationImages.length) {
+        this.setState("bubbleswim");
+      }
+    }
+  }
 
+  /**
+   * Returns transition imgs
+   * @returns {string[]} Transition imgs
+   */
+  getTransitionImages() {
+    return {
+      easy: this.IMAGES_FISH_EASY_TRANSITION,
+      medium: this.IMAGES_FISH_MEDIUM_TRANSITION,
+      hard: this.IMAGES_FISH_HARD_TRANSITION,
+    }[this.type] || [];
+  }
+
+  /**
+   * Returns bubble swim imgs
+   * @returns {string[]} Bubble swim imgs
+   */
+  getBubbleSwimImages() {
+    return {
+      easy: this.IMAGES_FISH_EASY_BUBBLESWIM,
+      medium: this.IMAGES_FISH_MEDIUM_BUBBLESWIM,
+      hard: this.IMAGES_FISH_HARD_BUBBLESWIM,
+    }[this.type] || [];
+  }
+
+  /**
+   * Returns dead images
+   * @returns {string[]} Dead imgs
+   */
+  getDeadImages() {
+    return {
+      easy: this.IMAGES_FISH_EASY_DEAD,
+      medium: this.IMAGES_FISH_MEDIUM_DEAD,
+      hard: this.IMAGES_FISH_HARD_DEAD,
+    }[this.type] || [];
+  }
 }

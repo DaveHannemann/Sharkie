@@ -17,7 +17,7 @@ class Character extends MovableObject {
     isPlayingHurtSound = false;
 
     world;
-    offSet = {top : 35, bottom : 70, left : 25, right : 40};
+    offSet = {top : 35, bottom : 70, left : 30, right : 40};
 
     IMAGES_IDLE = [
         '../img/1.Sharkie/1.IDLE/1.png',
