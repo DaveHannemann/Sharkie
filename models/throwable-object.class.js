@@ -2,7 +2,7 @@ class ThrowableObject extends MovableObject{
 
     height = 30;
     width = 30;
-    speedX = 6;
+    speedX = 7;
     type = 'normal';
 
 
@@ -19,6 +19,9 @@ class ThrowableObject extends MovableObject{
         }
     }
 
+    /**
+     * Updates position of throwable object
+     */
     update() {
         this.x += this.speedX;
     }
