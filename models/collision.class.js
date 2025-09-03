@@ -41,14 +41,17 @@ class CollisionManager {
    * @param {MovableObject} enemy - Enemy 
    */
   applyEnemyCollisionDamage(enemy) {
+    const char = this.world.charakter;
     if (enemy instanceof Endboss) {
-        this.world.charakter.hit(this.calcBossDamage());
-    } else if (enemy instanceof JellyFish || (enemy instanceof Fish && enemy.state === "bubbleswim")) {
-        this.world.charakter.hit(10);
+        char.hit(this.calcBossDamage(), "default");
+    } else if (enemy instanceof JellyFish && !enemy.isDead) {
+        char.hit(10, enemy.type);
+    } else if (enemy instanceof Fish && enemy.state === "bubbleswim") {
+        char.hit(10, "poison");
     } else if (enemy instanceof Fish) {
-        this.world.charakter.hit(5);
+        char.hit(5, "default");
     } else {
-        this.world.charakter.hit("default");
+        char.hit(10, "default");
     }
   }
 

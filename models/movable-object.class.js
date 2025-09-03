@@ -91,20 +91,26 @@ class MovableObject extends DrawableObject{
     }
 
     /**
-     * Plays animation Sequence, the stops
-     * @param {string[]} images - Array of imgs path 
-     * @param {number} intervalTime - Delay between frames
+     * Plays an animation sequence frame by frame
+     * @param {string[]} images - Array of image paths
+     * @param {number} interval - Time per frame in ms
+     * @param {function} [onComplete] - Optional callback after last frame
      */
-    playAnimationSequence(images, intervalTime) {
+    playAnimationSequence(images, interval, onComplete) {
         let frameIndex = 0;
-        let animationInterval = setInterval(() => {
-            this.playAnimationOnce(images, frameIndex);
+        const animInterval = setInterval(() => {
+            const img = new Image();
+            img.src = images[frameIndex];
+            this.img = img;
+
             frameIndex++;
             if (frameIndex >= images.length) {
-                clearInterval(animationInterval);
+                clearInterval(animInterval);
+                if (onComplete) onComplete();
             }
-        }, intervalTime);
+        }, interval);
     }
+
 
     /**
      * Plays animation once

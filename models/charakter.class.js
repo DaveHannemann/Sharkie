@@ -306,38 +306,43 @@ class Character extends MovableObject {
         this.playAnimationSequence(this.IMAGES_FIN_SLAP, 60);
     }
 
+
     /**
-     * Executes bubble attack if possible.
+     * Returns the X coordinate where a bubble should spawn.
+     * @returns {number|null} X position for bubble spawn or null if invalid
+     */
+    getBubbleStartX() {
+        if (this.otherDirection) return null;
+        return this.x + this.width - this.offSet.right;
+    }
+
+    /**
+     * Returns the Y coordinate where a bubble should spawn.
+     * @returns {number} Y position for bubble spawn
+     */
+    getBubbleStartY() {
+        return this.y + this.height - this.offSet.bottom;
+    }
+
+    /**
+     * Initiates a bubble attack if possible.
      * @returns {void}
      */
     bubbleAttack() {
-        if (this.bubbleAttacking || !this.world || this.otherDirection || this.world.endboss?.energy <= 0 ) return;
+        if (this.bubbleAttacking || !this.world || this.otherDirection || this.world.endboss?.energy <= 0) return;
         this.bubbleAttacking = true;
         const usePoison = this.poisonBubblesUnlocked && this.world.poisonBar.percentage > 0;
         const anim = usePoison ? this.IMAGES_BUBBLE_POISON_ATTACK : this.IMAGES_BUBBLE_ATTACK;
         audioManager.playSFX('bubble');
-        this.playAnimationSequence(anim, 60);
-        const startX = this.getBubbleStartX();
-        setTimeout(() => {
+        this.playAnimationSequence(anim, 60, () => {
             if (!this.world) return;
+            const spawnX = this.x + this.width - this.offSet.right;
+            const spawnY = this.y + this.height - this.offSet.bottom;
             const type = usePoison ? 'poison' : 'normal';
-            this.world.throwableObjects.push(new ThrowableObject(startX, this.y + 100, type, 1));
+            this.world.throwableObjects.push(new ThrowableObject(spawnX, spawnY, type, 1));
             if (usePoison) this.world.poisonBar.setPercentage(Math.max(this.world.poisonBar.percentage - 10, 0));
             this.bubbleAttacking = false;
-        }, anim.length * 60);
-    }
-
-    /**
-     * Calculates X position where bubble will spawn.
-     * @returns {number} Bubble start X position
-     */
-    getBubbleStartX() {
-        const levelEndX = this.world.level.level_end_x;
-        const atBossArea = this.x >= levelEndX;
-        if (atBossArea) return this.x + this.width;
-            const movingRight = this.world.keyboard.RIGHT;
-            const offset = movingRight ? 100 : -20;
-            return this.x + this.width + offset;
+        });
     }
 
     /**
