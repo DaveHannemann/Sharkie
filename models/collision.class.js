@@ -32,8 +32,8 @@ class CollisionManager {
   shouldProcessEnemyCollision(enemy) {
     if (!this.world.charakter.isColliding(enemy)) return false;
     if (enemy instanceof JellyFish && (enemy.isDead || enemy.readyToRemove)) return false;
-    if (this.world.charakter.finSlapped && enemy instanceof Fish) return false;
-    return enemy.state === "bubbleswim" || enemy instanceof JellyFish || enemy instanceof Endboss;
+    if (this.world.charakter.finSlapped) return false;
+    return enemy instanceof Fish || enemy instanceof JellyFish || enemy instanceof Endboss;
   }
 
   /**
@@ -42,11 +42,13 @@ class CollisionManager {
    */
   applyEnemyCollisionDamage(enemy) {
     if (enemy instanceof Endboss) {
-      this.world.charakter.hit(this.calcBossDamage());
-    } else if (enemy instanceof JellyFish) {
-      this.world.charakter.hit(enemy.type);
+        this.world.charakter.hit(this.calcBossDamage());
+    } else if (enemy instanceof JellyFish || (enemy instanceof Fish && enemy.state === "bubbleswim")) {
+        this.world.charakter.hit(10);
+    } else if (enemy instanceof Fish) {
+        this.world.charakter.hit(5);
     } else {
-      this.world.charakter.hit("default");
+        this.world.charakter.hit("default");
     }
   }
 
