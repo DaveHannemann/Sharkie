@@ -142,34 +142,49 @@ class Character extends MovableObject {
     }
 
     /**
-     * Handles animation based on state.
+     * Updates characters animation, state and input
      * @returns {void}
      */
-handleAnimation() {
-    if (!this.world) return;
-    if (
-        this.world.keyboard.RIGHT || 
-        this.world.keyboard.LEFT || 
-        this.world.keyboard.UP || 
-        this.world.keyboard.DOWN || 
-        this.world.keyboard.SPACE ||
-        this.world.keyboard.D
-    ) {
-        this.lastKeyPressed = Date.now();
+    handleAnimation() {
+        if (!this.world) return;
+        if (this.anyKeyPressed()) {
+            this.lastKeyPressed = Date.now();
+            this.stopSnoringIfActive();
+        }
+        if (this.isDead()) return this.playDeathAnimation();
+        if (this.isHurt()) return this.playHurtAnimation();
+        if (this.isMoving()) return this.playMovingAnimation();
+        if (Date.now() - this.lastKeyPressed > 10000) return this.playLongIdleAnimation();
+        this.playAnimation(this.IMAGES_IDLE);
+    }
+
+    /**
+     * Checks if any relevant key is currently pressed.
+     * @returns {boolean} True if key is pressed
+     */
+    anyKeyPressed() {
+        const k = this.world.keyboard;
+        return k.RIGHT || k.LEFT || k.UP || k.DOWN || k.SPACE || k.D;
+    }
+
+    /**
+     * Checks character movement
+     * @returns {boolean} True if keys are pressed
+     */
+    isMoving() {
+        const k = this.world.keyboard;
+        return k.RIGHT || k.LEFT || k.UP || k.DOWN;
+    }
+
+    /**
+     * Stops snoring if active
+     */
+    stopSnoringIfActive() {
         if (this.snoringPlaying) {
             audioManager.stopSFX('snoring');
             this.snoringPlaying = false;
         }
     }
-    if (this.isDead()) return this.playDeathAnimation();
-    if (this.isHurt()) return this.playHurtAnimation();
-    this.isPlayingHurtSound = false;
-    const moving = this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN;
-    if (moving) return this.playMovingAnimation();        
-    const idleTime = Date.now() - this.lastKeyPressed;
-    if (idleTime > 10000) return this.playLongIdleAnimation();
-    this.playAnimation(this.IMAGES_IDLE);
-}
 
     /**
      * Handles attack input fin slap.
