@@ -133,6 +133,7 @@ playEntranceAnimation() {
             this.startSwimming();
             this.startMovement();
             this.startRandomAttacks();
+            setTimeout(() => this.attack(), 300);
         }
     }, 175);
 }
@@ -151,12 +152,27 @@ startSwimming() {
  * Starts movement for endboss.
  */
 startMovement() {
-    const [minY, maxY] = [-180, 150];
+    const minY = -180;
+    const maxY = 150;
     this.intervals.movement = setInterval(() => {
-        if (this.isDead) return clearInterval(this.intervals.movement);
-        if (this.isAttacking) return;
-        this.movingDown ? this.moveDown(maxY) : this.moveUp(minY);
+        if (this.isDead || this.isAttacking) return;
+
+        this.updateDirection();
+        this.y += this.movingDown ? this.speedY : -this.speedY;
+        this.checkBounds(minY, maxY);
     }, 1000 / 60);
+}
+
+updateDirection() {
+    if (Math.random() < 0.02) {
+        this.movingDown = !this.movingDown;
+    }
+}
+
+
+checkBounds(minY, maxY) {
+    if (this.y > maxY) this.movingDown = false;
+    if (this.y < minY) this.movingDown = true;
 }
 
 /**
