@@ -229,43 +229,50 @@ a{
     }
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 768px), only screen and (max-height: 600px) {
+    html, body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+    }
+
     canvas {
         width: 100%;
+        height: auto;
+        max-height: 100vh;
+        display: block;
     }
 
-    h2{
-    font-size: 18px;
-    margin-top: 5px;
-    cursor: default;
+    .dialog {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        max-width: 100%;
+        max-height: 100%;
     }
 
-    p{
-        font-size: 14px;
-    }
-}
-
-@media only screen and (max-height: 600px) {
-    canvas {
-        height: 100vh;
-    }
-
-    h1{
+    h1 {
         display: none;
     }
 
-    h2{
+    h2 {
         font-size: 18px;
         margin-top: 5px;
-        cursor: default;
     }
 
-    p{
+    p {
         font-size: 14px;
     }
 
-    .dialog{
-        margin-top: 0;
-        height: 100%;
+    #joystick, #btn-attack, #btn-throw {
+        display: block;
+    }
+}
+
+@media (pointer: fine) {
+    #joystick, #btn-attack, #btn-throw {
+        display: none;
     }
 }
