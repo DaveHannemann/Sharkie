@@ -241,17 +241,31 @@ class Character extends MovableObject {
      * Handles animation based on state.
      * @returns {void}
      */
-    handleAnimation() {
-        if (!this.world) return;
-        if (this.isDead()) return this.playDeathAnimation();
-        if (this.isHurt()) return this.playHurtAnimation();
-        this.isPlayingHurtSound = false;
-        const moving = this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN;
-        if (moving) return this.playMovingAnimation();        
-        const idleTime = Date.now() - this.lastKeyPressed;
-        if (idleTime > 10000) return this.playLongIdleAnimation();
-        this.playAnimation(this.IMAGES_IDLE);
+handleAnimation() {
+    if (!this.world) return;
+    if (
+        this.world.keyboard.RIGHT || 
+        this.world.keyboard.LEFT || 
+        this.world.keyboard.UP || 
+        this.world.keyboard.DOWN || 
+        this.world.keyboard.SPACE ||
+        this.world.keyboard.D
+    ) {
+        this.lastKeyPressed = Date.now();
+        if (this.snoringPlaying) {
+            audioManager.stopSFX('snoring');
+            this.snoringPlaying = false;
+        }
     }
+    if (this.isDead()) return this.playDeathAnimation();
+    if (this.isHurt()) return this.playHurtAnimation();
+    this.isPlayingHurtSound = false;
+    const moving = this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN;
+    if (moving) return this.playMovingAnimation();        
+    const idleTime = Date.now() - this.lastKeyPressed;
+    if (idleTime > 10000) return this.playLongIdleAnimation();
+    this.playAnimation(this.IMAGES_IDLE);
+}
 
     /**
      * Handles attack input fin slap.
