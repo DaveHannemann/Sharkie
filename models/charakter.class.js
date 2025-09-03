@@ -15,6 +15,9 @@ class Character extends MovableObject {
     bubbleAttacking = false;
     poisonBubblesUnlocked = false;
     isPlayingHurtSound = false;
+    longIdlePlayedOnce = false;
+    longIdleRepeatStartIndex = 10;
+    longIdleFrameIndex = 0;
 
     world;
     offSet = {top : 35, bottom : 70, left : 30, right : 40};
@@ -315,6 +318,8 @@ class Character extends MovableObject {
         }
         if (this.world && this.world.endScreen) return;
         this.lastKeyPressed = Date.now();
+        this.longIdlePlayedOnce = false;
+        this.longIdleFrameIndex = 0;
         this.playAnimation(this.IMAGES_SWIMMING);
     }
 
@@ -323,11 +328,35 @@ class Character extends MovableObject {
      */
     playLongIdleAnimation() {
         if (!this.world || this.world.startScreen || this.world.endScreen) return;
-        this.playAnimation(this.IMAGES_LONG_IDLE);
-        if (!this.snoringPlaying) {
-            audioManager.playSFX('snoring');
-            this.snoringPlaying = true;
+        this.updateLongIdleFrame(this.IMAGES_LONG_IDLE, this.longIdleRepeatStartIndex);
+        this.playAnimationOnce(this.IMAGES_LONG_IDLE, this.longIdleFrameIndex);
+        if (!this.snoringPlaying) this.startSnoring();
+    }
+
+    /**
+     * Handles the long idle animation whether full or the endloop
+     * @param {string[]} images - Array of imgs 
+     * @param {number} repeatStart - Index to start repeating the animation
+     */
+    updateLongIdleFrame(images, repeatStart) {
+        if (!this.longIdlePlayedOnce) {
+            this.longIdleFrameIndex++;
+            if (this.longIdleFrameIndex >= images.length) {
+                this.longIdlePlayedOnce = true;
+                this.longIdleFrameIndex = repeatStart;
+            }
+        } else {
+            this.longIdleFrameIndex++;
+            if (this.longIdleFrameIndex >= images.length) this.longIdleFrameIndex = repeatStart;
         }
+    }
+
+    /**
+     * Starts snoring if necessary
+     */
+    startSnoring() {
+        audioManager.playSFX('snoring');
+        this.snoringPlaying = true;
     }
 
     /**
