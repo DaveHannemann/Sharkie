@@ -118,7 +118,7 @@ function handleCanvasClick(mouseX, mouseY) {
  * @returns {string|null} Name of clicked button or null
  */
 function getClickedButton(x, y) {
-    const buttons = ['mute', 'start', 'fullscreen', 'howto'];
+    const buttons = ['mute', 'start', 'fullscreen', 'howto', 'impressum'];
     return buttons.find(name => startScreen.isButtonClicked(name, x, y)) || null;
 }
 
@@ -133,6 +133,7 @@ function runButtonAction(name) {
         case 'start':      return handleStartButton();
         case 'fullscreen': return handleFullscreenButton();
         case 'howto':      return handleHowToButton();
+        case 'impressum':  return handleImpressumButton();
     }
 }
 
@@ -165,6 +166,13 @@ function handleFullscreenButton() {
  */
 function handleHowToButton() {
     toggleOverlay(true);
+}
+
+/**
+ * Handles "Impressum" button click and opens new Tab
+ */
+function handleImpressumButton() {
+    window.open('./impressum.html', '_blank');
 }
 
 /**

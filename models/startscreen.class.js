@@ -87,7 +87,10 @@ class StartScreen extends DrawableObject {
             { name: 'mute', x: 200, y: 10, width: 30, height: 30,
                 currentIndex: audioManager.muted ? 1 : 0,
                 images: ['../img/6.Botones/sounds_on.png','../img/6.Botones/sounds_off.png'],
-                isStatic: true }
+                isStatic: true },
+            { name: 'impressum', x: 600, y: 440, width: 100, height: 30,
+            images: [], isStatic: true, text: 'Impressum',
+                hitboxOffset: { top: 0, left: 0, right: 0, bottom: 0 } }    
         ];
         this.animatedButtons.forEach(btn => this.loadImages(btn.images));
     }
@@ -153,9 +156,10 @@ class StartScreen extends DrawableObject {
      */
     drawButtons(ctx) {
         this.animatedButtons.forEach(btn => {
-            let img = this.imageCache[btn.images[btn.currentIndex]];
-            if (!img) return;
-            ctx.drawImage(img, btn.x, btn.y, btn.width, btn.height);
+            if (btn.images.length > 0) {
+                let img = this.imageCache[btn.images[btn.currentIndex]];
+                if (img) ctx.drawImage(img, btn.x, btn.y, btn.width, btn.height);
+            }
             if (btn.text) this.drawButtonText(ctx, btn);
         });
     }

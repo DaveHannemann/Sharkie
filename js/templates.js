@@ -14,14 +14,11 @@ function renderOverlayContent() {
         </div>
         <div class="key_single">
         <img class="key_d_img" src="../img/6.Botones/Key/D key.png">
-        <p>Bubble 'em!</p>
+        <p>Bubble 'em JellyFishes and Endboss!</p>
         </div>
         <div class="key_single">
         <img class="key_space_img" src="../img/6.Botones/Key/Space Bar key.png">
-        <p>Fin Slap 'em!</p>
-        </div>
-        <div class="impressum">
-        <a href="./impressum.html" target="_blank">Impressum</a>
+        <p>Fin Slap 'em blown up Pufferfishes!</p>
         </div>
     </div>
     

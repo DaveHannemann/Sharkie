@@ -4,7 +4,7 @@ class AudioManager {
         this.sfxTracks = {};
         this.sfxLoopTracks = {};
         this.currentMusic = null;
-        this.muted = false;
+        this.muted = JSON.parse(localStorage.getItem('audioMuted')) ?? false;
     }
 
     /**
@@ -94,6 +94,7 @@ class AudioManager {
      */
     toggleMute() {
         this.muted = !this.muted;
+        localStorage.setItem('audioMuted', JSON.stringify(this.muted));
         if (this.currentMusic) {
             if (this.muted) this.currentMusic.pause();
             else this.currentMusic.play();
