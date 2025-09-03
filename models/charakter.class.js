@@ -22,141 +22,45 @@ class Character extends MovableObject {
     world;
     offSet = {top : 35, bottom : 70, left : 30, right : 40};
 
-    IMAGES_IDLE = [
-        '../img/1.Sharkie/1.IDLE/1.png',
-        '../img/1.Sharkie/1.IDLE/2.png',
-        '../img/1.Sharkie/1.IDLE/3.png',
-        '../img/1.Sharkie/1.IDLE/4.png',
-        '../img/1.Sharkie/1.IDLE/5.png',
-        '../img/1.Sharkie/1.IDLE/6.png',
-        '../img/1.Sharkie/1.IDLE/7.png',
-        '../img/1.Sharkie/1.IDLE/8.png',
-        '../img/1.Sharkie/1.IDLE/9.png',
-        '../img/1.Sharkie/1.IDLE/10.png',
-        '../img/1.Sharkie/1.IDLE/11.png',
-        '../img/1.Sharkie/1.IDLE/12.png',
-        '../img/1.Sharkie/1.IDLE/13.png',
-        '../img/1.Sharkie/1.IDLE/14.png',
-        '../img/1.Sharkie/1.IDLE/15.png',
-        '../img/1.Sharkie/1.IDLE/16.png',
-        '../img/1.Sharkie/1.IDLE/17.png',
-        '../img/1.Sharkie/1.IDLE/18.png'
-    ];
-
-    IMAGES_LONG_IDLE = [
-        'img/1.Sharkie/2.Long_IDLE/li1.png',
-        'img/1.Sharkie/2.Long_IDLE/li2.png',
-        'img/1.Sharkie/2.Long_IDLE/li3.png',
-        'img/1.Sharkie/2.Long_IDLE/li4.png',
-        'img/1.Sharkie/2.Long_IDLE/li5.png',
-        'img/1.Sharkie/2.Long_IDLE/li6.png',
-        'img/1.Sharkie/2.Long_IDLE/li7.png',
-        'img/1.Sharkie/2.Long_IDLE/li8.png',
-        'img/1.Sharkie/2.Long_IDLE/li9.png',
-        'img/1.Sharkie/2.Long_IDLE/li10.png',
-        'img/1.Sharkie/2.Long_IDLE/li11.png',
-        'img/1.Sharkie/2.Long_IDLE/li12.png',
-        'img/1.Sharkie/2.Long_IDLE/li13.png',
-        'img/1.Sharkie/2.Long_IDLE/li14.png'
-    ]
-
-    IMAGES_SWIMMING = [
-        '../img/1.Sharkie/3.Swim/1.png',
-        '../img/1.Sharkie/3.Swim/2.png',
-        '../img/1.Sharkie/3.Swim/3.png',
-        '../img/1.Sharkie/3.Swim/4.png',
-        '../img/1.Sharkie/3.Swim/5.png',
-        '../img/1.Sharkie/3.Swim/6.png'
-    ];
-
-    IMAGES_HURT_POISONED = [
-        '../img/1.Sharkie/5.Hurt/1.Poisoned/1.png',
-        '../img/1.Sharkie/5.Hurt/1.Poisoned/2.png',
-        '../img/1.Sharkie/5.Hurt/1.Poisoned/3.png',
-        '../img/1.Sharkie/5.Hurt/1.Poisoned/4.png'
-    ];
-
-    IMAGES_HURT_SHOCKED = [
-        '../img/1.Sharkie/5.Hurt/2.Electric shock/1.png',
-        '../img/1.Sharkie/5.Hurt/2.Electric shock/2.png',
-        '../img/1.Sharkie/5.Hurt/2.Electric shock/3.png',
-    ];
-
-    IMAGES_DEAD_POISON = [
-        '../img/1.Sharkie/6.dead/1.Poisoned/1.png',
-        '../img/1.Sharkie/6.dead/1.Poisoned/2.png',
-        '../img/1.Sharkie/6.dead/1.Poisoned/3.png',
-        '../img/1.Sharkie/6.dead/1.Poisoned/4.png',
-        '../img/1.Sharkie/6.dead/1.Poisoned/5.png',
-        '../img/1.Sharkie/6.dead/1.Poisoned/6.png',
-        '../img/1.Sharkie/6.dead/1.Poisoned/7.png',
-        '../img/1.Sharkie/6.dead/1.Poisoned/8.png',
-        '../img/1.Sharkie/6.dead/1.Poisoned/9.png',
-        '../img/1.Sharkie/6.dead/1.Poisoned/10.png',
-        '../img/1.Sharkie/6.dead/1.Poisoned/11.png',
-        '../img/1.Sharkie/6.dead/1.Poisoned/12.png'
-    ];
-
-    IMAGES_DEAD_SHOCKED = [
-        '../img/1.Sharkie/6.dead/2.Electro_shock/1.png',
-        '../img/1.Sharkie/6.dead/2.Electro_shock/2.png',
-        '../img/1.Sharkie/6.dead/2.Electro_shock/3.png',
-        '../img/1.Sharkie/6.dead/2.Electro_shock/4.png',
-        '../img/1.Sharkie/6.dead/2.Electro_shock/5.png',
-        '../img/1.Sharkie/6.dead/2.Electro_shock/6.png',
-        '../img/1.Sharkie/6.dead/2.Electro_shock/7.png',
-        '../img/1.Sharkie/6.dead/2.Electro_shock/8.png',
-        '../img/1.Sharkie/6.dead/2.Electro_shock/9.png',
-        '../img/1.Sharkie/6.dead/2.Electro_shock/10.png'
-    ]
-
-    IMAGES_FIN_SLAP = [
-        '../img/1.Sharkie/4.Attack/Fin slap/1.png',
-        '../img/1.Sharkie/4.Attack/Fin slap/2.png',
-        '../img/1.Sharkie/4.Attack/Fin slap/3.png',
-        '../img/1.Sharkie/4.Attack/Fin slap/4.png',
-        '../img/1.Sharkie/4.Attack/Fin slap/5.png',
-        '../img/1.Sharkie/4.Attack/Fin slap/6.png',
-        '../img/1.Sharkie/4.Attack/Fin slap/7.png',
-        '../img/1.Sharkie/4.Attack/Fin slap/8.png'
-    ];
-
-    IMAGES_BUBBLE_ATTACK = [
-        '../img/1.Sharkie/4.Attack/Bubble trap/op1 (with bubble formation)/1.png',
-        '../img/1.Sharkie/4.Attack/Bubble trap/op1 (with bubble formation)/2.png',
-        '../img/1.Sharkie/4.Attack/Bubble trap/op1 (with bubble formation)/3.png',
-        '../img/1.Sharkie/4.Attack/Bubble trap/op1 (with bubble formation)/4.png',
-        '../img/1.Sharkie/4.Attack/Bubble trap/op1 (with bubble formation)/5.png',
-        '../img/1.Sharkie/4.Attack/Bubble trap/op1 (with bubble formation)/6.png',
-        '../img/1.Sharkie/4.Attack/Bubble trap/op1 (with bubble formation)/7.png',
-        '../img/1.Sharkie/4.Attack/Bubble trap/op1 (with bubble formation)/8.png'
-    ];
-
-    IMAGES_BUBBLE_POISON_ATTACK = [
-        '../img/1.Sharkie/4.Attack/Bubble trap/For Whale/1.png',
-        '../img/1.Sharkie/4.Attack/Bubble trap/For Whale/2.png',
-        '../img/1.Sharkie/4.Attack/Bubble trap/For Whale/3.png',
-        '../img/1.Sharkie/4.Attack/Bubble trap/For Whale/4.png',
-        '../img/1.Sharkie/4.Attack/Bubble trap/For Whale/5.png',
-        '../img/1.Sharkie/4.Attack/Bubble trap/For Whale/6.png',
-        '../img/1.Sharkie/4.Attack/Bubble trap/For Whale/7.png',
-        '../img/1.Sharkie/4.Attack/Bubble trap/For Whale/8.png'
-    ];
-
     constructor(){
         super().loadImage('../img/1.Sharkie/3.Swim/3.png');
-        this.loadImages(this.IMAGES_SWIMMING);
-        this.loadImages(this.IMAGES_FIN_SLAP);
-        this.loadImages(this.IMAGES_DEAD_POISON);
-        this.loadImages(this.IMAGES_DEAD_SHOCKED);
-        this.loadImages(this.IMAGES_HURT_POISONED);
-        this.loadImages(this.IMAGES_HURT_SHOCKED);
-        this.loadImages(this.IMAGES_IDLE);
-        this.loadImages(this.IMAGES_LONG_IDLE);
-        this.loadImages(this.IMAGES_BUBBLE_ATTACK);
-        this.loadImages(this.IMAGES_BUBBLE_POISON_ATTACK);
+        this.IMAGES_IDLE = this.createImagePaths('../img/1.Sharkie/1.IDLE', 18);
+        this.IMAGES_LONG_IDLE = this.createImagePaths('img/1.Sharkie/2.Long_IDLE', 14, 'li');
+        this.IMAGES_SWIMMING = this.createImagePaths('../img/1.Sharkie/3.Swim', 6);
+        this.IMAGES_HURT_POISONED = this.createImagePaths('../img/1.Sharkie/5.Hurt/1.Poisoned', 4);
+        this.IMAGES_HURT_SHOCKED = this.createImagePaths('../img/1.Sharkie/5.Hurt/2.Electric shock', 3);
+        this.IMAGES_DEAD_POISON = this.createImagePaths('../img/1.Sharkie/6.dead/1.Poisoned', 12);
+        this.IMAGES_DEAD_SHOCKED = this.createImagePaths('../img/1.Sharkie/6.dead/2.Electro_shock', 10);
+        this.IMAGES_FIN_SLAP = this.createImagePaths('../img/1.Sharkie/4.Attack/Fin slap', 8);
+        this.IMAGES_BUBBLE_ATTACK = this.createImagePaths('../img/1.Sharkie/4.Attack/Bubble trap/op1 (with bubble formation)', 8);
+        this.IMAGES_BUBBLE_POISON_ATTACK = this.createImagePaths('../img/1.Sharkie/4.Attack/Bubble trap/For Whale', 8);
+
+        [
+            this.IMAGES_SWIMMING,
+            this.IMAGES_FIN_SLAP,
+            this.IMAGES_DEAD_POISON,
+            this.IMAGES_DEAD_SHOCKED,
+            this.IMAGES_HURT_POISONED,
+            this.IMAGES_HURT_SHOCKED,
+            this.IMAGES_IDLE,
+            this.IMAGES_LONG_IDLE,
+            this.IMAGES_BUBBLE_ATTACK,
+            this.IMAGES_BUBBLE_POISON_ATTACK
+        ].forEach(arr => this.loadImages(arr));
 
         this.startAnimationLoops();
+    }
+
+    /**
+     * Helper to generate image paths
+     * @param {string} basePath - Folder path
+     * @param {number} count - Number of images
+     * @param {string} prefix - Optional prefix
+     * @param {string} suffix - Optional suffix
+     * @returns {string[]} Array of paths
+     */
+    createImagePaths(basePath, count, prefix = '', suffix = '.png') {
+        return Array.from({ length: count }, (_, i) => `${basePath}/${prefix}${i + 1}${suffix}`);
     }
 
     /**
