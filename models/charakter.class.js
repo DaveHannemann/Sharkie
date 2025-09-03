@@ -322,8 +322,9 @@ class Character extends MovableObject {
      * Plays long idle Animation and starts snoring.
      */
     playLongIdleAnimation() {
+        if (!this.world || this.world.startScreen || this.world.endScreen) return;
         this.playAnimation(this.IMAGES_LONG_IDLE);
-        if (!this.snoringPlaying && this.world && !this.world.endScreen) {
+        if (!this.snoringPlaying) {
             audioManager.playSFX('snoring');
             this.snoringPlaying = true;
         }

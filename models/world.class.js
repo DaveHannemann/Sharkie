@@ -56,6 +56,7 @@ class World {
         this.endboss = this.level.enemies.find(e => e instanceof Endboss) || null;
         this.charakter = new Character();
         this.charakter.world = this;
+        this.charakter.lastKeyPressed = Date.now();
         this.setWorld();
         this.resetBars();
         this.start();
@@ -146,6 +147,8 @@ class World {
     cleanupWorld() {
         this.endScreen = null;
         this.cleanup();
+        this.charakter?.stopAllIntervals?.();
+        this.charakter.lastKeyPressed = Date.now();
         world = null;
         startScreen = new StartScreen();
         hideMobileControls();
