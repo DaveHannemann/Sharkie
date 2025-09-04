@@ -169,10 +169,10 @@ function handleHowToButton() {
 }
 
 /**
- * Handles "Impressum" button click and opens new Tab
+ * Handles "Impressum" button click
  */
 function handleImpressumButton() {
-    window.open('./impressum.html', '_blank');
+    toggleOverlay(true, 'impressum');
 }
 
 /**
@@ -259,13 +259,18 @@ function setCanvasSize(canvas, width, height){
  * Toggles the overlay screen.
  * @param {boolean} [show=false] - show/not show overlay
  */
-function toggleOverlay(show = false) {
+function toggleOverlay(show = false, type = 'content') {
     const overlay = document.getElementById('overlay');
     const dialog = document.getElementById('dialogContent');
+
     if (show) {
         overlay.classList.remove('d_none');
         overlay.classList.add('show-overlay');
-        dialog.innerHTML = renderOverlayContent();
+        if (type === 'impressum') {
+            dialog.innerHTML = renderOverlayImpressum();
+        } else {
+            dialog.innerHTML = renderOverlayContent();
+        }
     } else {
         overlay.classList.add('d_none');
         overlay.classList.remove('show-overlay');

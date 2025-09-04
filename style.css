@@ -3,7 +3,6 @@
     src: url('../fonts/luckiestGuy-Regular.ttf') format('truetype');
 }  
 
-
 body{
     margin: 0;
     display: flex;
@@ -77,10 +76,36 @@ canvas{
     align-items: end;
 }
 
+.dialogContent::-webkit-scrollbar {
+  width: var(--sb-size)
+}
+
+.dialogContent::-webkit-scrollbar-track {
+  background: var(--sb-track-color);
+  border-radius: 5px;
+}
+
+.dialogContent::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb-color);
+  border-radius: 5px;
+  border: 1px solid #e24800;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .dialogContent {
+    scrollbar-color: var(--sb-thumb-color)
+                     var(--sb-track-color);
+  }
+}
+
 .dialogContent {
     display: flex;
     flex-direction: column;
     flex: 1;
+    overflow-y: auto;
+    --sb-track-color: #e24800;
+    --sb-thumb-color: #05a6eb;
+    --sb-size: 12px;
 }
 
 .keyboard_img{
@@ -138,7 +163,7 @@ a{
 .closeX{
     color: rgb(57, 55, 160);
     position: absolute;
-    margin-right: 10px;
+    margin-right: 18px;
     margin-top: 10px;
     background-color: orange;
     padding: 4px;
