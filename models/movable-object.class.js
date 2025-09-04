@@ -42,20 +42,17 @@ class MovableObject extends DrawableObject{
 
     /**
      * Applies damage to object, has a timer to prevent multiple hits directly
-     * @param {string|null} type - type of hit (electro or poison) 
+     * @param {number} damage - Damage value
+     * @param {string} [type="default"] - Type of hit (electro, poison, default) 
      */
-    hit(type = null) {
-        let hitTimer = new Date().getTime();
-
-        if(!this.lastHit || hitTimer -this.lastHit >= 1000) {
-            this.energy -= 10;
-                if(this.energy < 0) {
-                    this.energy = 0;
-                }
-            this.lastHit = hitTimer;
-            if (type) {
-                this.lastHitType = type;
-            }
+    hit(damage = 10, type = "default") {
+        const now = Date.now();
+        if (!this.lastHit || now - this.lastHit >= 1000) {
+            this.energy -= damage;
+            if (this.energy < 0) this.energy = 0;
+            this.lastHit = now;
+            this.lastHitType = type;
+            this.isPlayingHurtSound = false;
         }
     }
 
@@ -102,7 +99,6 @@ class MovableObject extends DrawableObject{
             const img = new Image();
             img.src = images[frameIndex];
             this.img = img;
-
             frameIndex++;
             if (frameIndex >= images.length) {
                 clearInterval(animInterval);
