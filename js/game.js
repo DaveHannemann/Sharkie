@@ -31,10 +31,17 @@ function init() {
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
     startScreen = new StartScreen();
+    if (isMobileDevice()) {
+    startScreen.toggleStartScreenButtons(['fullscreen'], false);
+    }
     hideMobileControls();
     drawStartScreenLoop();
     bindKeys();
     setupEventListeners();
+}
+
+function isMobileDevice() {
+    return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 }
 
 /**
