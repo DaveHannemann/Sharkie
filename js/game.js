@@ -91,10 +91,22 @@ function playStartMusicOnce() {
  * @returns {{x:number, y:number}} Mouse position on canvas.
  */
 function getMousePos(event, canvas) {
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / canvas.clientWidth;
-    const scaleY = canvas.height / canvas.clientHeight;
-    return { x: (event.clientX - rect.left) * scaleX, y: (event.clientY - rect.top) * scaleY };
+    const rect = canvas.getBoundingClientRect();    
+    const aspect = 720 / 480;
+    let canvasWidth = rect.width;
+    let canvasHeight = rect.height;    
+    let scale;
+    let offsetX = 0, offsetY = 0;    
+    if (canvasWidth / canvasHeight > aspect) {
+        scale = canvasHeight / 480;
+        offsetX = (canvasWidth - 720 * scale) / 2;
+    } else {
+        scale = canvasWidth / 720;
+        offsetY = (canvasHeight - 480 * scale) / 2;
+    }
+    const x = (event.clientX - rect.left - offsetX) / scale;
+    const y = (event.clientY - rect.top - offsetY) / scale;  
+    return { x, y };
 }
 
 /**
