@@ -72,27 +72,106 @@ class StartScreen extends DrawableObject {
      * Initializes buttons
      */
     initButtons() {
-        this.animatedButtons = [
-            { name: 'start', x: 280, y: 325, width: 180, height: 40, currentIndex: 0, images: [
-                '../img/6.Botones/Start/1.png','../img/6.Botones/Start/2.png',
-                '../img/6.Botones/Start/3.png','../img/6.Botones/Start/4.png'] },
-            { name: 'fullscreen', x: 580, y: 10, width: 130, height: 40, currentIndex: 0, images: [
-                '../img/6.Botones/Full Screen/Mesa de trabajo 6.png',
-                '../img/6.Botones/Full Screen/Mesa de trabajo 7.png',
-                '../img/6.Botones/Full Screen/Mesa de trabajo 8.png',
-                '../img/6.Botones/Full Screen/Mesa de trabajo 9.png'] },
-            { name: 'howto', x: 260, y: -20, width: 190, height: 120, currentIndex: 0,
-                images: ['../img/6.Botones/floss.png'], isStatic: true, text: 'How to',
-                hitboxOffset: { top: 40, left: 60, right: 60, bottom: 40 } },
-            { name: 'mute', x: 200, y: 10, width: 30, height: 30,
-                currentIndex: audioManager.muted ? 1 : 0,
-                images: ['../img/6.Botones/sounds_on.png','../img/6.Botones/sounds_off.png'],
-                isStatic: true },
-            { name: 'impressum', x: 600, y: 440, width: 100, height: 30,
-            images: [], isStatic: true, text: 'Impressum',
-                hitboxOffset: { top: 0, left: 0, right: 0, bottom: 0 } }    
-        ];
-        this.animatedButtons.forEach(btn => this.loadImages(btn.images));
+    this.animatedButtons = this.getButtonConfigs();
+    this.preloadButtonImages(this.animatedButtons);
+    }
+
+    /**
+     * Config for all buttons
+     * @returns {Object[]} Array of button configs
+     */
+    getButtonConfigs() {
+    return [
+        this.startButton(),
+        this.fullscreenButton(),
+        this.howToButton(),
+        this.muteButton(),
+        this.impressumButton()
+    ];
+    }
+
+    /**
+     * Preload button imgs
+     * @param {Object[]} buttons - Array of button configs
+     */
+    preloadButtonImages(buttons) {
+    buttons.forEach(btn => this.loadImages(btn.images));
+    }
+
+    /**
+     * Creates start button.
+     * @returns {Object} Button config
+     */
+    startButton() {
+    return this.createButton('start', 280, 325, 180, 40, [
+        '../img/6.Botones/Start/1.png',
+        '../img/6.Botones/Start/2.png',
+        '../img/6.Botones/Start/3.png',
+        '../img/6.Botones/Start/4.png'
+    ]);
+    }
+
+    /**
+     * Creates fullscreen button.
+     * @returns {Object} Button config
+     */
+    fullscreenButton() {
+    return this.createButton('fullscreen', 580, 10, 130, 40, [
+        '../img/6.Botones/Full Screen/Mesa de trabajo 6.png',
+        '../img/6.Botones/Full Screen/Mesa de trabajo 7.png',
+        '../img/6.Botones/Full Screen/Mesa de trabajo 8.png',
+        '../img/6.Botones/Full Screen/Mesa de trabajo 9.png'
+    ]);
+    }
+
+    /**
+     * Creates how-to button.
+     * @returns {Object} Button config
+     */
+    howToButton() {
+    return this.createButton(
+        'howto', 260, -20, 190, 120,
+        ['../img/6.Botones/floss.png'],
+        true, 'How to', { top: 40, left: 60, right: 60, bottom: 40 }
+    );
+    }
+
+    /**
+     * Creates mute button.
+     * @returns {Object} Button config
+     */
+    muteButton() {
+    return this.createButton(
+        'mute', 200, 10, 30, 30,
+        ['../img/6.Botones/sounds_on.png', '../img/6.Botones/sounds_off.png'],
+        true, null, null, audioManager.muted ? 1 : 0
+    );
+    }
+
+    /**
+     * Creates impressum button.
+     * @returns {Object} Button config
+     */
+    impressumButton() {
+    return this.createButton('impressum', 600, 440, 100, 30, [], true, 'Impressum');
+    }
+
+    /**
+     * Utility to create a button.
+     * @param {string} name - Unique name of the button
+     * @param {number} x - X position
+     * @param {number} y - Y position
+     * @param {number} width - Width of button
+     * @param {number} height - Height of button
+     * @param {string[]} images - Array of image paths
+     * @param {boolean} [isStatic=false] - If true, button is not animated
+     * @param {string|null} [text=null] - Optional text label
+     * @param {Object|null} [hitboxOffset=null] - Optional hitbox offsets
+     * @param {number} [currentIndex=0] - Current image index
+     * @returns {Object} Button configuration object
+     */
+    createButton(name, x, y, width, height, images, isStatic=false, text=null, hitboxOffset=null, currentIndex=0) {
+    return { name, x, y, width, height, images, isStatic, text, hitboxOffset, currentIndex };
     }
 
     /**
