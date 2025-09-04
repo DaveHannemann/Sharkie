@@ -173,9 +173,23 @@ class JellyFish extends MovableObject {
     this.loadImages(this.animationImages);
     this.isDead = true;
     this.speed = 0;
+    this.startFloatingUpwards();
     this.startDeathAnimation(() => {
-      this.readyToRemove = true;
     });
+  }
+
+  /**
+   * Starts floating the dead Jellyfish upwards
+   * @param {number} speed - speed of floating
+   */
+  startFloatingUpwards(speed = 1.5) {
+    this.movementInterval = setInterval(() => {
+      this.y -= speed;
+      if (this.y + this.height < 0) {
+        clearInterval(this.movementInterval);
+        this.readyToRemove = true;
+      }
+    }, 1000 / 60);
   }
 
   /**
