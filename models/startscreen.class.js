@@ -303,22 +303,25 @@ class StartScreen extends DrawableObject {
     }
 
     /**
-     * Shows or hides the "How To" button
+     * Shows or hides specified buttons on the StartScreen.
+     * @param {string[]} buttonNames - Array of button names to toggle
      * @param {boolean} visible - True to show
      */
-    toggleHowToButton(visible) {
-        let idx = this.animatedButtons.findIndex(b => b.name === 'howto');
-        if (!visible && idx !== -1) {
-            let removed = this.animatedButtons.splice(idx, 1)[0];
-            this.onlyStartScreenObjects.push(removed);
-        }
-        if (visible) {
-            let stored = this.onlyStartScreenObjects.find(b => b.name === 'howto');
-            if (stored && !this.animatedButtons.some(b => b.name === 'howto')) {
-                this.animatedButtons.push(stored);
-                this.onlyStartScreenObjects =
-                    this.onlyStartScreenObjects.filter(b => b.name !== 'howto');
+    toggleStartScreenButtons(buttonNames, visible) {
+        buttonNames.forEach(name => {
+            const idx = this.animatedButtons.findIndex(b => b.name === name);
+            if (!visible && idx !== -1) {
+                const removed = this.animatedButtons.splice(idx, 1)[0];
+                this.onlyStartScreenObjects.push(removed);
             }
-        }
+            if (visible) {
+                const stored = this.onlyStartScreenObjects.find(b => b.name === name);
+                if (stored && !this.animatedButtons.some(b => b.name === name)) {
+                    this.animatedButtons.push(stored);
+                    this.onlyStartScreenObjects =
+                        this.onlyStartScreenObjects.filter(b => b.name !== name);
+                }
+            }
+        });
     }
 }

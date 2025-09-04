@@ -71,7 +71,7 @@ function onCanvasMouseMove(e) {
 function onFullscreenChange() {
     const fullScreen = !!document.fullscreenElement;
     fullScreen ? scaleCanvasToFit(canvas) : resetCanvasSize(canvas);
-    startScreen?.toggleHowToButton(!fullScreen);
+    startScreen?.toggleStartScreenButtons(['howto', 'impressum'], !fullScreen);
 }
 
 /**
