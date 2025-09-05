@@ -29,7 +29,8 @@ class World {
     /**
      * Starts the game
      */
-    start() {
+    async start() {
+        await this.preloadBackground(this.level);
         this.run();
         this.draw();
         this.startEnemiesAnimation();
@@ -324,5 +325,17 @@ class World {
         this.stopDrawing(); 
         clearInterval(this.gameInterval); 
         this.stopEnemiesAnimation(); 
+    }
+
+    /**
+     * Preloads all background images
+     * @param {Level} level - level background objects.
+     * @returns {Promise<void>} Resolves when imgs loaded.
+     */
+    async preloadBackground(level) {
+        const promises = level.backgroundObjects
+            .map(bg => bg.imageLoaded)
+            .filter(Boolean);
+        await Promise.all(promises);
     }
 }
