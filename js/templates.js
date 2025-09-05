@@ -30,7 +30,7 @@ function renderOverlayContent() {
             <div class="enemybox"><img class="enemydmgbox" src="../img/2.Enemy/1.Puffer fish (3 color options)/1.Swim/1.swim1.png"><p>Pufferfish: 5 Damage</p></div>
             <div class="enemybox"><img class="enemydmgbox" src="../img/2.Enemy/1.Puffer fish (3 color options)/3.Bubbleeswim/1.bubbleswim1.png"><p>Bubblefish: 10 Damage</p></div>
             <div class="enemybox"><img class="enemydmgbox_jelly" src="../img/2.Enemy/2 Jelly fish/Regular damage/Lila 1.png"><p>Jellyfish: 15 Damage</p></div>
-            <div class="enemybox"><img class="enemydmgbox_endboss" src="../img/2.Enemy/3 Final Enemy/2.floating/1.png"><p>Endboss: 20-30 Damage based on level</p></div>
+            <div class="enemybox"><img class="enemydmgbox_endboss" src="../img/2.Enemy/3 Final Enemy/2.floating/1.png"><p>Endboss: 30-50 Damage based on level</p></div>
         </div>
     </div>
     `;

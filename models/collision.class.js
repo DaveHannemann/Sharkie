@@ -61,10 +61,10 @@ class CollisionManager {
    */
   calcBossDamage() {
     switch (this.world.currentLevelNumber) {
-      case 1: return 20;
-      case 2: return 25;
-      case 3: return 30;
-      default: return 20;
+      case 1: return 30;
+      case 2: return 40;
+      case 3: return 50;
+      default: return 30;
     }
   }
 
