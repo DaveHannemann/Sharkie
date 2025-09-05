@@ -40,6 +40,10 @@ function init() {
     setupEventListeners();
 }
 
+/**
+ * Detects if the current device is likely a mobile device.
+ * @returns {boolean} True if mobile device
+ */
 function isMobileDevice() {
     return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 }
@@ -93,27 +97,36 @@ function playStartMusicOnce() {
 
 /**
  * Gets the scaled mouse coordinates relative to the canvas.
- * @param {MouseEvent} event - mouse event
- * @param {HTMLCanvasElement} canvas - game
- * @returns {{x:number, y:number}} Mouse position on canvas.
+ * @param {MouseEvent} event - Mouse event
+ * @param {HTMLCanvasElement} canvas - Target canvas
+ * @returns {{x:number, y:number}} Mouse position on canvas
  */
 function getMousePos(event, canvas) {
-    const rect = canvas.getBoundingClientRect();    
+    const rect = canvas.getBoundingClientRect();
+    const { scale, offsetX, offsetY } = getScaleAndOffset(rect);
+    return {
+        x: (event.clientX - rect.left - offsetX) / scale,
+        y: (event.clientY - rect.top - offsetY) / scale
+    };
+}
+
+/**
+ * Calculates scale and offset for keeping 720x480 aspect ratio.
+ * @param {DOMRect} rect - Canvas bounding rectangle
+ * @returns {{scale:number, offsetX:number, offsetY:number}}
+ */
+function getScaleAndOffset(rect) {
     const aspect = 720 / 480;
-    let canvasWidth = rect.width;
-    let canvasHeight = rect.height;    
-    let scale;
-    let offsetX = 0, offsetY = 0;    
-    if (canvasWidth / canvasHeight > aspect) {
-        scale = canvasHeight / 480;
-        offsetX = (canvasWidth - 720 * scale) / 2;
+    const { width, height } = rect;
+    let scale, offsetX = 0, offsetY = 0;
+    if (width / height > aspect) {
+        scale = height / 480;
+        offsetX = (width - 720 * scale) / 2;
     } else {
-        scale = canvasWidth / 720;
-        offsetY = (canvasHeight - 480 * scale) / 2;
+        scale = width / 720;
+        offsetY = (height - 480 * scale) / 2;
     }
-    const x = (event.clientX - rect.left - offsetX) / scale;
-    const y = (event.clientY - rect.top - offsetY) / scale;  
-    return { x, y };
+    return { scale, offsetX, offsetY };
 }
 
 /**
@@ -276,12 +289,13 @@ function setCanvasSize(canvas, width, height){
 
 /**
  * Toggles the overlay screen.
- * @param {boolean} [show=false] - show/not show overlay
+ * @param {boolean} [show=false] - Whether to show (true) or hide (false) the overlay.
+ * @param {"content"|"impressum"} [type="content"] - The content type to render inside the overlay.
+ * @returns {void}
  */
 function toggleOverlay(show = false, type = 'content') {
     const overlay = document.getElementById('overlay');
     const dialog = document.getElementById('dialogContent');
-
     if (show) {
         overlay.classList.remove('d_none');
         overlay.classList.add('show-overlay');

@@ -249,7 +249,7 @@ a{
     font-size: 46px;
 }
 
-@media screen and (orientation: portrait) {
+@media (hover: none) and (pointer: coarse) and (orientation: portrait) {
   #rotate-overlay {
     display: flex;
   }
