@@ -61,10 +61,10 @@ class CollisionManager {
    */
   calcBossDamage() {
     switch (this.world.currentLevelNumber) {
-      case 1: return 10;
-      case 2: return 20;
+      case 1: return 20;
+      case 2: return 25;
       case 3: return 30;
-      default: return 10;
+      default: return 20;
     }
   }
 
@@ -136,10 +136,10 @@ class CollisionManager {
   calcBossHit(bubble) {
     let baseDamage;
     switch (this.world.currentLevelNumber) {
-      case 1: baseDamage = 20; break;
-      case 2: baseDamage = 15; break;
-      case 3: baseDamage = 10; break;
-      default: baseDamage = 20;
+      case 1: baseDamage = 15; break;
+      case 2: baseDamage = 10; break;
+      case 3: baseDamage = 5; break;
+      default: baseDamage = 15;
     }
     return bubble.type === 'poison' ? baseDamage + 5 : baseDamage;
   }

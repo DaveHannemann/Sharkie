@@ -129,7 +129,6 @@ canvas{
 }
 
 .key_instructions{
-    flex: 1;
     display: flex;
     justify-content: space-around;
     flex-direction: column;
@@ -173,8 +172,7 @@ a{
     margin-right: 18px;
     margin-top: 10px;
     background-color: orange;
-    padding: 4px;
-    border-radius: 25px;
+    padding: 2px;
     cursor: pointer;
 }
 
@@ -247,6 +245,41 @@ a{
 
 .tilt_me{
     font-size: 46px;
+}
+
+.enemydmgbox_jelly{
+    height: 50px;
+    width: 50px;
+}
+
+.enemydmgbox_endboss{
+    margin-top: -30px;
+    width: 60px;
+    height: 84px;
+}
+
+.enemydmgbox{
+    height: 30px;
+    width: 40px;
+}
+
+.flex{
+    display: flex;
+    flex: 1;
+    gap: 70px;
+}
+
+.enemybox{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.fishbox{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    justify-content: space-around;
 }
 
 @media (hover: none) and (pointer: coarse) and (orientation: portrait) {

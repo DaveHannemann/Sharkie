@@ -7,21 +7,28 @@ function renderOverlayContent() {
         Hit the pumped-up puffer fishes with your fin slap and the jelly fishes with your bubbles,
         collect some poison to get something special for the big bad shark at the end...</p>
     <h2>How To Play</h2>
-    <div class="key_instructions">
-        <div class="key_single">
-        <img class="keyboard_img" src="../img/6.Botones/Key/arrow keys.png">
-        <p>Move through water!</p>
+    <div class="flex">
+        <div class="key_instructions">
+            <div class="key_single">
+            <img class="keyboard_img" src="../img/6.Botones/Key/arrow keys.png">
+            <p>Move through water!</p>
+            </div>
+            <div class="key_single">
+            <img class="key_d_img" src="../img/6.Botones/Key/D key.png">
+            <p>Bubble 'em JellyFishes and Endboss!</p>
+            </div>
+            <div class="key_single">
+            <img class="key_space_img" src="../img/6.Botones/Key/Space Bar key.png">
+            <p>Fin Slap 'em blown up Pufferfishes!</p>
+            </div>
         </div>
-        <div class="key_single">
-        <img class="key_d_img" src="../img/6.Botones/Key/D key.png">
-        <p>Bubble 'em JellyFishes and Endboss!</p>
-        </div>
-        <div class="key_single">
-        <img class="key_space_img" src="../img/6.Botones/Key/Space Bar key.png">
-        <p>Fin Slap 'em blown up Pufferfishes!</p>
+        <div class="fishbox">
+            <div class="enemybox"><img class="enemydmgbox" src="../img/2.Enemy/1.Puffer fish (3 color options)/1.Swim/1.swim1.png"><p>5 Damage</p></div>
+            <div class="enemybox"><img class="enemydmgbox" src="../img/2.Enemy/1.Puffer fish (3 color options)/3.Bubbleeswim/1.bubbleswim1.png"><p>10 Damage</p></div>
+            <div class="enemybox"><img class="enemydmgbox_jelly" src="../img/2.Enemy/2 Jelly fish/Regular damage/Lila 1.png"><p>15 Damage</p></div>
+            <div class="enemybox"><img class="enemydmgbox_endboss" src="../img/2.Enemy/3 Final Enemy/2.floating/1.png"><p>20-30 Damage based on level</p></div>
         </div>
     </div>
-    
     `;
 }
 

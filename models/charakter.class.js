@@ -154,7 +154,7 @@ class Character extends MovableObject {
         if (this.isDead()) return this.playDeathAnimation();
         if (this.isHurt()) return this.playHurtAnimation();
         if (this.isMoving()) return this.playMovingAnimation();
-        if (Date.now() - this.lastKeyPressed > 10000) return this.playLongIdleAnimation();
+        if (Date.now() - this.lastKeyPressed > 5000) return this.playLongIdleAnimation();
         this.playAnimation(this.IMAGES_IDLE);
     }
 
