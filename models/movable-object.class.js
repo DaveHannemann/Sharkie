@@ -94,11 +94,11 @@ class MovableObject extends DrawableObject{
      * @param {function} [onComplete] - Optional callback after last frame
      */
     playAnimationSequence(images, interval, onComplete) {
+        if (!images || images.length === 0) return;
         let frameIndex = 0;
         const animInterval = setInterval(() => {
-            const img = new Image();
-            img.src = images[frameIndex];
-            this.img = img;
+            const path = images[frameIndex];
+            this.img = this.imageCache[path];
             frameIndex++;
             if (frameIndex >= images.length) {
                 clearInterval(animInterval);
