@@ -1,6 +1,3 @@
-/**
- * Class for the main character
- */
 class Character extends MovableObject {
     x = 50;
     y = 100;
@@ -24,9 +21,6 @@ class Character extends MovableObject {
     world;
     offSet = {top : 35, bottom : 70, left : 30, right : 40};
 
-    /**
-     * Initializes the character, loads imgs and starts animation
-     */
     constructor(){
         super().loadImage('../img/1.Sharkie/3.Swim/3.png');
         this.IMAGES_IDLE = this.createImagePaths('../img/1.Sharkie/1.IDLE', 18);

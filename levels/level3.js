@@ -1,3 +1,13 @@
+/**
+ * Creates level 3 of the game.
+ * Contents: Enemies, Light, Background, Collectables
+ * 
+ * @returns {Level} A new Level instance with:
+ * - **Enemies**: Normal fishes, JellyFishes, and Endboss.
+ * - **Lights**: Moving Light.
+ * - **BackgroundObjects**: Background layers.
+ * - **Collectables**: Coins and poison.
+ */
 function createLevel3() {
     return new Level(
     [

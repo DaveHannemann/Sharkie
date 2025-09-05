@@ -1,3 +1,7 @@
+/**
+ * Renders content overlay for story and shows control setup
+ * @returns {string} HTML string for the story and gameplay instructions
+ */
 function renderOverlayContent() {
     return `
     <h2>Story</h2>
@@ -32,6 +36,10 @@ function renderOverlayContent() {
     `;
 }
 
+/**
+ * Renders impressum overlay
+ * @returns {string} HTML string for the Impressum overlay
+ */
 function renderOverlayImpressum() {
     return `
     <h2>Impressum</h2><p>Angaben gemäß § 5 DDG</p><p>David Hannemann<br> 

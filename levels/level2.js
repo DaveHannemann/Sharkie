@@ -1,3 +1,13 @@
+/**
+ * Creates level 2 of the game.
+ * Contents: Enemies, Light, Background, Collectables
+ * 
+ * @returns {Level} A new Level instance with:
+ * - **Enemies**: Normal fishes, JellyFishes, and Endboss.
+ * - **Lights**: Moving Light.
+ * - **BackgroundObjects**: Background layers.
+ * - **Collectables**: Coins and poison.
+ */
 function createLevel2() {
     return new Level(
     [
