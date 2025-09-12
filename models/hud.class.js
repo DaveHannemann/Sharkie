@@ -5,8 +5,8 @@ class HUD extends DrawableObject {
         width: 30,
         height: 30,
         images: [
-            '../img/6.Botones/sounds_on.png',
-            '../img/6.Botones/sounds_off.png'
+            'img/6.Botones/sounds_on.png',
+            'img/6.Botones/sounds_off.png'
         ],
         currentIndex: audioManager.muted ? 1 : 0
     };

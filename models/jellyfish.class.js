@@ -18,59 +18,59 @@ class JellyFish extends MovableObject {
   };
 
   IMAGES_JELLYFISH_POISON_PURPLE = [
-    "../img/2.Enemy/2 Jelly fish/Regular damage/Lila 1.png",
-    "../img/2.Enemy/2 Jelly fish/Regular damage/Lila 2.png",
-    "../img/2.Enemy/2 Jelly fish/Regular damage/Lila 3.png",
-    "../img/2.Enemy/2 Jelly fish/Regular damage/Lila 4.png"
+    "img/2.Enemy/2 Jelly fish/Regular damage/Lila 1.png",
+    "img/2.Enemy/2 Jelly fish/Regular damage/Lila 2.png",
+    "img/2.Enemy/2 Jelly fish/Regular damage/Lila 3.png",
+    "img/2.Enemy/2 Jelly fish/Regular damage/Lila 4.png"
   ];
 
   IMAGES_JELLYFISH_POISON_PURPLE_DEAD = [
-    '../img/2.Enemy/2 Jelly fish/Dead/Lila/L1.png',
-    '../img/2.Enemy/2 Jelly fish/Dead/Lila/L2.png',
-    '../img/2.Enemy/2 Jelly fish/Dead/Lila/L3.png',
-    '../img/2.Enemy/2 Jelly fish/Dead/Lila/L4.png'
+    'img/2.Enemy/2 Jelly fish/Dead/Lila/L1.png',
+    'img/2.Enemy/2 Jelly fish/Dead/Lila/L2.png',
+    'img/2.Enemy/2 Jelly fish/Dead/Lila/L3.png',
+    'img/2.Enemy/2 Jelly fish/Dead/Lila/L4.png'
   ]
 
   IMAGES_JELLYFISH_POISON_YELLOW = [
-    "../img/2.Enemy/2 Jelly fish/Regular damage/Yellow 1.png",
-    "../img/2.Enemy/2 Jelly fish/Regular damage/Yellow 2.png",
-    "../img/2.Enemy/2 Jelly fish/Regular damage/Yellow 3.png",
-    "../img/2.Enemy/2 Jelly fish/Regular damage/Yellow 4.png"
+    "img/2.Enemy/2 Jelly fish/Regular damage/Yellow 1.png",
+    "img/2.Enemy/2 Jelly fish/Regular damage/Yellow 2.png",
+    "img/2.Enemy/2 Jelly fish/Regular damage/Yellow 3.png",
+    "img/2.Enemy/2 Jelly fish/Regular damage/Yellow 4.png"
   ];
 
   IMAGES_JELLYFISH_POISON_YELLOW_DEAD = [
-    '../img/2.Enemy/2 Jelly fish/Dead/Yellow/y1.png',
-    '../img/2.Enemy/2 Jelly fish/Dead/Yellow/y2.png',
-    '../img/2.Enemy/2 Jelly fish/Dead/Yellow/y3.png',
-    '../img/2.Enemy/2 Jelly fish/Dead/Yellow/y4.png',
+    'img/2.Enemy/2 Jelly fish/Dead/Yellow/y1.png',
+    'img/2.Enemy/2 Jelly fish/Dead/Yellow/y2.png',
+    'img/2.Enemy/2 Jelly fish/Dead/Yellow/y3.png',
+    'img/2.Enemy/2 Jelly fish/Dead/Yellow/y4.png',
   ]
 
   IMAGES_JELLYFISH_ELECTRO_GREEN = [
-    "../img/2.Enemy/2 Jelly fish/Súper dangerous/Green 1.png",
-    "../img/2.Enemy/2 Jelly fish/Súper dangerous/Green 2.png",
-    "../img/2.Enemy/2 Jelly fish/Súper dangerous/Green 3.png",
-    "../img/2.Enemy/2 Jelly fish/Súper dangerous/Green 4.png"
+    "img/2.Enemy/2 Jelly fish/Súper dangerous/Green 1.png",
+    "img/2.Enemy/2 Jelly fish/Súper dangerous/Green 2.png",
+    "img/2.Enemy/2 Jelly fish/Súper dangerous/Green 3.png",
+    "img/2.Enemy/2 Jelly fish/Súper dangerous/Green 4.png"
   ];
 
   IMAGES_JELLYFISH_ELEKTRO_GREEN_DEAD = [
-    '../img/2.Enemy/2 Jelly fish/Dead/green/g1.png',
-    '../img/2.Enemy/2 Jelly fish/Dead/green/g2.png',
-    '../img/2.Enemy/2 Jelly fish/Dead/green/g3.png',
-    '../img/2.Enemy/2 Jelly fish/Dead/green/g4.png'
+    'img/2.Enemy/2 Jelly fish/Dead/green/g1.png',
+    'img/2.Enemy/2 Jelly fish/Dead/green/g2.png',
+    'img/2.Enemy/2 Jelly fish/Dead/green/g3.png',
+    'img/2.Enemy/2 Jelly fish/Dead/green/g4.png'
   ]
 
   IMAGES_JELLYFISH_ELECTRO_PINK = [
-    "../img/2.Enemy/2 Jelly fish/Súper dangerous/Pink 1.png",
-    "../img/2.Enemy/2 Jelly fish/Súper dangerous/Pink 2.png",
-    "../img/2.Enemy/2 Jelly fish/Súper dangerous/Pink 3.png",
-    "../img/2.Enemy/2 Jelly fish/Súper dangerous/Pink 4.png",
+    "img/2.Enemy/2 Jelly fish/Súper dangerous/Pink 1.png",
+    "img/2.Enemy/2 Jelly fish/Súper dangerous/Pink 2.png",
+    "img/2.Enemy/2 Jelly fish/Súper dangerous/Pink 3.png",
+    "img/2.Enemy/2 Jelly fish/Súper dangerous/Pink 4.png",
   ];
 
   IMAGES_JELLYFISH_ELECTRO_PINK_DEAD = [
-    '../img/2.Enemy/2 Jelly fish/Dead/Pink/P1.png',
-    '../img/2.Enemy/2 Jelly fish/Dead/Pink/P2.png',
-    '../img/2.Enemy/2 Jelly fish/Dead/Pink/P3.png',
-    '../img/2.Enemy/2 Jelly fish/Dead/Pink/P4.png'
+    'img/2.Enemy/2 Jelly fish/Dead/Pink/P1.png',
+    'img/2.Enemy/2 Jelly fish/Dead/Pink/P2.png',
+    'img/2.Enemy/2 Jelly fish/Dead/Pink/P3.png',
+    'img/2.Enemy/2 Jelly fish/Dead/Pink/P4.png'
   ]
 
   constructor(

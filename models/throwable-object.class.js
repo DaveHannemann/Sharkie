@@ -13,9 +13,9 @@ class ThrowableObject extends MovableObject{
         this.type = type;
 
         if (this.type === 'poison') {
-            this.loadImage('../img/1.Sharkie/4.Attack/Bubble trap/Poisoned Bubble (for whale).png');
+            this.loadImage('img/1.Sharkie/4.Attack/Bubble trap/Poisoned Bubble (for whale).png');
         } else {
-            this.loadImage('../img/1.Sharkie/4.Attack/Bubble trap/Bubble.png');
+            this.loadImage('img/1.Sharkie/4.Attack/Bubble trap/Bubble.png');
         }
     }
 

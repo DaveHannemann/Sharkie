@@ -25,11 +25,11 @@ class StartScreen extends DrawableObject {
      */
     initBackground() {
         this.backgroundObjects = [
-            new BackgroundObject('../img/3. Background/Layers/5. Water/D1.png', 0),
-            new BackgroundObject('../img/3. Background/Layers/4.Fondo 2/D1.png', 0),
-            new BackgroundObject('../img/3. Background/Layers/3.Fondo 1/D1.png', 0),
-            new BackgroundObject('../img/3. Background/Layers/2. Floor/D1.png', 0),
-            new BackgroundObject('../img/3. Background/Layers/1. Light/1.png', 0)
+            new BackgroundObject('img/3. Background/Layers/5. Water/D1.png', 0),
+            new BackgroundObject('img/3. Background/Layers/4.Fondo 2/D1.png', 0),
+            new BackgroundObject('img/3. Background/Layers/3.Fondo 1/D1.png', 0),
+            new BackgroundObject('img/3. Background/Layers/2. Floor/D1.png', 0),
+            new BackgroundObject('img/3. Background/Layers/1. Light/1.png', 0)
         ];
         this.backgroundObjects.forEach(obj => this.loadImage(obj.img.src));
     }
@@ -104,10 +104,10 @@ class StartScreen extends DrawableObject {
      */
     startButton() {
     return this.createButton('start', 280, 325, 180, 40, [
-        '../img/6.Botones/Start/1.png',
-        '../img/6.Botones/Start/2.png',
-        '../img/6.Botones/Start/3.png',
-        '../img/6.Botones/Start/4.png'
+        'img/6.Botones/Start/1.png',
+        'img/6.Botones/Start/2.png',
+        'img/6.Botones/Start/3.png',
+        'img/6.Botones/Start/4.png'
     ]);
     }
 
@@ -117,10 +117,10 @@ class StartScreen extends DrawableObject {
      */
     fullscreenButton() {
     return this.createButton('fullscreen', 580, 10, 130, 40, [
-        '../img/6.Botones/Full Screen/Mesa de trabajo 6.png',
-        '../img/6.Botones/Full Screen/Mesa de trabajo 7.png',
-        '../img/6.Botones/Full Screen/Mesa de trabajo 8.png',
-        '../img/6.Botones/Full Screen/Mesa de trabajo 9.png'
+        'img/6.Botones/Full Screen/Mesa de trabajo 6.png',
+        'img/6.Botones/Full Screen/Mesa de trabajo 7.png',
+        'img/6.Botones/Full Screen/Mesa de trabajo 8.png',
+        'img/6.Botones/Full Screen/Mesa de trabajo 9.png'
     ]);
     }
 
@@ -131,7 +131,7 @@ class StartScreen extends DrawableObject {
     howToButton() {
     return this.createButton(
         'howto', 260, -20, 190, 120,
-        ['../img/6.Botones/floss.png'],
+        ['img/6.Botones/floss.png'],
         true, 'How to', { top: 40, left: 60, right: 60, bottom: 40 }
     );
     }
@@ -143,7 +143,7 @@ class StartScreen extends DrawableObject {
     muteButton() {
     return this.createButton(
         'mute', 200, 10, 30, 30,
-        ['../img/6.Botones/sounds_on.png', '../img/6.Botones/sounds_off.png'],
+        ['img/6.Botones/sounds_on.png', '../img/6.Botones/sounds_off.png'],
         true, null, null, audioManager.muted ? 1 : 0
     );
     }

@@ -40,10 +40,10 @@ class EndScreen extends DrawableObject {
 
         this.animatedButtons = [
             this.createButton('win', 190, 242, 340, 80, [
-                '../img/6.Botones/Tittles/You win/Recurso 20.png',
-                '../img/6.Botones/Tittles/You win/Recurso 21.png',
-                '../img/6.Botones/Tittles/You win/Recurso 22.png',
-                '../img/6.Botones/Tittles/You win/Recurso 23.png'
+                'img/6.Botones/Tittles/You win/Recurso 20.png',
+                'img/6.Botones/Tittles/You win/Recurso 21.png',
+                'img/6.Botones/Tittles/You win/Recurso 22.png',
+                'img/6.Botones/Tittles/You win/Recurso 23.png'
             ]),
             this.createStaticButton('homescreen', 670, 10, 40, 40, ['../img/6.Botones/shell_home.png'], 'Home')
         ];
@@ -58,17 +58,17 @@ class EndScreen extends DrawableObject {
     initLoseScreen() {
         this.animatedButtons = [
             this.createButton('gameover', 270, 200, 200, 60, [
-                '../img/6.Botones/Tittles/Game Over/Recurso 9.png',
-                '../img/6.Botones/Tittles/Game Over/Recurso 10.png',
-                '../img/6.Botones/Tittles/Game Over/Recurso 11.png',
-                '../img/6.Botones/Tittles/Game Over/Recurso 12.png',
-                '../img/6.Botones/Tittles/Game Over/Recurso 13.png'
+                'img/6.Botones/Tittles/Game Over/Recurso 9.png',
+                'img/6.Botones/Tittles/Game Over/Recurso 10.png',
+                'img/6.Botones/Tittles/Game Over/Recurso 11.png',
+                'img/6.Botones/Tittles/Game Over/Recurso 12.png',
+                'img/6.Botones/Tittles/Game Over/Recurso 13.png'
             ]),
             this.createButton('retry', 280, 325, 180, 40, [
-                '../img/6.Botones/Try again/Recurso 15.png',
-                '../img/6.Botones/Try again/Recurso 16.png',
-                '../img/6.Botones/Try again/Recurso 17.png',
-                '../img/6.Botones/Try again/Recurso 18.png'
+                'img/6.Botones/Try again/Recurso 15.png',
+                'img/6.Botones/Try again/Recurso 16.png',
+                'img/6.Botones/Try again/Recurso 17.png',
+                'img/6.Botones/Try again/Recurso 18.png'
             ], { top: 0, left: 10, right: 10, bottom: 0 }),
             this.createStaticButton('homescreen', 670, 10, 40, 40, ['../img/6.Botones/shell_home.png'], 'Home')
         ];

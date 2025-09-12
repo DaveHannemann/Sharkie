@@ -22,17 +22,17 @@ class Character extends MovableObject {
     offSet = {top : 35, bottom : 70, left : 30, right : 40};
 
     constructor(){
-        super().loadImage('../img/1.Sharkie/3.Swim/3.png');
-        this.IMAGES_IDLE = this.createImagePaths('../img/1.Sharkie/1.IDLE', 18);
+        super().loadImage('img/1.Sharkie/3.Swim/3.png');
+        this.IMAGES_IDLE = this.createImagePaths('img/1.Sharkie/1.IDLE', 18);
         this.IMAGES_LONG_IDLE = this.createImagePaths('img/1.Sharkie/2.Long_IDLE', 14, 'li');
-        this.IMAGES_SWIMMING = this.createImagePaths('../img/1.Sharkie/3.Swim', 6);
-        this.IMAGES_HURT_POISONED = this.createImagePaths('../img/1.Sharkie/5.Hurt/1.Poisoned', 4);
-        this.IMAGES_HURT_SHOCKED = this.createImagePaths('../img/1.Sharkie/5.Hurt/2.Electric shock', 3);
-        this.IMAGES_DEAD_POISON = this.createImagePaths('../img/1.Sharkie/6.dead/1.Poisoned', 12);
-        this.IMAGES_DEAD_SHOCKED = this.createImagePaths('../img/1.Sharkie/6.dead/2.Electro_shock', 10);
-        this.IMAGES_FIN_SLAP = this.createImagePaths('../img/1.Sharkie/4.Attack/Fin slap', 8);
-        this.IMAGES_BUBBLE_ATTACK = this.createImagePaths('../img/1.Sharkie/4.Attack/Bubble trap/op1 (with bubble formation)', 8);
-        this.IMAGES_BUBBLE_POISON_ATTACK = this.createImagePaths('../img/1.Sharkie/4.Attack/Bubble trap/For Whale', 8);
+        this.IMAGES_SWIMMING = this.createImagePaths('img/1.Sharkie/3.Swim', 6);
+        this.IMAGES_HURT_POISONED = this.createImagePaths('img/1.Sharkie/5.Hurt/1.Poisoned', 4);
+        this.IMAGES_HURT_SHOCKED = this.createImagePaths('img/1.Sharkie/5.Hurt/2.Electric shock', 3);
+        this.IMAGES_DEAD_POISON = this.createImagePaths('img/1.Sharkie/6.dead/1.Poisoned', 12);
+        this.IMAGES_DEAD_SHOCKED = this.createImagePaths('img/1.Sharkie/6.dead/2.Electro_shock', 10);
+        this.IMAGES_FIN_SLAP = this.createImagePaths('img/1.Sharkie/4.Attack/Fin slap', 8);
+        this.IMAGES_BUBBLE_ATTACK = this.createImagePaths('img/1.Sharkie/4.Attack/Bubble trap/op1 (with bubble formation)', 8);
+        this.IMAGES_BUBBLE_POISON_ATTACK = this.createImagePaths('img/1.Sharkie/4.Attack/Bubble trap/For Whale', 8);
 
         [
             this.IMAGES_SWIMMING,
