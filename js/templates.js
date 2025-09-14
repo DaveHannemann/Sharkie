@@ -14,23 +14,23 @@ function renderOverlayContent() {
     <div class="flex">
         <div class="key_instructions">
             <div class="key_single">
-            <img class="keyboard_img" src="../img/6.Botones/Key/arrow keys.png">
+            <img class="keyboard_img" src="./img/6.Botones/Key/arrow keys.png">
             <p>Move through water!</p>
             </div>
             <div class="key_single">
-            <img class="key_d_img" src="../img/6.Botones/Key/D key.png">
+            <img class="key_d_img" src="./img/6.Botones/Key/D key.png">
             <p>Bubble 'em JellyFishes and Endboss!</p>
             </div>
             <div class="key_single">
-            <img class="key_space_img" src="../img/6.Botones/Key/Space Bar key.png">
+            <img class="key_space_img" src="./img/6.Botones/Key/Space Bar key.png">
             <p>Fin Slap 'em Bubblefishes!</p>
             </div>
         </div>
         <div class="fishbox">
-            <div class="enemybox"><img class="enemydmgbox" src="../img/2.Enemy/1.Puffer fish (3 color options)/1.Swim/1.swim1.png"><p>Pufferfish: 5 Damage</p></div>
-            <div class="enemybox"><img class="enemydmgbox" src="../img/2.Enemy/1.Puffer fish (3 color options)/3.Bubbleeswim/1.bubbleswim1.png"><p>Bubblefish: 10 Damage</p></div>
-            <div class="enemybox"><img class="enemydmgbox_jelly" src="../img/2.Enemy/2 Jelly fish/Regular damage/Lila 1.png"><p>Jellyfish: 15 Damage</p></div>
-            <div class="enemybox"><img class="enemydmgbox_endboss" src="../img/2.Enemy/3 Final Enemy/2.floating/1.png"><p>Endboss: 30-50 Damage based on level</p></div>
+            <div class="enemybox"><img class="enemydmgbox" src="./img/2.Enemy/1.Puffer fish (3 color options)/1.Swim/1.swim1.png"><p>Pufferfish: 5 Damage</p></div>
+            <div class="enemybox"><img class="enemydmgbox" src="./img/2.Enemy/1.Puffer fish (3 color options)/3.Bubbleeswim/1.bubbleswim1.png"><p>Bubblefish: 10 Damage</p></div>
+            <div class="enemybox"><img class="enemydmgbox_jelly" src="./img/2.Enemy/2 Jelly fish/Regular damage/Lila 1.png"><p>Jellyfish: 15 Damage</p></div>
+            <div class="enemybox"><img class="enemydmgbox_endboss" src="./img/2.Enemy/3 Final Enemy/2.floating/1.png"><p>Endboss: 30-50 Damage based on level</p></div>
         </div>
     </div>
     `;
